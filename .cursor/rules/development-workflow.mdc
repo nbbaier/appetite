@@ -1,0 +1,299 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Development Workflow & Standards
+
+## Project Setup & Configuration
+
+### Environment Setup
+- Node.js 18+ required
+- Package manager: npm (as defined in [package.json](mdc:package.json))
+- Development server: `npm run dev`
+- Build: `npm run build`
+- Linting: `npm run lint`
+
+### Key Configuration Files
+- [vite.config.ts](mdc:vite.config.ts) - Vite build configuration
+- [tsconfig.json](mdc:tsconfig.json) - TypeScript configuration
+- [tailwind.config.js](mdc:tailwind.config.js) - Tailwind CSS configuration
+- [eslint.config.js](mdc:eslint.config.js) - ESLint rules
+- [components.json](mdc:components.json) - UI component configuration
+
+## Coding Standards
+
+### TypeScript Guidelines
+- Use strict TypeScript mode
+- Define proper interfaces for all data structures
+- Use type inference where appropriate
+- Avoid `any` type - use proper typing
+- Use utility types (Partial, Omit, Pick) when needed
+
+### Naming Conventions
+```typescript
+// Files and directories
+components/          // kebab-case for directories
+ComponentName.tsx    // PascalCase for component files
+useHookName.ts       // camelCase for utility files
+
+// Variables and functions
+const userName = "John";           // camelCase for variables
+function calculateTotal() {}       // camelCase for functions
+const UserComponent = () => {};    // PascalCase for components
+
+// Constants
+const API_ENDPOINTS = {};          // UPPER_SNAKE_CASE for constants
+const MAX_RETRY_ATTEMPTS = 3;      // UPPER_SNAKE_CASE for magic numbers
+
+// Types and interfaces
+interface UserProfile {}           // PascalCase for interfaces
+type ApiResponse<T> = {};          // PascalCase for types
+```
+
+### Import Organization
+```typescript
+// 1. React and external libraries
+import React, { useState, useEffect } from "react";
+import { useForm } from "react-hook-form";
+
+// 2. Internal utilities and services
+import { cn } from "../lib/utils";
+import { ingredientService } from "../lib/database";
+
+// 3. Components
+import { Button } from "../components/ui/Button";
+import { Card } from "../components/ui/Card";
+
+// 4. Types
+import type { Ingredient, Recipe } from "../types";
+
+// 5. Styles (if any)
+import "./ComponentName.css";
+```
+
+## File Structure Standards
+
+### Component Organization
+```
+src/components/
+├── ui/                    # Base UI components
+│   ├── Button.tsx
+│   ├── Card.tsx
+│   └── Input.tsx
+├── layout/               # Layout components
+│   ├── Header.tsx
+│   ├── Sidebar.tsx
+│   └── Layout.tsx
+├── auth/                 # Authentication components
+│   └── AuthForm.tsx
+└── feature/              # Feature-specific components
+    ├── IngredientCard.tsx
+    └── RecipeGrid.tsx
+```
+
+### Page Organization
+```
+src/pages/
+├── Dashboard.tsx         # Main dashboard
+├── Pantry.tsx           # Pantry management
+├── Recipes.tsx          # Recipe discovery
+├── Shopping.tsx         # Shopping lists (future)
+├── Assistant.tsx        # AI assistant (future)
+└── Settings.tsx         # User settings (future)
+```
+
+## Development Workflow
+
+### Feature Development Process
+1. **Plan**: Review requirements and design
+2. **Branch**: Create feature branch from main
+3. **Develop**: Implement feature with proper testing
+4. **Test**: Run linting and type checking
+5. **Review**: Self-review code before commit
+6. **Commit**: Write clear commit messages
+7. **Push**: Push to remote repository
+8. **PR**: Create pull request for review
+
+### Commit Message Format
+```
+type(scope): description
+
+feat(pantry): add ingredient creation form
+fix(auth): resolve login redirect issue
+docs(readme): update installation instructions
+style(ui): improve button hover states
+refactor(database): simplify ingredient queries
+test(recipes): add unit tests for recipe service
+```
+
+### Code Review Checklist
+- [ ] Code follows project conventions
+- [ ] TypeScript types are properly defined
+- [ ] Error handling is implemented
+- [ ] Loading states are included
+- [ ] Accessibility considerations are met
+- [ ] Performance implications are considered
+- [ ] Tests are included (if applicable)
+- [ ] Documentation is updated (if needed)
+
+## Testing Strategy
+
+### Testing Levels
+1. **Unit Tests**: Test individual functions and components
+2. **Integration Tests**: Test component interactions
+3. **E2E Tests**: Test complete user workflows
+4. **Performance Tests**: Test data-heavy operations
+
+### Testing Tools
+- **Unit/Integration**: Vitest (recommended for Vite projects)
+- **E2E**: Playwright or Cypress
+- **Component Testing**: React Testing Library
+- **Mocking**: MSW (Mock Service Worker)
+
+### Test File Organization
+```
+src/
+├── components/
+│   └── Button.test.tsx
+├── lib/
+│   └── database.test.ts
+└── pages/
+    └── Dashboard.test.tsx
+```
+
+## Performance Guidelines
+
+### React Optimization
+```typescript
+// Use React.memo for expensive components
+const ExpensiveComponent = React.memo(({ data }) => {
+  return <div>{/* component content */}</div>;
+});
+
+// Use useCallback for event handlers
+const handleClick = useCallback(() => {
+  // handler logic
+}, [dependencies]);
+
+// Use useMemo for expensive calculations
+const expensiveValue = useMemo(() => {
+  return calculateExpensiveValue(data);
+}, [data]);
+```
+
+### Bundle Optimization
+- Use dynamic imports for code splitting
+- Lazy load routes and components
+- Optimize images and assets
+- Minimize bundle size with tree shaking
+
+### Database Optimization
+- Use proper indexes for queries
+- Implement pagination for large datasets
+- Cache frequently accessed data
+- Use optimistic updates for better UX
+
+## Error Handling Standards
+
+### Error Boundaries
+```typescript
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Error caught by boundary:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return <ErrorFallback />;
+    }
+    return this.props.children;
+  }
+}
+```
+
+### Async Error Handling
+```typescript
+const loadData = async () => {
+  try {
+    setLoading(true);
+    setError(null);
+    const data = await service.getData();
+    setData(data);
+  } catch (err) {
+    setError(err instanceof Error ? err.message : 'An error occurred');
+    console.error('Data loading error:', err);
+  } finally {
+    setLoading(false);
+  }
+};
+```
+
+## Security Guidelines
+
+### Authentication
+- Always validate user authentication
+- Use proper session management
+- Implement secure logout procedures
+- Handle token expiration gracefully
+
+### Data Validation
+- Validate all user inputs
+- Sanitize data before database operations
+- Use parameterized queries (handled by Supabase)
+- Implement proper access controls
+
+### Environment Variables
+- Never commit sensitive data to version control
+- Use environment variables for configuration
+- Validate environment variables at startup
+- Use different environments for dev/staging/prod
+
+## Documentation Standards
+
+### Code Documentation
+- Use JSDoc for complex functions
+- Document component props with TypeScript interfaces
+- Include usage examples for reusable components
+- Document complex business logic
+
+### README Maintenance
+- Keep [README.md](mdc:README.md) updated with setup instructions
+- Document API changes and new features
+- Include troubleshooting guides
+- Maintain changelog for major changes
+
+### Architecture Documentation
+- Document system architecture decisions
+- Maintain database schema documentation
+- Document deployment procedures
+- Keep API documentation updated
+
+## Deployment Guidelines
+
+### Environment Configuration
+- Use environment-specific configuration
+- Validate all required environment variables
+- Implement proper error handling for missing config
+- Use secure secrets management
+
+### Build Process
+- Run all tests before deployment
+- Validate TypeScript compilation
+- Check for linting errors
+- Optimize bundle for production
+
+### Monitoring and Logging
+- Implement proper error logging
+- Monitor application performance
+- Track user interactions (anonymously)
+- Set up alerts for critical errors

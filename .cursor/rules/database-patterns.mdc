@@ -1,0 +1,287 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# Database Patterns & Service Layer
+
+## Database Schema Overview
+
+### Core Tables
+Reference the database schema in [supabase/migrations/](mdc:supabase/migrations) for complete table definitions:
+
+- **ingredients** - User's pantry items with quantities and expiration dates
+- **recipes** - Recipe metadata and details
+- **recipe_ingredients** - Ingredients required for recipes
+- **recipe_instructions** - Step-by-step cooking instructions
+- **user_bookmarks** - User's saved recipes
+- **shopping_list_items** - Grocery shopping items
+
+### Data Models
+All TypeScript interfaces are defined in [types/index.ts](mdc:src/types/index.ts):
+- `User` - Authentication and profile data
+- `Ingredient` - Pantry items with user ownership
+- `Recipe` - Recipe metadata
+- `RecipeIngredient` - Recipe ingredient requirements
+- `RecipeInstruction` - Cooking steps
+- `ShoppingListItem` - Shopping list items
+
+## Service Layer Architecture
+
+### Service Functions
+All database operations are centralized in [database.ts](mdc:src/lib/database.ts) with three main service objects:
+
+#### Ingredient Service
+```typescript
+export const ingredientService = {
+  async getAll(userId: string): Promise<Ingredient[]>
+  async create(ingredient: Omit<Ingredient, "id" | "created_at" | "updated_at">): Promise<Ingredient>
+  async update(id: string, updates: Partial<Ingredient>): Promise<Ingredient>
+  async delete(id: string): Promise<void>
+  async getExpiringSoon(userId: string, days: number = 7): Promise<Ingredient[]>
+}
+```
+
+#### Recipe Service
+```typescript
+export const recipeService = {
+  async getAll(): Promise<Recipe[]>
+  async getById(id: string): Promise<Recipe | null>
+  async getIngredients(recipeId: string): Promise<RecipeIngredient[]>
+  async getInstructions(recipeId: string): Promise<RecipeInstruction[]>
+  async getCanCook(userIngredients: string[]): Promise<Recipe[]>
+}
+```
+
+#### Bookmark Service
+```typescript
+export const bookmarkService = {
+  async getUserBookmarks(userId: string): Promise<string[]>
+  async addBookmark(userId: string, recipeId: string): Promise<boolean>
+  async removeBookmark(userId: string, recipeId: string): Promise<void>
+}
+```
+
+## Database Operation Patterns
+
+### Error Handling
+```typescript
+async function fetchData() {
+  try {
+    const { data, error } = await supabase
+      .from("table_name")
+      .select("*")
+      .eq("user_id", userId);
+
+    if (error) throw error;
+    return data || [];
+  } catch (error) {
+    console.error("Database operation failed:", error);
+    throw error;
+  }
+}
+```
+
+### Type Safety
+- Always use TypeScript interfaces for data models
+- Use proper type guards for optional fields
+- Implement proper error types
+- Use generic types for reusable operations
+
+### Query Patterns
+
+#### Basic CRUD Operations
+```typescript
+// Create
+const { data, error } = await supabase
+  .from("table_name")
+  .insert([newRecord])
+  .select()
+  .single();
+
+// Read
+const { data, error } = await supabase
+  .from("table_name")
+  .select("*")
+  .eq("user_id", userId)
+  .order("created_at", { ascending: false });
+
+// Update
+const { data, error } = await supabase
+  .from("table_name")
+  .update(updates)
+  .eq("id", recordId)
+  .select()
+  .single();
+
+// Delete
+const { error } = await supabase
+  .from("table_name")
+  .delete()
+  .eq("id", recordId);
+```
+
+#### Complex Queries
+```typescript
+// Join queries
+const { data, error } = await supabase
+  .from("recipes")
+  .select(`
+    *,
+    recipe_ingredients (
+      ingredient_name,
+      quantity,
+      unit
+    )
+  `);
+
+// Filtering with multiple conditions
+const { data, error } = await supabase
+  .from("ingredients")
+  .select("*")
+  .eq("user_id", userId)
+  .not("expiration_date", "is", null)
+  .lte("expiration_date", futureDate)
+  .order("expiration_date", { ascending: true });
+```
+
+## Security Patterns
+
+### Row Level Security (RLS)
+All tables have RLS enabled with appropriate policies:
+
+#### User-Owned Data (ingredients, bookmarks)
+```sql
+-- Users can only access their own data
+CREATE POLICY "Users can read own ingredients"
+  ON ingredients
+  FOR SELECT
+  TO authenticated
+  USING (auth.uid() = user_id);
+```
+
+#### Public Read Data (recipes)
+```sql
+-- Anyone can read recipes
+CREATE POLICY "Anyone can read recipes"
+  ON recipes
+  FOR SELECT
+  TO authenticated
+  USING (true);
+```
+
+### Authentication Integration
+- All user-specific operations require authentication
+- Use `auth.uid()` for user identification
+- Implement proper session handling
+- Validate user permissions before operations
+
+## Data Validation Patterns
+
+### Input Validation
+```typescript
+// Use Zod schemas for validation
+const ingredientSchema = z.object({
+  name: z.string().min(1, "Name is required"),
+  quantity: z.number().min(0, "Quantity must be positive"),
+  unit: z.string().optional(),
+  category: z.string().default("Other"),
+  expiration_date: z.string().optional(),
+});
+
+// Validate before database operations
+const validatedData = ingredientSchema.parse(inputData);
+```
+
+### Data Sanitization
+- Sanitize user inputs before database operations
+- Use parameterized queries (handled by Supabase)
+- Validate data types and formats
+- Handle edge cases and null values
+
+## Performance Optimization
+
+### Indexing Strategy
+```sql
+-- User-specific queries
+CREATE INDEX idx_ingredients_user_id ON ingredients(user_id);
+
+-- Expiration date queries
+CREATE INDEX idx_ingredients_expiration ON ingredients(expiration_date) 
+WHERE expiration_date IS NOT NULL;
+
+-- Recipe ingredient lookups
+CREATE INDEX idx_recipe_ingredients_recipe_id ON recipe_ingredients(recipe_id);
+```
+
+### Query Optimization
+- Use specific column selection instead of `*`
+- Implement proper ordering for pagination
+- Use appropriate WHERE clauses for filtering
+- Avoid N+1 query problems with joins
+
+### Caching Strategy
+- Implement client-side caching for frequently accessed data
+- Use React Query or SWR for data fetching
+- Cache user preferences and settings
+- Implement optimistic updates for better UX
+
+## Real-time Features
+
+### Supabase Realtime
+```typescript
+// Subscribe to table changes
+const subscription = supabase
+  .channel('ingredients_changes')
+  .on('postgres_changes', 
+    { event: '*', schema: 'public', table: 'ingredients' },
+    (payload) => {
+      // Handle real-time updates
+      console.log('Change received!', payload);
+    }
+  )
+  .subscribe();
+```
+
+### Real-time Use Cases
+- Live updates for collaborative features
+- Real-time notifications for expiring ingredients
+- Live shopping list updates
+- Recipe bookmark synchronization
+
+## Migration Patterns
+
+### Database Migrations
+- All schema changes go through migrations in [supabase/migrations/](mdc:supabase/migrations)
+- Use descriptive migration names
+- Include both up and down migrations
+- Test migrations in development before production
+
+### Data Seeding
+```sql
+-- Seed initial data
+INSERT INTO recipes (title, description, prep_time, cook_time, servings, difficulty)
+VALUES 
+  ('Spaghetti Carbonara', 'Classic Italian pasta dish', 10, 15, 4, 'Medium'),
+  ('Chicken Stir Fry', 'Quick and healthy stir fry', 15, 10, 2, 'Easy');
+```
+
+## Testing Database Operations
+
+### Unit Testing
+- Mock Supabase client for unit tests
+- Test service functions in isolation
+- Validate error handling scenarios
+- Test data transformation logic
+
+### Integration Testing
+- Use test database for integration tests
+- Test complete CRUD operations
+- Validate RLS policies
+- Test real-time subscriptions
+
+### Data Consistency
+- Implement proper foreign key constraints
+- Use database transactions for complex operations
+- Validate data integrity after operations
+- Handle concurrent access scenarios

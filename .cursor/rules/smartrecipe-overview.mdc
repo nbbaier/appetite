@@ -1,0 +1,133 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+# SmartRecipe Project Overview
+
+## Project Description
+SmartRecipe is a comprehensive smart recipe management application that helps users manage their pantry, discover recipes based on available ingredients, and get AI-powered cooking assistance. The app features a modern React frontend with Supabase backend integration.
+
+## Architecture Overview
+
+### Frontend Stack
+- **Framework**: React 18+ with TypeScript
+- **Styling**: Tailwind CSS with custom design system
+- **Components**: Custom components built with Radix UI primitives
+- **Routing**: React Router DOM with protected routes
+- **Forms**: React Hook Form + Zod validation
+- **State**: React Context + hooks for global state
+- **Icons**: Lucide React
+- **Build**: Vite
+
+### Backend Stack
+- **Database**: Supabase PostgreSQL
+- **Authentication**: Supabase Auth
+- **Security**: Row Level Security (RLS) policies
+- **Real-time**: Supabase real-time subscriptions
+
+## Project Structure
+
+### Core Files
+- [App.tsx](mdc:src/App.tsx) - Main application with routing and auth protection
+- [main.tsx](mdc:src/main.tsx) - Application entry point
+- [types/index.ts](mdc:src/types/index.ts) - TypeScript interfaces for all data models
+
+### Key Directories
+- `src/components/` - Reusable UI components
+  - `auth/` - Authentication components
+  - `layout/` - Layout components (Header, Sidebar, Layout)
+  - `ui/` - Base UI components (Button, Card, Input)
+- `src/pages/` - Main application pages
+- `src/contexts/` - React Context providers
+- `src/lib/` - Utility functions and services
+- `supabase/migrations/` - Database schema and migrations
+
+### Data Models
+- **User**: Authentication and profile data
+- **Ingredient**: User's pantry items with quantities and expiration dates
+- **Recipe**: Recipe metadata and details
+- **RecipeIngredient**: Ingredients required for recipes
+- **RecipeInstruction**: Step-by-step cooking instructions
+- **ShoppingListItem**: Grocery shopping items
+- **UserBookmark**: User's saved recipes
+
+## Development Patterns
+
+### Component Structure
+- Use functional components with TypeScript
+- Implement proper prop interfaces
+- Follow single responsibility principle
+- Use composition over inheritance
+
+### State Management
+- Use React Context for global state (AuthContext)
+- Use local state with useState for component-specific data
+- Use useEffect for side effects and data fetching
+
+### Data Fetching
+- All database operations go through service functions in [database.ts](mdc:src/lib/database.ts)
+- Use async/await with proper error handling
+- Implement loading states for better UX
+
+### Styling Guidelines
+- Use Tailwind CSS utility classes
+- Follow the design system defined in [tailwind.config.js](mdc:tailwind.config.js)
+- Use consistent spacing (8px grid system)
+- Implement responsive design with mobile-first approach
+
+### Authentication Flow
+- Protected routes require authentication
+- Auth state managed through AuthContext
+- Supabase handles user sessions and tokens
+- Redirect to auth form if not authenticated
+
+## Current Development Status
+
+### Completed Features
+- ✅ Project setup and configuration
+- ✅ Authentication system
+- ✅ Database schema and migrations
+- ✅ Basic layout and navigation
+- ✅ Dashboard with stats
+- ✅ Pantry management foundation
+- ✅ Recipe discovery structure
+
+### In Progress
+- 🔄 Pantry CRUD operations
+- 🔄 Recipe management interface
+- 🔄 Shopping list functionality
+
+### Planned Features
+- ⏳ AI Assistant chat interface
+- ⏳ Advanced recipe filtering
+- ⏳ User settings and preferences
+- ⏳ Mobile responsiveness improvements
+- ⏳ Performance optimizations
+
+## Development Guidelines
+
+### Code Quality
+- Use TypeScript strict mode
+- Follow ESLint rules defined in [eslint.config.js](mdc:eslint.config.js)
+- Write clean, readable code without unnecessary comments
+- Use proper error handling and loading states
+
+### Database Operations
+- All database calls go through service functions
+- Use proper RLS policies for security
+- Implement optimistic updates where appropriate
+- Handle errors gracefully with user feedback
+
+### UI/UX Principles
+- Clean and modern interface design
+- Consistent component patterns
+- Progressive disclosure of complexity
+- Immediate feedback for user actions
+- Accessibility considerations
+
+### Testing Strategy
+- Component testing for UI components
+- Integration testing for data flows
+- E2E testing for critical user journeys
+- Performance testing for data-heavy operations

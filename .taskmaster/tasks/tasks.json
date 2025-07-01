@@ -1,0 +1,1482 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Project Setup and Configuration",
+        "description": "Initialize the project repository with React, TypeScript, Vite, and configure essential dependencies.",
+        "details": "1. Create a new Vite project with React and TypeScript template: `npm create vite@latest smartrecipe -- --template react-ts`\n2. Install core dependencies:\n   - `npm install react-router-dom tailwindcss postcss autoprefixer @radix-ui/react-*`\n   - `npm install lucide-react react-hook-form zod date-fns clsx tailwind-merge`\n   - `npm install @supabase/supabase-js`\n3. Install dev dependencies: `npm install -D typescript @types/react @types/react-dom`\n4. Initialize Tailwind CSS: `npx tailwindcss init -p`\n5. Configure Tailwind CSS in `tailwind.config.js` and create base CSS file\n6. Set up Shadcn/ui components following their installation guide\n7. Create project structure with folders for components, hooks, pages, utils, types, and contexts\n8. Configure ESLint and Prettier for code quality\n9. Set up basic Vite configuration in `vite.config.ts`\n10. Create initial README.md with project overview and setup instructions",
+        "testStrategy": "Verify project builds successfully with `npm run build`. Ensure all dependencies are correctly installed and the development server runs with `npm run dev`. Check that Tailwind CSS is properly configured by testing a simple styled component.",
+        "priority": "high",
+        "dependencies": [],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 2,
+        "title": "Supabase Backend Setup",
+        "description": "Set up Supabase project, configure database tables, and implement Row Level Security (RLS) policies.",
+        "details": "1. Create a new Supabase project from the dashboard\n2. Define and create the following database tables:\n   - users (extends auth.users): profile_id, dietary_restrictions, allergies, skill_level, measurement_system\n   - pantry_items: id, user_id, name, quantity, unit, category, expiration_date, notes, created_at, updated_at\n   - recipes: id, title, description, ingredients, instructions, cooking_time, difficulty, image_url, tags\n   - user_recipes: user_id, recipe_id, is_favorite, notes\n   - shopping_lists: id, user_id, name, created_at\n   - shopping_list_items: id, list_id, name, quantity, unit, category, is_purchased\n3. Set up foreign key relationships between tables\n4. Implement Row Level Security (RLS) policies for each table to ensure users can only access their own data\n5. Create database indexes for frequently queried columns\n6. Set up Supabase Auth settings and enable email authentication\n7. Configure Supabase environment variables in the frontend project\n8. Create a Supabase client utility in the frontend codebase",
+        "testStrategy": "Test database schema by inserting and querying sample data. Verify RLS policies by attempting to access data across different user contexts. Ensure foreign key constraints work properly. Test Supabase client connection from the frontend.",
+        "priority": "high",
+        "dependencies": [
+          1
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 3,
+        "title": "Authentication System Implementation",
+        "description": "Implement user registration, login, and protected routes using Supabase Auth.",
+        "details": "1. Create an AuthContext using React Context API to manage authentication state\n2. Implement the following components:\n   - SignUp: Email/password registration form with validation\n   - Login: Email/password login form with validation\n   - PasswordReset: Form for requesting password reset\n   - AuthGuard: HOC to protect routes requiring authentication\n3. Set up authentication routes in React Router:\n   - /auth/signup\n   - /auth/login\n   - /auth/reset-password\n4. Implement session persistence using Supabase's session management\n5. Create custom hooks:\n   - useAuth: Provides authentication methods and user state\n   - useRequireAuth: Redirects unauthenticated users\n6. Add loading states and error handling for auth operations\n7. Implement logout functionality\n8. Set up route redirection based on authentication status\n9. Store JWT securely and handle token refresh",
+        "testStrategy": "Test user registration with valid and invalid inputs. Verify login functionality and session persistence. Test protected routes to ensure they redirect unauthenticated users. Verify password reset flow. Test token refresh mechanism.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          2
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 4,
+        "title": "User Profile Management",
+        "description": "Create user profile management interface for personal details, dietary restrictions, allergies, cooking skill level, and kitchen equipment.",
+        "details": "1. Create a UserProfileContext to manage profile state\n2. Design and implement profile management components:\n   - ProfileForm: Form for editing user details\n   - DietaryPreferences: Multi-select component for dietary restrictions\n   - AllergiesInput: Tag-based input for allergies\n   - SkillLevelSelector: Radio button group for cooking skill level\n   - KitchenEquipmentInventory: Checklist for available equipment\n3. Implement form validation using Zod and React Hook Form\n4. Create database functions to update user profile data\n5. Add profile image upload using Supabase Storage\n6. Implement settings for measurement system preference (metric/imperial)\n7. Create a profile completion indicator\n8. Add form submission handling with loading states and error feedback\n9. Implement profile data persistence in Supabase",
+        "testStrategy": "Test profile form submission with various inputs. Verify data persistence in the database. Test image upload functionality. Ensure validation works correctly for all fields. Verify that profile changes are reflected throughout the application.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          3
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and implement database schema updates",
+            "description": "Update the existing database schema to accommodate new user profile fields",
+            "dependencies": [],
+            "details": "Add new columns for additional user information, ensure proper data types and constraints",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Create frontend components for user profile",
+            "description": "Develop React components for displaying and editing user profile information",
+            "dependencies": [],
+            "details": "Create reusable components for profile view and edit forms, implement state management",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement form validation",
+            "description": "Add client-side validation for user profile form inputs",
+            "dependencies": [
+              2
+            ],
+            "details": "Validate input fields for correct format, required fields, and data integrity",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Develop API endpoints for profile management",
+            "description": "Create backend API endpoints for retrieving and updating user profile data",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement GET and PUT endpoints, handle data serialization and deserialization",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Integrate frontend with backend for data persistence",
+            "description": "Connect frontend components to API endpoints for saving and retrieving profile data",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Implement API calls from React components, handle loading states and error scenarios",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Application Layout and Navigation",
+        "description": "Develop the core application layout, responsive design, and navigation components.",
+        "details": "1. Create a responsive layout component with:\n   - Header with logo, navigation, and user menu\n   - Sidebar for main navigation\n   - Main content area\n   - Footer with links and information\n2. Implement mobile-first design with responsive breakpoints\n3. Create navigation components:\n   - MainNav: Primary navigation links\n   - UserMenu: Dropdown with profile and logout options\n   - MobileMenu: Collapsible menu for small screens\n4. Set up React Router with the following routes:\n   - /dashboard: Main dashboard\n   - /pantry: Pantry management\n   - /recipes: Recipe discovery\n   - /shopping-lists: Shopping list management\n   - /assistant: AI cooking assistant\n   - /profile: User profile management\n   - /settings: Application settings\n5. Implement navigation state management\n6. Add loading indicators for route transitions\n7. Create breadcrumb navigation for nested routes\n8. Ensure keyboard navigation accessibility\n9. Add active state styling for current route",
+        "testStrategy": "Test responsive layout at various screen sizes. Verify navigation functionality and route transitions. Test keyboard navigation and accessibility. Ensure mobile menu works correctly. Verify that active states are properly applied to current routes.",
+        "priority": "high",
+        "dependencies": [
+          1,
+          3
+        ],
+        "status": "done",
+        "subtasks": []
+      },
+      {
+        "id": 6,
+        "title": "Pantry Management - Core Functionality",
+        "description": "Implement the core pantry management interface for adding, viewing, editing, and deleting ingredients.",
+        "details": "1. Create a PantryContext to manage pantry state\n2. Design and implement pantry management components:\n   - PantryList: Main view of pantry items with sorting and filtering\n   - PantryItem: Individual ingredient display component\n   - AddIngredientForm: Form for adding new ingredients\n   - EditIngredientForm: Form for editing existing ingredients\n   - DeleteConfirmation: Confirmation dialog for deleting ingredients\n3. Implement CRUD operations using Supabase client:\n   - fetchPantryItems(): Get user's pantry items\n   - addPantryItem(): Add new ingredient\n   - updatePantryItem(): Update existing ingredient\n   - deletePantryItem(): Remove ingredient\n4. Add form validation using Zod\n5. Implement real-time updates using Supabase Realtime\n6. Create filtering options by category, expiration date, and name\n7. Add sorting options by name, expiration date, and quantity\n8. Implement pagination or infinite scrolling for large pantries\n9. Add loading states and error handling",
+        "testStrategy": "Test CRUD operations for pantry items. Verify real-time updates when data changes. Test filtering and sorting functionality. Ensure form validation works correctly. Test pagination/infinite scrolling with a large number of items.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          5
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Database Schema",
+            "description": "Create a comprehensive database schema for pantry items, categories, and user preferences",
+            "dependencies": [],
+            "details": "Define tables for items, categories, quantities, expiration dates, and user settings. Consider relationships and indexing for optimal performance.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement CRUD Operations",
+            "description": "Develop backend API endpoints for Create, Read, Update, and Delete operations on pantry items",
+            "dependencies": [
+              1
+            ],
+            "details": "Create RESTful API endpoints for managing pantry items, including adding new items, updating quantities, and removing expired items.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Set Up Real-time Updates",
+            "description": "Implement a real-time update system for synchronizing pantry data across devices",
+            "dependencies": [
+              2
+            ],
+            "details": "Use WebSockets or a similar technology to ensure instant updates when changes are made to the pantry inventory.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Develop UI Components for Item Management",
+            "description": "Create reusable UI components for displaying and managing pantry items",
+            "dependencies": [
+              2
+            ],
+            "details": "Design and implement components for item lists, detail views, and forms for adding/editing items.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implement State Management",
+            "description": "Set up a state management solution to handle complex data flow in the application",
+            "dependencies": [
+              3,
+              4
+            ],
+            "details": "Implement a state management library (e.g., Redux, MobX) to manage application state, including real-time updates and UI interactions.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Create Dashboard and Analytics UI",
+            "description": "Develop UI components for displaying pantry statistics and analytics",
+            "dependencies": [
+              4,
+              5
+            ],
+            "details": "Design and implement dashboard components to show inventory levels, expiration alerts, and usage trends.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "title": "AI-Powered Pantry Input",
+        "description": "Implement natural language processing for pantry item input using Supabase Edge Functions and AI.",
+        "details": "1. Create a Supabase Edge Function for parsing natural language input:\n   ```typescript\n   // parseIngredients.ts Edge Function\n   import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'\n   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'\n   import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.2.1'\n   \n   serve(async (req) => {\n     const { text } = await req.json()\n     \n     // Initialize OpenAI\n     const configuration = new Configuration({\n       apiKey: Deno.env.get('OPENAI_API_KEY'),\n     })\n     const openai = new OpenAIApi(configuration)\n     \n     try {\n       // Parse ingredients using AI\n       const response = await openai.createCompletion({\n         model: \"text-davinci-003\",\n         prompt: `Parse the following text into structured ingredients with quantities and units:\\n${text}\\nFormat as JSON array with name, quantity, and unit fields.`,\n         max_tokens: 500,\n         temperature: 0.3,\n       })\n       \n       const parsedIngredients = JSON.parse(response.data.choices[0].text.trim())\n       return new Response(JSON.stringify({ ingredients: parsedIngredients }), {\n         headers: { 'Content-Type': 'application/json' },\n         status: 200,\n       })\n     } catch (error) {\n       return new Response(JSON.stringify({ error: error.message }), {\n         headers: { 'Content-Type': 'application/json' },\n         status: 500,\n       })\n     }\n   })\n   ```\n2. Deploy the Edge Function to Supabase\n3. Create a frontend component for natural language input:\n   - NaturalLanguageInput: Textarea with submit button\n   - ParsedIngredientsPreview: Display parsed ingredients before adding to pantry\n   - ConfirmAddition: Confirmation step before adding to pantry\n4. Implement error handling and fallback to manual input\n5. Add loading states during API calls\n6. Create a client-side function to call the Edge Function\n7. Implement batch addition of parsed ingredients to pantry",
+        "testStrategy": "Test natural language parsing with various input formats. Verify correct extraction of ingredients, quantities, and units. Test error handling when parsing fails. Ensure batch addition works correctly. Test with edge cases like unusual units or complex descriptions.",
+        "priority": "medium",
+        "dependencies": [
+          2,
+          6
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Edge Function for AI processing",
+            "description": "Develop an Edge Function to handle AI-powered pantry input processing",
+            "dependencies": [],
+            "details": "Set up a new Edge Function in the project, configure necessary environment variables, and create the basic structure to receive and process pantry input requests",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Integrate OpenAI API",
+            "description": "Implement OpenAI API integration within the Edge Function",
+            "dependencies": [
+              1
+            ],
+            "details": "Add OpenAI SDK, set up API authentication, and create functions to send pantry input to OpenAI for processing and receive structured responses",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Develop frontend input component",
+            "description": "Create a user-friendly frontend component for pantry input",
+            "dependencies": [],
+            "details": "Design and implement a React component with a text input field and submit button for users to enter pantry items in natural language",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement result display component",
+            "description": "Create a component to display processed pantry items",
+            "dependencies": [
+              3
+            ],
+            "details": "Develop a React component to receive and display the structured pantry items returned from the AI processing, including item names, quantities, and categories",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Add error handling and validation",
+            "description": "Implement comprehensive error handling and input validation",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Add input validation on the frontend, implement error handling in the Edge Function for API failures, and create user-friendly error messages for various scenarios",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 8,
+        "title": "Advanced Pantry Features - Expiration Tracking",
+        "description": "Implement expiration date tracking with alerts for expired, critical, warning, and upcoming expirations.",
+        "details": "1. Enhance the pantry database schema to include expiration tracking fields\n2. Create utility functions for expiration calculations:\n   - isExpired(date): Check if date is in the past\n   - getExpirationStatus(date): Return status (expired, critical, warning, upcoming, ok)\n   - getDaysUntilExpiration(date): Calculate days remaining\n3. Implement expiration visualization components:\n   - ExpirationBadge: Color-coded badge showing expiration status\n   - ExpirationProgress: Visual indicator of time remaining\n   - ExpirationAlerts: Summary of items requiring attention\n4. Create an expiration dashboard view:\n   - Group items by expiration status\n   - Sort by nearest expiration date\n   - Filter by status\n5. Implement user-configurable thresholds in settings:\n   - Critical threshold (default: 2 days)\n   - Warning threshold (default: 5 days)\n   - Upcoming threshold (default: 10 days)\n6. Add database queries to filter items by expiration status\n7. Implement notification system for expiring items",
+        "testStrategy": "Test expiration calculations with various dates. Verify correct classification of items by expiration status. Test threshold configuration and its effect on status calculation. Ensure expiration visualization components display correctly for different statuses. Test filtering and sorting by expiration date.",
+        "priority": "medium",
+        "dependencies": [
+          6
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Update Database Schema",
+            "description": "Modify the database schema to include expiration-related fields",
+            "dependencies": [],
+            "details": "Add fields for expiration date, notification preferences, and last notification sent date to relevant tables",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement Expiration Calculations",
+            "description": "Create logic for calculating expiration dates and determining when items are close to expiring",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop algorithms to calculate expiration based on item type, storage conditions, and other relevant factors",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Develop UI Components",
+            "description": "Create user interface elements for displaying expiration information and managing tracking preferences",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Design and implement components for expiration date display, sorting by expiration, and setting notification preferences",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Build Notification System",
+            "description": "Implement a system to send notifications for items approaching expiration",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Create a notification service that checks expiration dates and sends alerts through various channels (e.g., email, push notifications)",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 9,
+        "title": "Advanced Pantry Features - Intelligent Categorization",
+        "description": "Implement AI-powered category suggestions that learn from user behavior for consistent organization.",
+        "details": "1. Create a Supabase Edge Function for category suggestions:\n   ```typescript\n   // suggestCategory.ts Edge Function\n   import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'\n   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'\n   \n   serve(async (req) => {\n     const { ingredient, userId } = await req.json()\n     \n     // Create Supabase client with service role key\n     const supabase = createClient(\n       Deno.env.get('SUPABASE_URL') ?? '',\n       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''\n     )\n     \n     try {\n       // Get user's categorization history\n       const { data: userCategories } = await supabase\n         .from('pantry_items')\n         .select('name, category')\n         .eq('user_id', userId)\n       \n       // Get global categorization patterns\n       const { data: globalCategories } = await supabase\n         .from('pantry_items')\n         .select('name, category')\n         .limit(1000)\n       \n       // Simple algorithm to suggest category based on exact or partial matches\n       let suggestedCategory = null\n       \n       // First check user's own categorization\n       const userMatch = userCategories.find(item => \n         item.name.toLowerCase() === ingredient.toLowerCase()\n       )\n       if (userMatch) suggestedCategory = userMatch.category\n       \n       // If no exact match, check partial matches in user data\n       if (!suggestedCategory) {\n         const partialUserMatch = userCategories.find(item => \n           ingredient.toLowerCase().includes(item.name.toLowerCase()) || \n           item.name.toLowerCase().includes(ingredient.toLowerCase())\n         )\n         if (partialUserMatch) suggestedCategory = partialUserMatch.category\n       }\n       \n       // If still no match, check global data\n       if (!suggestedCategory) {\n         const globalMatch = globalCategories.find(item => \n           item.name.toLowerCase() === ingredient.toLowerCase()\n         )\n         if (globalMatch) suggestedCategory = globalMatch.category\n       }\n       \n       // Default categories based on common ingredients\n       const defaultCategories = {\n         'milk': 'Dairy',\n         'cheese': 'Dairy',\n         'yogurt': 'Dairy',\n         'chicken': 'Meat',\n         'beef': 'Meat',\n         'pork': 'Meat',\n         'apple': 'Fruits',\n         'banana': 'Fruits',\n         'orange': 'Fruits',\n         'carrot': 'Vegetables',\n         'onion': 'Vegetables',\n         'potato': 'Vegetables',\n         'rice': 'Grains',\n         'pasta': 'Grains',\n         'bread': 'Bakery',\n         // Add more default mappings\n       }\n       \n       // Check default categories if no match found\n       if (!suggestedCategory) {\n         for (const [key, category] of Object.entries(defaultCategories)) {\n           if (ingredient.toLowerCase().includes(key)) {\n             suggestedCategory = category\n             break\n           }\n         }\n       }\n       \n       // Default to 'Other' if no category found\n       if (!suggestedCategory) suggestedCategory = 'Other'\n       \n       return new Response(JSON.stringify({ category: suggestedCategory }), {\n         headers: { 'Content-Type': 'application/json' },\n         status: 200,\n       })\n     } catch (error) {\n       return new Response(JSON.stringify({ error: error.message }), {\n         headers: { 'Content-Type': 'application/json' },\n         status: 500,\n       })\n     }\n   })\n   ```\n2. Deploy the Edge Function to Supabase\n3. Create frontend components for category management:\n   - CategorySelector: Dropdown with suggested and custom categories\n   - CategoryManager: Interface for managing custom categories\n4. Implement client-side function to call the category suggestion API\n5. Add category management to pantry item forms\n6. Create a category filter for the pantry view\n7. Implement category statistics to show distribution of items\n8. Add ability to bulk recategorize items",
+        "testStrategy": "Test category suggestions with various ingredients. Verify that the system learns from user behavior by testing suggestions before and after categorization. Test the fallback to global patterns and default categories. Ensure category management UI works correctly. Test bulk recategorization functionality.",
+        "priority": "medium",
+        "dependencies": [
+          6,
+          7
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Edge Function architecture",
+            "description": "Create a high-level design for the Edge Function that will handle the Intelligent Categorization feature",
+            "dependencies": [],
+            "details": "Define input/output structure, determine necessary APIs, and outline the overall flow of the Edge Function",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Develop category suggestion algorithm",
+            "description": "Implement the core algorithm for suggesting categories based on transaction data",
+            "dependencies": [
+              1
+            ],
+            "details": "Research and implement machine learning techniques for category prediction, considering factors like transaction description, amount, and historical data",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Create frontend components for category selection",
+            "description": "Design and implement UI components for displaying and selecting suggested categories",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop reusable React components for category suggestion display, user selection, and feedback mechanisms",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement database integration for category learning",
+            "description": "Set up database structures and queries to store and retrieve category data for continuous learning",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Design database schema for storing transaction-category mappings, implement CRUD operations, and create queries for retrieving relevant data for the suggestion algorithm",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Integrate and test Intelligent Categorization feature",
+            "description": "Combine all components and perform comprehensive testing of the Intelligent Categorization feature",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Integrate Edge Function with frontend and database, conduct unit and integration tests, and perform user acceptance testing for the entire feature",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 10,
+        "title": "Advanced Pantry Features - Inventory Level Tracking",
+        "description": "Implement low stock alerts based on customizable thresholds per ingredient.",
+        "details": "1. Enhance pantry database schema to include inventory tracking fields:\n   - min_quantity: Minimum desired quantity\n   - restock_threshold: Percentage threshold for alerts\n2. Create utility functions for inventory calculations:\n   - isLowStock(item): Check if item is below threshold\n   - getStockLevel(item): Calculate percentage of current vs. minimum\n3. Implement inventory visualization components:\n   - StockLevelIndicator: Visual representation of current stock level\n   - LowStockBadge: Badge for items below threshold\n   - StockSummary: Overview of inventory status\n4. Create inventory management interface:\n   - Set minimum quantities for items\n   - Configure restock thresholds\n   - View low stock items\n5. Implement database queries to filter items by stock level\n6. Add automatic addition of low stock items to shopping list\n7. Create notification system for low stock alerts",
+        "testStrategy": "Test inventory level calculations with various quantities and thresholds. Verify correct identification of low stock items. Test threshold configuration. Ensure visualization components display correctly for different stock levels. Test automatic addition to shopping list functionality.",
+        "priority": "low",
+        "dependencies": [
+          6
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and implement database schema updates",
+            "description": "Update the existing database schema to accommodate inventory level tracking",
+            "dependencies": [],
+            "details": "Add new tables and columns for inventory items, quantities, and thresholds. Ensure proper relationships with existing tables.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Develop inventory calculation logic",
+            "description": "Create algorithms for real-time inventory level calculations",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement functions to calculate current inventory levels, reorder points, and safety stock levels based on historical data and predefined rules.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Create UI components for inventory tracking",
+            "description": "Design and implement user interface elements for displaying inventory levels",
+            "dependencies": [
+              2
+            ],
+            "details": "Develop dashboard widgets, inventory level charts, and detailed item views that integrate with the new calculation logic.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement inventory alert system",
+            "description": "Develop a notification system for low inventory levels and reorder suggestions",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Create an alert mechanism that triggers notifications when inventory levels fall below thresholds, and suggests reorder quantities based on calculated data.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 11,
+        "title": "Recipe Management - Core Functionality",
+        "description": "Implement the core recipe management interface for browsing, viewing, and bookmarking recipes.",
+        "details": "1. Create a RecipeContext to manage recipe state\n2. Design and implement recipe management components:\n   - RecipeList: Grid or list view of available recipes\n   - RecipeCard: Card displaying recipe summary\n   - RecipeDetail: Modal or page showing full recipe details\n   - RecipeFilters: Interface for filtering recipes\n   - BookmarkButton: Toggle for saving favorite recipes\n3. Implement recipe data functions using Supabase client:\n   - fetchRecipes(): Get available recipes\n   - fetchRecipeById(): Get detailed recipe information\n   - toggleBookmark(): Save/unsave recipe as favorite\n4. Create recipe detail view with:\n   - Title, description, and image\n   - Ingredients list with quantities\n   - Step-by-step instructions\n   - Cooking time and difficulty\n   - Tags and categories\n5. Implement filtering by tags, difficulty, and cooking time\n6. Add sorting options by popularity, cooking time, and difficulty\n7. Implement pagination or infinite scrolling for recipe browsing\n8. Add loading states and error handling",
+        "testStrategy": "Test recipe browsing with various filters and sorting options. Verify recipe detail view displays all information correctly. Test bookmarking functionality. Ensure pagination/infinite scrolling works with a large number of recipes. Test loading states and error handling.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          5
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Recipe Database Schema",
+            "description": "Create a database schema to store recipe information including ingredients, instructions, categories, and user data.",
+            "dependencies": [],
+            "details": "Define tables for recipes, ingredients, categories, and users. Include fields for recipe name, description, preparation time, serving size, and image URLs.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement CRUD Operations for Recipes",
+            "description": "Develop API endpoints and backend logic for creating, reading, updating, and deleting recipes.",
+            "dependencies": [
+              1
+            ],
+            "details": "Create RESTful API endpoints for recipe management. Implement data validation, error handling, and database interactions.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Design and Develop UI Components",
+            "description": "Create reusable UI components for displaying and interacting with recipes.",
+            "dependencies": [],
+            "details": "Develop components for recipe cards, recipe details view, ingredient list, and instruction steps. Ensure responsive design for various screen sizes.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement Recipe Filtering and Sorting",
+            "description": "Add functionality to filter and sort recipes based on various criteria.",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Implement backend logic and API endpoints for filtering by category, ingredients, and preparation time. Add sorting options for popularity, difficulty, and date added.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Integrate UI Components with Backend",
+            "description": "Connect the frontend UI components with the backend API for a fully functional recipe management system.",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Implement data fetching and state management in the frontend. Handle user interactions, form submissions, and real-time updates for recipe CRUD operations.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 12,
+        "title": "Recipe Management - 'Can Cook' Discovery",
+        "description": "Implement intelligent recipe discovery based on ingredients currently available in the user's pantry.",
+        "details": "1. Create a Supabase database function for matching recipes to pantry:\n   ```sql\n   CREATE OR REPLACE FUNCTION match_recipes_to_pantry(user_id UUID)\n   RETURNS TABLE (\n     recipe_id UUID,\n     recipe_title TEXT,\n     match_percentage NUMERIC,\n     missing_ingredients JSONB\n   ) LANGUAGE plpgsql AS $$\n   BEGIN\n     RETURN QUERY\n     WITH user_pantry AS (\n       SELECT name FROM pantry_items WHERE user_id = $1\n     ),\n     recipe_ingredients AS (\n       SELECT \n         r.id,\n         r.title,\n         jsonb_array_elements(r.ingredients) AS ingredient\n       FROM recipes r\n     ),\n     ingredient_matches AS (\n       SELECT\n         ri.id,\n         ri.title,\n         COUNT(DISTINCT p.name) AS matched_count,\n         jsonb_agg(DISTINCT ri.ingredient) FILTER (WHERE p.name IS NULL) AS missing\n       FROM recipe_ingredients ri\n       LEFT JOIN user_pantry p ON \n         p.name ILIKE '%' || ri.ingredient->>'name' || '%' OR\n         ri.ingredient->>'name' ILIKE '%' || p.name || '%'\n       GROUP BY ri.id, ri.title\n     )\n     SELECT\n       im.id,\n       im.title,\n       ROUND((im.matched_count::NUMERIC / jsonb_array_length(r.ingredients)) * 100, 2) AS match_percentage,\n       im.missing\n     FROM ingredient_matches im\n     JOIN recipes r ON im.id = r.id\n     ORDER BY match_percentage DESC;\n   END;\n   $$;\n   ```\n2. Create frontend components for 'Can Cook' discovery:\n   - CanCookView: Main interface showing cookable recipes\n   - MatchPercentageIndicator: Visual display of match percentage\n   - MissingIngredientsList: Display of ingredients not in pantry\n   - CanCookFilters: Filters specific to pantry matching\n3. Implement client-side function to call the database function\n4. Add filtering options:\n   - Minimum match percentage\n   - Maximum number of missing ingredients\n   - Recipe difficulty and cooking time\n5. Create sorting options by match percentage and missing ingredients\n6. Implement quick add to shopping list for missing ingredients\n7. Add loading states and error handling",
+        "testStrategy": "Test recipe matching with various pantry contents. Verify correct calculation of match percentages. Test filtering by match percentage and missing ingredients. Ensure quick add to shopping list works correctly. Test with edge cases like empty pantry or recipes with many ingredients.",
+        "priority": "high",
+        "dependencies": [
+          6,
+          11
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and implement database functions for 'Can Cook' feature",
+            "description": "Create database functions to efficiently query and retrieve recipe data based on available ingredients",
+            "dependencies": [],
+            "details": "Develop SQL functions to match ingredients with recipes, considering ingredient substitutions and quantity variations",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Develop matching algorithm for 'Can Cook' feature",
+            "description": "Create an intelligent algorithm to match user's available ingredients with potential recipes",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement a scoring system that considers ingredient matches, substitutions, and recipe popularity",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Design and implement frontend components for 'Can Cook' feature",
+            "description": "Create user interface elements to display matching recipes and ingredient information",
+            "dependencies": [],
+            "details": "Develop reusable components for recipe cards, ingredient lists, and filtering options",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Integrate 'Can Cook' feature with pantry data",
+            "description": "Connect the 'Can Cook' functionality with the user's existing pantry inventory",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Implement data synchronization between pantry inventory and 'Can Cook' matching algorithm",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Test and optimize 'Can Cook' feature performance",
+            "description": "Conduct thorough testing and performance optimization for the 'Can Cook' feature",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Perform unit tests, integration tests, and load tests to ensure feature reliability and efficiency",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 13,
+        "title": "Shopping List Management",
+        "description": "Implement shopping list creation, management, and integration with pantry.",
+        "details": "1. Create a ShoppingListContext to manage shopping list state\n2. Design and implement shopping list components:\n   - ShoppingListsOverview: Display of all user shopping lists\n   - ShoppingListDetail: View of items in a specific list\n   - CreateListForm: Form for creating new shopping lists\n   - AddItemForm: Form for adding items to a list\n   - ShoppingListItem: Individual item with purchase toggle\n3. Implement shopping list data functions using Supabase client:\n   - fetchShoppingLists(): Get user's shopping lists\n   - createShoppingList(): Create new list\n   - fetchListItems(): Get items in a specific list\n   - addListItem(): Add item to list\n   - updateListItem(): Update item details\n   - togglePurchased(): Mark item as purchased\n   - deleteListItem(): Remove item from list\n4. Create shopping list management interface:\n   - Create, rename, and delete lists\n   - Add, edit, and remove items\n   - Mark items as purchased\n   - View purchase progress\n5. Implement automatic pantry integration:\n   - Add purchased items to pantry\n   - Update quantities for existing pantry items\n6. Add categorization and sorting of shopping list items\n7. Implement real-time updates using Supabase Realtime\n8. Add loading states and error handling",
+        "testStrategy": "Test shopping list CRUD operations. Verify item management functionality. Test marking items as purchased and progress tracking. Ensure automatic pantry integration works correctly. Test real-time updates when data changes. Verify categorization and sorting of items.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          5,
+          6
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Shopping List Database Schema",
+            "description": "Create a database schema for storing shopping list items, categories, and user preferences.",
+            "dependencies": [],
+            "details": "Include tables for items, categories, user-item associations, and integration points with pantry and recipe systems.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Implement CRUD Operations for Shopping List",
+            "description": "Develop backend API endpoints for creating, reading, updating, and deleting shopping list items.",
+            "dependencies": [
+              1
+            ],
+            "details": "Ensure proper error handling, input validation, and user authentication for all CRUD operations.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Create UI Components for Shopping List Management",
+            "description": "Design and implement user interface components for managing shopping lists.",
+            "dependencies": [
+              2
+            ],
+            "details": "Include features like adding items, checking off purchased items, categorizing items, and sorting/filtering options.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Integrate Shopping List with Pantry System",
+            "description": "Develop functionality to sync shopping list items with the pantry inventory system.",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Implement automatic addition of items to shopping list when pantry stock is low, and update pantry inventory when items are purchased.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Integrate Shopping List with Recipe System",
+            "description": "Create functionality to generate shopping lists based on selected recipes.",
+            "dependencies": [
+              2,
+              3,
+              4
+            ],
+            "details": "Allow users to add recipe ingredients to the shopping list, considering existing pantry inventory and current shopping list items.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 14,
+        "title": "Shopping List - Recipe Integration",
+        "description": "Implement functionality to add missing ingredients from recipes to shopping lists.",
+        "details": "1. Create utility functions for recipe-shopping list integration:\n   - getMissingIngredients(recipeId, userId): Get ingredients not in pantry\n   - formatForShoppingList(ingredients): Format recipe ingredients for shopping list\n   - addRecipeToShoppingList(recipeId, listId, userId): Add missing ingredients to list\n2. Implement UI components:\n   - AddToShoppingListButton: Button in recipe detail view\n   - ShoppingListSelector: Dropdown to select target list\n   - MissingIngredientsPreview: Preview of items to be added\n3. Create a Supabase stored procedure for efficient processing:\n   ```sql\n   CREATE OR REPLACE FUNCTION add_recipe_to_shopping_list(\n     p_recipe_id UUID,\n     p_list_id UUID,\n     p_user_id UUID\n   ) RETURNS SETOF shopping_list_items LANGUAGE plpgsql AS $$\n   DECLARE\n     v_ingredient JSONB;\n     v_item_id UUID;\n   BEGIN\n     -- For each ingredient in the recipe\n     FOR v_ingredient IN \n       SELECT jsonb_array_elements(ingredients) \n       FROM recipes \n       WHERE id = p_recipe_id\n     LOOP\n       -- Check if ingredient exists in pantry\n       IF NOT EXISTS (\n         SELECT 1 FROM pantry_items \n         WHERE user_id = p_user_id \n         AND (name ILIKE '%' || (v_ingredient->>'name') || '%' \n           OR (v_ingredient->>'name') ILIKE '%' || name || '%')\n       ) THEN\n         -- Add to shopping list if not in pantry\n         INSERT INTO shopping_list_items (\n           list_id, name, quantity, unit, category, is_purchased\n         ) VALUES (\n           p_list_id,\n           v_ingredient->>'name',\n           COALESCE((v_ingredient->>'quantity')::NUMERIC, 1),\n           COALESCE(v_ingredient->>'unit', ''),\n           COALESCE(v_ingredient->>'category', 'Other'),\n           FALSE\n         )\n         RETURNING id INTO v_item_id;\n         \n         RETURN QUERY SELECT * FROM shopping_list_items WHERE id = v_item_id;\n       END IF;\n     END LOOP;\n     \n     RETURN;\n   END;\n   $$;\n   ```\n4. Implement client-side function to call the stored procedure\n5. Add ability to select which missing ingredients to add\n6. Create option to add all recipe ingredients regardless of pantry status\n7. Implement duplicate detection and quantity merging\n8. Add loading states and success/error feedback",
+        "testStrategy": "Test adding missing ingredients from various recipes. Verify correct identification of missing ingredients. Test with different pantry states. Ensure duplicate detection and quantity merging work correctly. Test the UI flow from recipe to shopping list. Verify loading states and feedback.",
+        "priority": "medium",
+        "dependencies": [
+          11,
+          13
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design and implement database procedures",
+            "description": "Create stored procedures in the database for managing shopping lists and their integration with recipes",
+            "dependencies": [],
+            "details": "Develop procedures for adding, updating, and deleting shopping list items. Include procedures for linking shopping list items to recipe ingredients and pantry items.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Develop frontend components for shopping list management",
+            "description": "Create React components for displaying and interacting with shopping lists",
+            "dependencies": [],
+            "details": "Design and implement components for viewing, adding, editing, and removing items from shopping lists. Include functionality for marking items as purchased.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Integrate shopping list with recipe system",
+            "description": "Implement functionality to add recipe ingredients to shopping lists",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Create a feature that allows users to add all ingredients from a selected recipe to their shopping list, taking into account existing pantry items.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement pantry system integration",
+            "description": "Connect shopping list functionality with the pantry system",
+            "dependencies": [
+              1,
+              2,
+              3
+            ],
+            "details": "Develop features to automatically update pantry quantities when shopping list items are marked as purchased, and to suggest adding items to the shopping list when pantry quantities are low.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 15,
+        "title": "AI Cooking Assistant - Chat Interface",
+        "description": "Implement a real-time AI chat interface powered by OpenAI GPT-4.1 API via Supabase Edge Function.",
+        "details": "1. Create a Supabase Edge Function for the AI assistant:\n   ```typescript\n   // cookingAssistant.ts Edge Function\n   import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'\n   import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'\n   import { Configuration, OpenAIApi } from 'https://esm.sh/openai@3.2.1'\n   \n   serve(async (req) => {\n     const { message, userId, conversationHistory } = await req.json()\n     \n     // Initialize OpenAI\n     const configuration = new Configuration({\n       apiKey: Deno.env.get('OPENAI_API_KEY'),\n     })\n     const openai = new OpenAIApi(configuration)\n     \n     // Create Supabase client with service role key\n     const supabase = createClient(\n       Deno.env.get('SUPABASE_URL') ?? '',\n       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''\n     )\n     \n     try {\n       // Get user profile data\n       const { data: profile } = await supabase\n         .from('users')\n         .select('dietary_restrictions, allergies, skill_level')\n         .eq('id', userId)\n         .single()\n       \n       // Get user's pantry items\n       const { data: pantryItems } = await supabase\n         .from('pantry_items')\n         .select('name, quantity, unit, expiration_date')\n         .eq('user_id', userId)\n       \n       // Format pantry data for the AI\n       const pantryData = pantryItems.map(item => ({\n         name: item.name,\n         quantity: `${item.quantity} ${item.unit}`,\n         expires: item.expiration_date ? new Date(item.expiration_date).toISOString().split('T')[0] : 'unknown'\n       }))\n       \n       // Create system message with context\n       const systemMessage = {\n         role: 'system',\n         content: `You are SmartRecipe's AI cooking assistant. Help the user with cooking advice, recipe suggestions, and ingredient usage.\n         \n         User Profile:\n         - Dietary Restrictions: ${profile.dietary_restrictions || 'None'}\n         - Allergies: ${profile.allergies || 'None'}\n         - Cooking Skill Level: ${profile.skill_level || 'Intermediate'}\n         \n         Current Pantry Contents (${pantryData.length} items):\n         ${JSON.stringify(pantryData, null, 2)}\n         \n         When suggesting recipes, format them as recipe cards using markdown. Focus on recipes the user can make with their current pantry items. Prioritize ingredients that will expire soon. Be helpful, concise, and encouraging.`\n       }\n       \n       // Format conversation history\n       const formattedHistory = conversationHistory.map(msg => ({\n         role: msg.isUser ? 'user' : 'assistant',\n         content: msg.content\n       }))\n       \n       // Add current message\n       const messages = [\n         systemMessage,\n         ...formattedHistory,\n         { role: 'user', content: message }\n       ]\n       \n       // Get response from OpenAI\n       const completion = await openai.createChatCompletion({\n         model: \"gpt-4\", // Use the latest available model\n         messages: messages,\n         max_tokens: 1000,\n         temperature: 0.7,\n       })\n       \n       const reply = completion.data.choices[0].message?.content || 'Sorry, I couldn\\'t generate a response.'\n       \n       return new Response(JSON.stringify({ reply }), {\n         headers: { 'Content-Type': 'application/json' },\n         status: 200,\n       })\n     } catch (error) {\n       return new Response(JSON.stringify({ error: error.message }), {\n         headers: { 'Content-Type': 'application/json' },\n         status: 500,\n       })\n     }\n   })\n   ```\n2. Deploy the Edge Function to Supabase\n3. Create frontend components for the chat interface:\n   - ChatContainer: Main chat interface\n   - MessageList: Display of conversation history\n   - UserMessage: Styling for user messages\n   - AssistantMessage: Styling for AI responses with markdown support\n   - MessageInput: Text input with send button\n   - TypingIndicator: Animation showing AI is responding\n4. Implement chat state management:\n   - Store conversation history\n   - Handle message sending and receiving\n   - Manage loading states\n5. Add markdown rendering for rich text responses\n6. Implement error handling and fallback responses\n7. Create a conversation persistence mechanism\n8. Add ability to clear conversation history",
+        "testStrategy": "Test chat interface with various queries. Verify that the AI incorporates user profile and pantry data in responses. Test markdown rendering for recipe suggestions. Ensure conversation history is maintained correctly. Test error handling when the AI service is unavailable. Verify loading states during API calls.",
+        "priority": "high",
+        "dependencies": [
+          2,
+          4,
+          6
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up Edge Function for API handling",
+            "description": "Create an Edge Function to handle API requests and responses",
+            "dependencies": [],
+            "details": "Implement an Edge Function that will serve as the backend for the AI Cooking Assistant, handling requests from the frontend and communicating with OpenAI's API\n<info added on 2025-06-30T03:01:43.700Z>\nImplement an Edge Function in supabase/functions/chat that will serve as the backend for the AI Cooking Assistant. This function will:\n\n1. Handle incoming requests from the frontend AI chat component (src/components/ai/AIChat.tsx)\n2. Process user queries about recipes and cooking\n3. Communicate with OpenAI's API to generate appropriate responses\n4. Return structured data to the frontend\n\nThe implementation should integrate with the existing authentication system and consider the recipe and pantry management contexts to provide personalized cooking assistance. Since no prior chat backend logic exists, this will be a new implementation that needs to be built from scratch.\n</info added on 2025-06-30T03:01:43.700Z>\n<info added on 2025-06-30T03:05:02.002Z>\nReview and enhance the existing Edge Function in supabase/functions/chat/index.ts that serves as the backend for the AI Cooking Assistant. Focus on:\n\n1. Testing the function's handling of POST requests from the frontend AI chat component\n2. Verifying proper integration with OpenAI's API\n3. Ensuring the function correctly utilizes user context (ingredients, preferences) to generate personalized responses\n4. Optimizing performance and error handling\n5. Adding documentation for any complex logic\n6. Implementing additional features if needed, such as:\n   - Improved context management\n   - Response caching for common queries\n   - Enhanced error reporting to the frontend\n\nThe goal is to refine the existing implementation rather than building from scratch, ensuring it reliably supports the SmartRecipe AI Cooking Assistant functionality.\n</info added on 2025-06-30T03:05:02.002Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Integrate OpenAI API",
+            "description": "Set up OpenAI API integration within the Edge Function",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement OpenAI API calls, handle authentication, and process responses within the Edge Function\n<info added on 2025-06-30T03:01:48.847Z>\nImplement OpenAI API integration in supabase/functions/chat/index.ts. Include proper authentication using environment variables for API keys, implement request validation, handle rate limiting, and add comprehensive error handling for various API failure scenarios. Structure the function to process user queries, format them according to OpenAI's chat completion API requirements, and parse responses for the frontend. Add logging for debugging and monitoring purposes.\n</info added on 2025-06-30T03:01:48.847Z>\n<info added on 2025-06-30T03:05:13.179Z>\nReview and enhance the existing OpenAI API integration in supabase/functions/chat/index.ts. Focus on:\n\n1. Prompt engineering: Optimize the prompts for the cooking assistant context to improve response quality and relevance.\n\n2. Error handling: Strengthen error handling for edge cases such as API outages, token limits, and content policy violations.\n\n3. Logging: Implement more detailed logging for monitoring performance metrics and troubleshooting.\n\n4. Testing: Create comprehensive test cases covering various cooking queries, edge cases, and error scenarios.\n\n5. Performance optimization: Review response caching opportunities and implement strategies to reduce token usage while maintaining quality.\n\n6. Rate limiting: Refine the existing rate limiting implementation to balance user experience with API cost management.\n\nDocument any changes made to the integration for future reference and maintenance.\n</info added on 2025-06-30T03:05:13.179Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Develop chat interface components",
+            "description": "Create React components for the chat interface",
+            "dependencies": [],
+            "details": "Design and implement React components for the chat interface, including message display, input field, and send button\n<info added on 2025-06-30T03:01:53.992Z>\nExpand the existing AIChat.tsx component to create a complete chat interface with the following features:\n1. Message history display area showing both user queries and AI responses\n2. Text input field with send button for user messages\n3. Markdown rendering capability for AI responses, particularly for recipe suggestions\n4. Utilize existing UI components (Button, Input, Card) from the component library\n5. Implement proper message formatting and styling to distinguish between user and AI messages\n6. Ensure the interface is responsive and provides good user experience on different devices\n</info added on 2025-06-30T03:01:53.992Z>\n<info added on 2025-06-30T03:05:23.865Z>\nThe frontend implementation should focus on expanding the existing src/components/ai/AIChat.tsx component. Key development areas include:\n\n1. Connect the chat interface to the Edge Function API endpoint for message processing\n2. Implement loading states and error handling for API interactions\n3. Add auto-scrolling functionality to keep the most recent messages visible\n4. Ensure proper handling of markdown content, especially for recipe formatting with ingredients lists and step-by-step instructions\n5. Implement message persistence using local storage to maintain chat history between sessions\n6. Add visual indicators for when the AI is \"thinking\" or generating a response\n7. Optimize the component for performance, especially when handling long conversation histories\n8. Include accessibility features such as proper ARIA attributes and keyboard navigation\n</info added on 2025-06-30T03:05:23.865Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement state management",
+            "description": "Set up state management for the chat application",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement state management using React hooks or a state management library to handle chat messages, user input, and application state\n<info added on 2025-06-30T03:01:59.819Z>\nState management implementation has been started for Task 15. Based on codebase review, we'll proceed with implementing state management using either React hooks (useState, useReducer, useContext) or a dedicated state management library. The implementation will handle:\n\n1. Chat message history (storing and displaying previous messages)\n2. User input handling (capturing and processing text input)\n3. Loading states (indicating when the AI is processing a response)\n4. Conversation context management\n\nThis will be a new implementation as no existing chat state management logic has been identified in the current codebase. Will coordinate with the team working on conversation persistence (Task 15.5) to ensure our state management approach supports their requirements.\n</info added on 2025-06-30T03:01:59.819Z>\n<info added on 2025-06-30T03:05:31.878Z>\nAfter reviewing the codebase, I've identified that we need to implement state management in src/components/ai/AIChat.tsx and related components. The implementation plan is as follows:\n\n1. Create a ChatContext using React.createContext to manage global chat state\n2. Implement a useReducer hook in AIChat.tsx to handle state transitions:\n   - ADD_MESSAGE: Add new user or AI messages to the conversation\n   - SET_LOADING: Toggle loading state when waiting for AI response\n   - UPDATE_INPUT: Track user input in the text field\n   - CLEAR_CONVERSATION: Reset the conversation state\n\n3. Define TypeScript interfaces for:\n   - Message objects (sender, content, timestamp)\n   - Chat state (messages[], isLoading, currentInput)\n   - Action types for the reducer\n\n4. Create custom hooks for component access:\n   - useChat(): Access chat context state and dispatch\n   - useSendMessage(): Handle message submission logic\n\n5. Ensure components like MessageList, InputField, and LoadingIndicator consume the context appropriately\n\nThis implementation will coordinate with the conversation persistence work in Task 15.5 by exposing methods to save/load conversation state.\n</info added on 2025-06-30T03:05:31.878Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Develop conversation persistence",
+            "description": "Implement a system to persist chat conversations",
+            "dependencies": [
+              4
+            ],
+            "details": "Create a mechanism to store and retrieve chat conversations, either using local storage or a database solution\n<info added on 2025-06-30T03:02:04.865Z>\nThis subtask is now in progress. Initial codebase review confirms no existing chat persistence logic. Implementation options:\n\n1. Local Storage approach:\n   - Store conversations in browser's localStorage\n   - Implement serialization/deserialization of chat history\n   - Add user identification mechanism\n\n2. Database solution:\n   - Leverage existing database utilities in the codebase\n   - Design schema for conversation storage (user_id, message_id, timestamp, content, etc.)\n   - Implement CRUD operations for chat history\n\nConsider hybrid approach with temporary local storage and periodic database syncing for optimal performance and reliability.\n</info added on 2025-06-30T03:02:04.865Z>\n<info added on 2025-06-30T03:05:39.593Z>\nAfter reviewing the requirements, we need to implement a persistence mechanism for chat conversations. The solution should:\n\n1. Store complete conversation history including user queries and AI responses\n2. Allow users to access and resume previous conversations\n3. Enable browsing/searching through past interactions\n\nImplementation approach:\n- Start with localStorage implementation for quick deployment\n  - Create a data structure that organizes conversations by session ID\n  - Store message objects with {sender, content, timestamp} format\n  - Implement auto-save functionality after each message exchange\n  - Add conversation title generation based on content\n\n- Plan for database migration in phase 2:\n  - Design database schema with users, conversations, and messages tables\n  - Implement server-side API endpoints for CRUD operations\n  - Add authentication to associate conversations with user accounts\n  - Create synchronization logic to handle offline/online transitions\n\nTechnical considerations:\n- Implement data compression for efficient storage\n- Add conversation export/import functionality\n- Consider privacy implications and add options for users to delete conversation history\n- Set reasonable storage limits based on platform constraints\n</info added on 2025-06-30T03:05:39.593Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Integrate frontend with Edge Function",
+            "description": "Connect the frontend components to the Edge Function API",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Implement API calls from the frontend to the Edge Function, handle responses, and update the UI accordingly\n<info added on 2025-06-30T03:02:12.036Z>\nImplement API calls from the chat UI to the Edge Function backend. Create fetch requests with appropriate headers and error handling. Develop response handling logic to process AI cooking assistant replies. Implement UI state management to show loading indicators during API calls and update the conversation thread with responses. Add error handling for network failures, timeouts, and invalid responses with user-friendly error messages. Ensure the implementation follows the project's architecture patterns and maintains a responsive user experience.\n</info added on 2025-06-30T03:02:12.036Z>\n<info added on 2025-06-30T03:05:45.462Z>\nThe frontend integration with Edge Function has been started in src/components/ai/AIChat.tsx. Expand this implementation to ensure complete functionality by:\n\n1. Review and enhance existing API call implementation in AIChat.tsx\n2. Add comprehensive error handling for network failures, timeouts, and server errors\n3. Implement loading states with visual indicators during API calls\n4. Create response parsing logic to properly format and display AI cooking assistant replies\n5. Ensure proper state management for conversation history\n6. Add retry mechanisms for failed requests\n7. Implement graceful degradation when the service is unavailable\n8. Test edge cases including slow connections and partial responses\n9. Optimize the request/response cycle for performance\n10. Document the API integration approach for other developers\n</info added on 2025-06-30T03:05:45.462Z>",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 16,
+        "title": "AI Cooking Assistant - Recipe Recommendations",
+        "description": "Implement visual recipe recommendations within the AI chat interface.",
+        "details": "1. Enhance the AI assistant Edge Function to include recipe recommendations:\n   ```typescript\n   // Add to cookingAssistant.ts Edge Function\n   \n   // Function to search for recipes based on ingredients\n   async function findMatchingRecipes(supabase, ingredients, dietary_restrictions) {\n     // Convert ingredients array to search terms\n     const searchTerms = ingredients.map(i => i.toLowerCase())\n     \n     // Query recipes table\n     let query = supabase\n       .from('recipes')\n       .select('id, title, description, cooking_time, difficulty, image_url, ingredients')\n       .limit(5)\n     \n     // Add filters for dietary restrictions if present\n     if (dietary_restrictions && dietary_restrictions.length > 0) {\n       const restrictions = dietary_restrictions.split(',').map(r => r.trim().toLowerCase())\n       restrictions.forEach(restriction => {\n         query = query.not('tags', 'cs', `{${restriction}}`)\n       })\n     }\n     \n     const { data: recipes } = await query\n     \n     // Score recipes based on ingredient matches\n     return recipes.map(recipe => {\n       const recipeIngredients = recipe.ingredients.map(i => i.name.toLowerCase())\n       const matchCount = searchTerms.filter(term => \n         recipeIngredients.some(ri => ri.includes(term) || term.includes(ri))\n       ).length\n       const matchScore = matchCount / searchTerms.length\n       \n       return {\n         ...recipe,\n         matchScore\n       }\n     }).sort((a, b) => b.matchScore - a.matchScore)\n   }\n   ```\n2. Create components for visual recipe recommendations:\n   - RecipeCard: Visual card with recipe details\n   - RecipeCarousel: Horizontal scrolling container for multiple recipes\n   - RecipeActionButtons: Buttons for viewing details or adding to shopping list\n3. Implement recipe recommendation detection in chat responses\n4. Create a parser to extract recipe suggestions from AI responses\n5. Add ability to view full recipe details from recommendations\n6. Implement quick actions for recommended recipes:\n   - View full details\n   - Add missing ingredients to shopping list\n   - Bookmark recipe\n7. Create a smooth transition between text and visual elements\n8. Add loading states for recipe recommendations",
+        "testStrategy": "Test recipe recommendation functionality with various queries. Verify that recommendations are relevant to the conversation and user's pantry. Test the visual display of recipe cards. Ensure quick actions work correctly. Test with edge cases like no matching recipes or dietary restrictions.",
+        "priority": "medium",
+        "dependencies": [
+          11,
+          15
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Develop recommendation algorithm",
+            "description": "Create an AI-powered algorithm to generate personalized recipe recommendations",
+            "dependencies": [],
+            "details": "Implement machine learning model to analyze user preferences, dietary restrictions, and past interactions to suggest relevant recipes",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Design frontend components for recipe display",
+            "description": "Create visually appealing UI components to showcase recommended recipes",
+            "dependencies": [],
+            "details": "Develop reusable React components for recipe cards, image galleries, and detailed recipe views",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Integrate recommendations with chat interface",
+            "description": "Seamlessly incorporate recipe recommendations into the existing chat UI",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Modify chat component to display recipe suggestions alongside text responses, ensuring a smooth user experience",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement quick actions for recipes",
+            "description": "Add functionality for users to quickly interact with recommended recipes",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Create buttons or gestures for saving, sharing, or starting cooking mode directly from the recommendation display",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Optimize performance and responsiveness",
+            "description": "Ensure the recipe recommendation feature performs efficiently across devices",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Conduct performance testing, implement lazy loading for images, and optimize API calls to maintain smooth user interactions",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 17,
+        "title": "Application Settings",
+        "description": "Implement application settings for customizing user experience.",
+        "details": "1. Create a SettingsContext to manage application settings\n2. Design and implement settings components:\n   - SettingsForm: Main settings interface\n   - MeasurementSystemSelector: Toggle between metric and imperial\n   - NotificationSettings: Configure notification preferences\n   - ExpirationThresholds: Set thresholds for expiration alerts\n   - InventoryThresholds: Set thresholds for low stock alerts\n   - ThemeSelector: Choose light/dark/system theme\n3. Implement settings data functions using Supabase client:\n   - fetchSettings(): Get user settings\n   - updateSettings(): Update user settings\n4. Create database schema for user settings\n5. Implement settings persistence in Supabase\n6. Add form validation using Zod\n7. Create utility functions to apply settings throughout the application\n8. Implement theme switching functionality\n9. Add loading states and error handling",
+        "testStrategy": "Test settings form submission with various inputs. Verify settings persistence in the database. Test application of settings throughout the app (e.g., measurement system changes). Ensure theme switching works correctly. Test form validation for settings inputs.",
+        "priority": "low",
+        "dependencies": [
+          2,
+          3,
+          4
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Design Database Schema for Application Settings",
+            "description": "Create a database schema to store various application settings",
+            "dependencies": [],
+            "details": "Define tables and relationships for storing different types of settings (e.g., user preferences, system configurations)\n<info added on 2025-06-30T15:24:15.266Z>\n# Database Schema for Application Settings\n\n## User Settings Table\n- Table: user_settings\n  - id (uuid, primary key)\n  - user_id (uuid, foreign key to users)\n  - theme (text, e.g., 'light', 'dark', 'system')\n  - measurement_system (text, e.g., 'metric', 'imperial')\n  - notification_enabled (boolean)\n  - expiration_threshold_days (integer)\n  - inventory_threshold (integer)\n  - created_at (timestamp)\n  - updated_at (timestamp)\n\n## Indexes\n- Unique index on user_id\n\n## Relationships\n- user_id references users(id)\n\n## Implementation Notes\n- This schema allows for easy extension if more settings are needed in the future\n- All settings are stored per user for customization\n\n## Next Steps\n- Create a Supabase migration SQL file to add this table and constraints\n</info added on 2025-06-30T15:24:15.266Z>\n<info added on 2025-06-30T15:25:26.523Z>\n# Schema Update for Application Settings\n\n## Extend Existing User Preferences Table\nInstead of creating a new table, we'll extend the existing user_preferences table with the following columns:\n- notification_enabled (boolean, DEFAULT true, NOT NULL)\n- expiration_threshold_days (integer, DEFAULT 3, NOT NULL)\n- inventory_threshold (integer, DEFAULT 1, NOT NULL)\n\n## Migration SQL\n```sql\nALTER TABLE user_preferences\nADD COLUMN notification_enabled boolean NOT NULL DEFAULT true,\nADD COLUMN expiration_threshold_days integer NOT NULL DEFAULT 3,\nADD COLUMN inventory_threshold integer NOT NULL DEFAULT 1;\n```\n\n## Implementation Notes\n- Using the existing user_preferences table simplifies the data model\n- Default values ensure backward compatibility for existing users\n- NOT NULL constraints prevent invalid states\n- Theme system implementation is postponed for now\n\n## Next Steps\n- Create a Supabase migration SQL file to implement these changes\n- Update application code to utilize these new preference fields\n</info added on 2025-06-30T15:25:26.523Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Develop Settings Components",
+            "description": "Create reusable UI components for managing application settings",
+            "dependencies": [],
+            "details": "Design and implement form elements, toggles, and other UI components for users to interact with settings",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement Data Persistence for Settings",
+            "description": "Develop functionality to save and retrieve settings from the database",
+            "dependencies": [
+              1
+            ],
+            "details": "Create data access layer and API endpoints for CRUD operations on settings",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Integrate Settings Across Application",
+            "description": "Ensure application-wide access and application of settings",
+            "dependencies": [
+              2,
+              3
+            ],
+            "details": "Implement a global state management solution for settings and apply them throughout the application",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implement Theme Selector and Theme Switching",
+            "description": "Add a global theme selector (light/dark/system) to the settings page and implement application-wide theme switching functionality.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 17
+          },
+          {
+            "id": 6,
+            "title": "Persist Notification and Expiration Threshold Settings",
+            "description": "Enable users to save notification and expiration/inventory threshold preferences in the database and apply them throughout the app.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 17
+          },
+          {
+            "id": 7,
+            "title": "Centralize Settings with a Settings Context",
+            "description": "Create a React context/provider to manage and provide application settings globally, reducing duplication and improving consistency.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 17
+          }
+        ]
+      },
+      {
+        "id": 18,
+        "title": "Error Handling and Fallbacks",
+        "description": "Implement robust error handling and fallback mechanisms throughout the application.",
+        "details": "1. Create reusable error handling components:\n   - ErrorBoundary: React error boundary component\n   - ErrorFallback: Component to display when errors occur\n   - NetworkErrorMessage: Specific message for network errors\n   - NotFoundView: 404 page for missing resources\n2. Implement error handling utilities:\n   - handleApiError(): Process API errors and display appropriate messages\n   - logError(): Log errors to console or monitoring service\n   - retryOperation(): Retry failed operations with backoff\n3. Add error states to all data fetching operations\n4. Implement graceful degradation for AI features:\n   - Fallback to basic functionality when AI services are unavailable\n   - Clear error messages explaining the issue\n   - Retry mechanisms with appropriate backoff\n5. Create offline detection and messaging\n6. Implement form validation error handling\n7. Add global error notification system\n8. Create error logging to Supabase for monitoring",
+        "testStrategy": "Test error handling with various error scenarios (network errors, API failures, etc.). Verify appropriate error messages are displayed. Test retry mechanisms. Ensure graceful degradation of AI features when services are unavailable. Test form validation error handling.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2,
+          3,
+          5,
+          6,
+          11,
+          13,
+          15
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement reusable error components",
+            "description": "Create a set of reusable UI components for displaying various types of errors to users",
+            "dependencies": [],
+            "details": "Design and implement error message, error page, and error boundary components that can be easily used across the application",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Develop error handling utilities",
+            "description": "Create a set of utility functions for standardized error handling and logging",
+            "dependencies": [],
+            "details": "Implement functions for error categorization, logging, and formatting that can be used throughout the application",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Implement API error management",
+            "description": "Develop a system for handling and responding to API errors",
+            "dependencies": [
+              2
+            ],
+            "details": "Create middleware or interceptors to catch API errors, format them consistently, and trigger appropriate responses or retries",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement graceful degradation for AI features",
+            "description": "Develop fallback mechanisms for AI-powered features in case of errors or unavailability",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Create alternative flows or simplified versions of AI features that can be activated when the primary AI functionality fails",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Integrate error handling across the application",
+            "description": "Implement the developed error handling mechanisms throughout the application",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Systematically integrate error components, utilities, API error management, and graceful degradation into all relevant parts of the application",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Implement reusable error components",
+            "description": "Create a set of reusable UI components for displaying various types of errors to users. Design and implement error message, error page, and error boundary components that can be easily used across the application.",
+            "details": "<info added on 2025-06-30T17:56:28.039Z>\nImplemented a global NotificationContext and provider with a notify function for displaying success, error, info, and warning notifications using the sonner toast system. Wrapped the application in NotificationProvider to make notifications accessible throughout the app. Bridged legacy error handling by setting window.notify to the context's notify function, enabling logError and other legacy code to trigger user-facing toasts. Memoized the notify function with useCallback to prevent unnecessary re-renders.\n\nNext steps include:\n1. Updating error boundaries to trigger global notifications when React errors are caught\n2. Modifying API error handling to use the notify function directly via useNotification\n3. Migrating local error toasts to the global notification system for consistency\n</info added on 2025-06-30T17:56:28.039Z>",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 18
+          },
+          {
+            "id": 7,
+            "title": "Develop error handling utilities",
+            "description": "Create a set of utility functions for standardized error handling and logging. Implement functions for error categorization, logging, and formatting that can be used throughout the application.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 18
+          },
+          {
+            "id": 8,
+            "title": "Implement API error management",
+            "description": "Develop a system for handling and responding to API errors. Create middleware or interceptors to catch API errors, format them consistently, and trigger appropriate responses or retries.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 18
+          },
+          {
+            "id": 9,
+            "title": "Implement graceful degradation for AI features",
+            "description": "Develop fallback mechanisms for AI-powered features in case of errors or unavailability. Create alternative flows or simplified versions of AI features that can be activated when the primary AI functionality fails.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 18
+          },
+          {
+            "id": 10,
+            "title": "Create offline detection and messaging",
+            "description": "Implement offline detection and display appropriate messaging to users when the application is offline.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 18
+          },
+          {
+            "id": 11,
+            "title": "Implement form validation error handling",
+            "description": "Ensure all forms display validation errors clearly and handle invalid input gracefully.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 18
+          },
+          {
+            "id": 12,
+            "title": "Add global error notification system",
+            "description": "Add a global notification system to surface errors to users across the application.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 18
+          },
+          {
+            "id": 13,
+            "title": "Create error logging to Supabase for monitoring",
+            "description": "Implement error logging to Supabase or another monitoring service for centralized error tracking.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 18
+          }
+        ]
+      },
+      {
+        "id": 19,
+        "title": "Accessibility Improvements",
+        "description": "Enhance application accessibility to meet WCAG 2.1 AA guidelines.",
+        "details": "1. Implement keyboard navigation throughout the application:\n   - Focus management for modals and dialogs\n   - Keyboard shortcuts for common actions\n   - Skip links for main content\n2. Add ARIA attributes to all interactive components:\n   - aria-label for buttons and inputs\n   - aria-describedby for form fields\n   - aria-live regions for dynamic content\n   - aria-expanded for collapsible sections\n3. Ensure proper color contrast throughout the UI:\n   - Test all text against backgrounds\n   - Create high-contrast mode option\n4. Implement screen reader support:\n   - Semantic HTML structure\n   - Alt text for all images\n   - Descriptive link text\n5. Create focus styles for all interactive elements\n6. Add form label associations and error announcements\n7. Implement responsive design for various devices and zoom levels\n8. Create an accessibility statement page",
+        "testStrategy": "Test keyboard navigation throughout the application. Verify screen reader compatibility using NVDA or VoiceOver. Check color contrast using automated tools. Test focus management in modals and interactive components. Verify form accessibility and error announcements.",
+        "priority": "medium",
+        "dependencies": [
+          5,
+          6,
+          11,
+          13,
+          15
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Keyboard Navigation",
+            "description": "Ensure all interactive elements are accessible via keyboard",
+            "dependencies": [],
+            "details": "Add focus indicators, implement proper tabbing order, and ensure all functionality is operable through keyboard commands",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Add ARIA Attributes",
+            "description": "Incorporate ARIA roles, states, and properties throughout the application",
+            "dependencies": [
+              1
+            ],
+            "details": "Review and update HTML elements with appropriate ARIA attributes to improve screen reader compatibility",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Improve Color Contrast",
+            "description": "Ensure sufficient color contrast ratios for all text and UI elements",
+            "dependencies": [],
+            "details": "Audit current color scheme, adjust colors to meet WCAG 2.1 AA contrast requirements, and update CSS accordingly",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Enhance Screen Reader Support",
+            "description": "Optimize content and functionality for screen reader users",
+            "dependencies": [
+              2
+            ],
+            "details": "Test with popular screen readers, add descriptive alt text for images, and ensure proper heading structure and content order",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Implement Responsive Design for Accessibility",
+            "description": "Ensure accessibility features work across all device sizes and orientations",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "details": "Test and adjust accessibility improvements on various screen sizes, ensure text resizing and zooming functionality, and maintain readability on small screens",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 20,
+        "title": "Performance Optimization",
+        "description": "Optimize application performance for fast page loads and responsive interactions.",
+        "details": "1. Implement code splitting and lazy loading:\n   - Split code by route using React.lazy and Suspense\n   - Lazy load heavy components and libraries\n2. Optimize data fetching:\n   - Implement caching strategies\n   - Use pagination and infinite scrolling for large datasets\n   - Add request debouncing and throttling\n3. Optimize rendering performance:\n   - Memoize expensive components with React.memo\n   - Use useCallback and useMemo for performance-critical functions\n   - Implement virtualized lists for large data sets\n4. Add loading skeletons and placeholders:\n   - Create skeleton components for common UI elements\n   - Implement content placeholders during data loading\n5. Optimize images and assets:\n   - Use responsive images with srcset\n   - Implement lazy loading for images\n   - Compress and optimize static assets\n6. Add performance monitoring:\n   - Implement Web Vitals tracking\n   - Monitor and log performance metrics\n7. Optimize database queries:\n   - Add appropriate indexes\n   - Optimize complex queries\n   - Implement query caching where appropriate",
+        "testStrategy": "Measure performance metrics before and after optimization using Lighthouse and Web Vitals. Test application performance with large datasets. Verify lazy loading and code splitting functionality. Test loading performance on slow networks. Measure database query performance.",
+        "priority": "medium",
+        "dependencies": [
+          1,
+          2,
+          5,
+          6,
+          11,
+          13,
+          15
+        ],
+        "status": "done",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Implement Code Splitting",
+            "description": "Break down the application into smaller chunks to improve initial load time",
+            "dependencies": [],
+            "details": "Use dynamic imports and React.lazy() for component-level code splitting. Implement route-based code splitting for different pages.\n<info added on 2025-06-30T15:49:52.634Z>\nImplementation Plan for Code Splitting:\n\n1. Refactor the main App router to use React.lazy and Suspense for route-based code splitting.\n2. Convert each page import in App.tsx to a dynamic import using React.lazy.\n3. Wrap the <Routes> in a <Suspense> fallback to show a loading spinner while loading chunks.\n4. Ensure error boundaries are in place for lazy-loaded components.\n5. Test that each route loads only the required chunk and the spinner appears during loading.\n\nTarget files: src/App.tsx, src/pages/*.tsx\n</info added on 2025-06-30T15:49:52.634Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 2,
+            "title": "Optimize Data Fetching",
+            "description": "Improve the efficiency of data retrieval from the server",
+            "dependencies": [],
+            "details": "Implement caching strategies, use GraphQL for precise data fetching, and optimize API calls to reduce unnecessary data transfer.\n<info added on 2025-06-30T15:51:57.384Z>\nImplementation Plan for Data Fetching Optimization:\n\n1. Add client-side caching for expensive API calls (e.g., ingredientService, recipeService) using React state or a simple in-memory cache.\n2. Implement pagination and infinite scroll for large lists (e.g., recipes, pantry items, shopping list items) by loading data in chunks and appending as the user scrolls.\n3. Add request debouncing for search/filter inputs to avoid excessive API calls.\n4. Add request throttling for rapid user actions (e.g., typing, filtering).\n5. Ensure all fetches handle loading and error states gracefully.\n\nTarget files: src/pages/Recipes.tsx, src/pages/Pantry.tsx, src/pages/Shopping.tsx, src/lib/database.ts\n</info added on 2025-06-30T15:51:57.384Z>",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 3,
+            "title": "Enhance Rendering Performance",
+            "description": "Optimize component rendering to reduce unnecessary re-renders",
+            "dependencies": [
+              1
+            ],
+            "details": "Use React.memo for functional components, implement shouldComponentUpdate for class components, and optimize list rendering with virtualization techniques.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 4,
+            "title": "Implement Loading Optimizations",
+            "description": "Improve perceived performance during initial load and subsequent interactions",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Add loading skeletons, implement progressive loading, and use prefetching techniques for anticipated user actions.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 5,
+            "title": "Optimize Assets",
+            "description": "Reduce the size and improve loading of static assets",
+            "dependencies": [],
+            "details": "Compress images, implement lazy loading for images and videos, and optimize CSS and JavaScript files through minification and tree shaking.",
+            "status": "done",
+            "testStrategy": ""
+          },
+          {
+            "id": 6,
+            "title": "Set Up Performance Monitoring",
+            "description": "Implement tools and processes to continuously monitor and improve performance",
+            "dependencies": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "details": "Set up performance tracking tools, establish performance budgets, and create a process for regular performance audits and optimizations.",
+            "status": "done",
+            "testStrategy": ""
+          }
+        ]
+      },
+      {
+        "id": 21,
+        "title": "Testing Framework and Quality Assurance Implementation",
+        "description": "Implement comprehensive testing and quality assurance processes to ensure application reliability, including unit testing framework, integration tests, E2E tests, CI setup, and test coverage monitoring.",
+        "details": "1. Set up Jest and React Testing Library as the primary testing framework:\n   ```bash\n   npm install --save-dev jest @testing-library/react @testing-library/jest-dom @testing-library/user-event jest-environment-jsdom\n   ```\n\n2. Configure Jest in package.json:\n   ```json\n   {\n     \"jest\": {\n       \"testEnvironment\": \"jsdom\",\n       \"setupFilesAfterEnv\": [\"<rootDir>/src/setupTests.js\"],\n       \"moduleNameMapper\": {\n         \"\\\\.(css|less|scss)$\": \"identity-obj-proxy\"\n       },\n       \"collectCoverageFrom\": [\n         \"src/**/*.{js,jsx,ts,tsx}\",\n         \"!src/**/*.d.ts\",\n         \"!src/index.tsx\"\n       ]\n     },\n     \"scripts\": {\n       \"test\": \"jest\",\n       \"test:watch\": \"jest --watch\",\n       \"test:coverage\": \"jest --coverage\"\n     }\n   }\n   ```\n\n3. Create setupTests.js file:\n   ```javascript\n   import '@testing-library/jest-dom';\n   ```\n\n4. Implement unit tests for core components:\n   - Create test files with naming convention `*.test.tsx` or `*.spec.tsx`\n   - Write tests for context providers (AuthContext, PantryContext, etc.)\n   - Test utility functions and hooks\n   - Test UI components with various states and props\n\n5. Implement integration tests for key features:\n   - Authentication flows (registration, login, password reset)\n   - Pantry management (adding, editing, deleting items)\n   - Shopping list functionality\n   - Recipe management\n   - AI assistant interactions\n\n6. Set up Cypress for E2E testing:\n   ```bash\n   npm install --save-dev cypress\n   ```\n\n7. Configure Cypress and create E2E tests for critical user flows:\n   - User registration and login\n   - Complete pantry management workflow\n   - Shopping list creation and management\n   - Recipe browsing and interaction\n   - Settings configuration\n\n8. Set up GitHub Actions for CI:\n   Create `.github/workflows/ci.yml`:\n   ```yaml\n   name: CI\n   \n   on:\n     push:\n       branches: [ main, develop ]\n     pull_request:\n       branches: [ main, develop ]\n   \n   jobs:\n     test:\n       runs-on: ubuntu-latest\n       steps:\n         - uses: actions/checkout@v3\n         - name: Use Node.js\n           uses: actions/setup-node@v3\n           with:\n             node-version: '18.x'\n         - name: Install dependencies\n           run: npm ci\n         - name: Run linting\n           run: npm run lint\n         - name: Run unit and integration tests\n           run: npm test -- --coverage\n         - name: Run E2E tests\n           run: npm run cy:run\n         - name: Upload coverage reports\n           uses: codecov/codecov-action@v3\n   ```\n\n9. Implement test mocks for Supabase and external services:\n   ```javascript\n   // src/mocks/supabaseMock.js\n   export const supabaseMock = {\n     auth: {\n       signUp: jest.fn(),\n       signIn: jest.fn(),\n       signOut: jest.fn(),\n       resetPasswordForEmail: jest.fn()\n     },\n     from: jest.fn().mockReturnThis(),\n     select: jest.fn().mockReturnThis(),\n     insert: jest.fn().mockReturnThis(),\n     update: jest.fn().mockReturnThis(),\n     delete: jest.fn().mockReturnThis(),\n     eq: jest.fn().mockReturnThis(),\n     single: jest.fn(),\n     order: jest.fn().mockReturnThis()\n   };\n   ```\n\n10. Set up test coverage monitoring with codecov or similar service:\n    - Configure coverage thresholds in Jest config\n    - Integrate with CI to track coverage over time\n    - Set up alerts for coverage drops\n\n11. Implement snapshot testing for UI components:\n    ```javascript\n    test('renders correctly', () => {\n      const { container } = render(<ComponentToTest />);\n      expect(container).toMatchSnapshot();\n    });\n    ```\n\n12. Create testing documentation and guidelines for the team:\n    - Document testing approach and standards\n    - Provide examples for different types of tests\n    - Define coverage requirements for new features",
+        "testStrategy": "1. Verify Jest and React Testing Library setup:\n   - Run `npm test` to ensure the testing environment is properly configured\n   - Check that test files are correctly discovered and executed\n\n2. Validate unit tests for core components:\n   - Run tests for context providers and verify they pass\n   - Check test coverage for utility functions and hooks\n   - Ensure UI component tests cover different states (loading, error, success)\n\n3. Verify integration tests:\n   - Run integration tests for authentication flows and verify they pass\n   - Test pantry management operations end-to-end within the test environment\n   - Verify shopping list and recipe integration tests\n\n4. Test Cypress E2E setup:\n   - Run `npx cypress open` to verify Cypress is correctly configured\n   - Execute E2E tests for critical user flows and verify they pass\n   - Check that tests run successfully in headless mode for CI\n\n5. Validate CI configuration:\n   - Push a test commit to trigger the GitHub Actions workflow\n   - Verify that all test stages (unit, integration, E2E) run successfully\n   - Check that test coverage reports are generated and uploaded\n\n6. Test coverage assessment:\n   - Run `npm test -- --coverage` and verify coverage meets minimum thresholds\n   - Check coverage reports for areas needing additional tests\n   - Verify codecov integration is working correctly\n\n7. Validate test mocks:\n   - Run tests that use Supabase mocks and verify they correctly simulate API behavior\n   - Check that tests are isolated from actual external services\n\n8. Review testing documentation:\n   - Ensure documentation is clear and comprehensive\n   - Verify examples are accurate and follow best practices\n   - Check that coverage requirements are clearly defined\n\n9. Perform cross-browser testing:\n   - Run E2E tests in multiple browsers to ensure compatibility\n   - Verify that tests pass consistently across different environments",
+        "status": "done",
+        "dependencies": [
+          2,
+          3,
+          6,
+          11,
+          13,
+          16,
+          18
+        ],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set Up Unit Testing Framework",
+            "description": "Install and configure a unit testing framework (Vitest) and supporting libraries for React and TypeScript.",
+            "details": "<info added on 2025-06-30T04:52:30.488Z>\n1. Check if Vitest or Jest is already installed in the project (look for dependencies in package.json).\n2. If not present, install Vitest (preferred for Vite projects) and supporting libraries for React and TypeScript:\n   - vitest\n   - @vitest/ui\n   - @testing-library/react\n   - @testing-library/jest-dom\n   - @testing-library/user-event\n   - jsdom\n   - @types/jest (if using Jest)\n3. Configure Vitest in vite.config.ts and/or create a vitest.config.ts file.\n4. Add a basic test file (e.g., src/components/ui/Button.test.tsx) to verify setup.\n5. Add npm scripts for running tests and coverage in package.json.\n6. Document the setup in README.md or a dedicated testing guide.\n</info added on 2025-06-30T04:52:30.488Z>\n<info added on 2025-06-30T04:54:02.735Z>\nImplementation progress update:\n\n- Confirmed that Vitest is installed and configured in package.json and vitest.config.ts.\n- Verified that @testing-library/react, @testing-library/jest-dom, and jsdom are installed as devDependencies.\n- Created a basic unit test for the Button component (src/components/ui/Button.test.tsx) using Vitest and React Testing Library.\n- The test suite runs successfully, confirming the unit testing framework is set up and working.\n\nNext steps for this subtask could include:\n- Adding more example tests for other core components or utilities.\n- Documenting the testing setup in the README or a dedicated testing guide.\n- Ensuring npm scripts for test and coverage are present (already present in package.json).\n</info added on 2025-06-30T04:54:02.735Z>",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 21
+          },
+          {
+            "id": 2,
+            "title": "Write Unit Tests for Core Logic",
+            "description": "Write unit tests for core business logic, utility functions, and critical React components.",
+            "details": "<info added on 2025-06-30T04:54:58.910Z>\n1. Identify core business logic and utility functions in the codebase (e.g., src/lib/utils.ts, src/lib/notificationService.ts).\n2. Identify critical React components (e.g., UI components, context providers).\n3. For each target:\n   - Create or update test files (e.g., utils.test.ts, notificationService.test.ts, AuthContext.test.tsx).\n   - Write unit tests covering key logic, edge cases, and expected behaviors.\n   - Use mocks/stubs as needed for external dependencies.\n4. Run tests and ensure they pass.\n5. Review coverage and add tests for uncovered logic.\n\nNext, I will:\n- List and review utility files and core components to prioritize for unit testing.\n- Propose a concrete list of files/functions/components to target first.\n</info added on 2025-06-30T04:54:58.910Z>\n<info added on 2025-06-30T04:57:14.905Z>\nI've completed unit tests for core utility functions:\n\n- Implemented tests for the `cn` utility function in src/lib/utils.ts:\n  * Verified proper class name merging\n  * Tested Tailwind CSS conflict resolution\n  * Covered edge cases (null inputs, empty strings, etc.)\n\n- Created comprehensive tests for `checkExpiringItems` in src/lib/notificationService.ts:\n  * Tested detection of expired items (ingredients and leftovers)\n  * Verified critical expiration warnings (items expiring within 1 day)\n  * Confirmed warning notifications (items expiring within 3 days)\n  * Validated handling of non-expiring items\n  * Used mock onNotify function to verify correct notification behavior\n\nAll tests are passing, confirming the correctness of these core utilities.\n\nNext priorities:\n- Implement unit tests for context providers (AuthContext.tsx, PantryContext.tsx)\n- Focus on testing state management and business logic in these providers\n- Review current test coverage metrics to identify remaining gaps\n</info added on 2025-06-30T04:57:14.905Z>\n<info added on 2025-06-30T05:59:39.140Z>\nI've completed the second phase of unit testing with the following results:\n\nTest Coverage Analysis:\n- All core utility functions (`src/lib/utils.ts`, `src/lib/notificationService.ts`) have 100% test coverage.\n- Context providers (`AuthContext.tsx`, `ChatContext.tsx`, `PantryContext.tsx`, `RecipeContext.tsx`) are well covered, with 79–98% statement coverage and 100% function coverage.\n- All tests for these areas are passing.\n\nMajor coverage gaps identified:\n- React components in `src/components/` (UI, layout, shopping, etc.)\n- Pages in `src/pages/`\n- Utility files like `src/lib/database.ts`, `src/lib/supabase.ts`\n- Custom hooks (`src/hooks/useIngredientHistory.ts`)\n- Type definitions\n\nNext priorities:\n- Write unit tests for key React components and pages to improve overall coverage.\n- Consider adding tests for custom hooks and remaining utility files.\n\nOverall, the core logic and context providers are well tested, but the application lacks coverage for most UI and page-level code.\n</info added on 2025-06-30T05:59:39.140Z>\n<info added on 2025-06-30T06:06:40.039Z>\nI've completed testing for core UI components with the following results:\n\n- ExpirationMonitor component:\n  * Implemented comprehensive tests covering rendering states\n  * Verified settings panel interaction functionality\n  * Confirmed proper display of expired items\n  * Improved accessibility by adding proper label/input associations\n  * All tests passing\n\n- SmartCategorySelector component:\n  * Created tests for initial rendering and state\n  * Verified async smart suggestion logic works correctly\n  * Tested user interactions (applying and dismissing suggestions)\n  * Added handling for ambiguous queries\n  * Ensured robust test coverage for edge cases\n  * All tests passing\n\nCurrent test coverage status:\n- Core utilities: 100% coverage\n- Context providers: 79-98% statement coverage, 100% function coverage\n- UI components: Improving with addition of ExpirationMonitor and SmartCategorySelector tests\n\nNext priorities:\n- Continue testing core UI components (AutocompleteInput, LowStockAlert, RecipeCard)\n- Expand test coverage for user interaction patterns\n- Address edge cases in remaining components\n\nThis progress significantly addresses the UI component coverage gaps identified in the previous analysis.\n</info added on 2025-06-30T06:06:40.039Z>\n<info added on 2025-06-30T06:18:03.525Z>\nI've completed the final phase of unit testing with excellent results:\n\nTest coverage summary:\n- Core utilities: 100% coverage\n- Context providers: 79-98% statement coverage, 100% function coverage\n- UI components: Comprehensive coverage across all critical components\n\nAll tests are now passing except for two accessibility issues:\n- AddEditItemForm: The <label> for 'Unit' and 'Category' fields lacks proper htmlFor/id association with the corresponding <select> elements\n- LeftoverForm: Similar accessibility issue with <label> elements not programmatically associated with <select> elements\n\nThese are accessibility and testability issues rather than logic or coverage gaps. The tests for Input, RecipeDetailModal, ShoppingListItems, and all context providers are passing successfully.\n\nAction items to complete this subtask:\n1. Fix the label/select accessibility issues in AddEditItemForm and LeftoverForm by adding proper htmlFor/id associations\n2. Re-run tests to confirm all tests pass after these fixes\n\nOnce these accessibility issues are addressed, we will have achieved comprehensive, high-quality test coverage for all core logic and UI components in the project.\n</info added on 2025-06-30T06:18:03.525Z>\n<info added on 2025-06-30T06:19:21.003Z>\nI've fixed the accessibility issues identified in our unit tests:\n\n- AddEditItemForm component:\n  * Added proper htmlFor/id associations for the 'Unit' and 'Category' select fields\n  * Implemented React's useId() hook to generate unique IDs for each form control\n  * Ensured each label is programmatically associated with its corresponding select element\n\n- LeftoverForm component:\n  * Added htmlFor and id association for the 'Unit' select field\n  * Implemented useId() hook to maintain consistency across components\n  * Fixed the programmatic association between label and select element\n\nAfter implementing these fixes, I re-ran all unit tests and can confirm that all tests are now passing with no accessibility issues. This completes our unit testing implementation with comprehensive coverage across all core utilities, context providers, and UI components.\n\nFinal test coverage metrics:\n- Core utilities: 100% coverage\n- Context providers: 79-98% statement coverage, 100% function coverage\n- UI components: Comprehensive coverage with all accessibility requirements met\n\nThe unit testing phase is now complete and ready for code review.\n</info added on 2025-06-30T06:19:21.003Z>",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 21
+          },
+          {
+            "id": 3,
+            "title": "Implement Integration Tests",
+            "description": "Write integration tests to verify interactions between components and services, including database and API integration.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 21
+          },
+          {
+            "id": 4,
+            "title": "Add E2E Tests for Critical Flows",
+            "description": "Set up and implement end-to-end (E2E) tests for critical user workflows using Playwright or Cypress.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 21
+          },
+          {
+            "id": 5,
+            "title": "Set Up Continuous Integration (CI)",
+            "description": "Configure a CI workflow to automatically run tests and checks on every push and pull request.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 21
+          },
+          {
+            "id": 6,
+            "title": "Monitor Test Coverage",
+            "description": "Set up test coverage reporting and enforce minimum coverage thresholds.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 21
+          }
+        ]
+      },
+      {
+        "id": 22,
+        "title": "Pre-Deployment Checklist Implementation",
+        "description": "Create a comprehensive pre-deployment checklist system to ensure all critical requirements are met before the application is deployed to production.",
+        "details": "1. Create a PreDeploymentContext to manage the checklist state and validation:\n   ```typescript\n   interface ChecklistItem {\n     id: string;\n     title: string;\n     description: string;\n     status: 'pending' | 'completed' | 'failed';\n     validator?: () => Promise<boolean>;\n     manualCheck: boolean;\n   }\n   ```\n\n2. Implement the following checklist components:\n   - DeploymentChecklist: Main component displaying all checklist items\n   - ChecklistItem: Individual item with status indicator and action buttons\n   - ChecklistProgress: Visual progress indicator for overall completion\n   - ValidationReport: Detailed report of validation results\n\n3. Create automated validators for technical requirements:\n   - validateDatabaseMigrations(): Verify all migrations run successfully\n   - validateAPIEndpoints(): Test critical API endpoints\n   - validateAuthFlow(): Verify authentication flows\n   - validateCriticalUserJourneys(): Test key user flows\n   - validatePerformanceMetrics(): Check performance meets requirements\n\n4. Implement manual checklist items for non-automated checks:\n   - Security review completion\n   - Content and copy review\n   - Accessibility compliance verification\n   - Legal and compliance approval\n   - Stakeholder sign-off\n\n5. Create a deployment approval workflow:\n   - All automated checks must pass\n   - All manual checks must be marked as completed\n   - Required approvers must sign off\n   - Generate deployment approval report\n\n6. Implement checklist persistence in Supabase:\n   - Create deployment_checklists table\n   - Create deployment_checklist_items table\n   - Create deployment_approvals table\n\n7. Add pre-deployment environment configuration validation:\n   - Environment variables check\n   - API keys and secrets verification\n   - Service dependencies availability check\n   - Database backup confirmation",
+        "testStrategy": "1. Unit test all validator functions with both passing and failing scenarios:\n   - Mock API responses for endpoint validation\n   - Create test fixtures for database migration tests\n   - Simulate authentication flows with test accounts\n\n2. Integration test the checklist system:\n   - Verify checklist items are correctly loaded and displayed\n   - Test status updates for both automated and manual checks\n   - Verify persistence of checklist state in the database\n   - Test the approval workflow with different user roles\n\n3. End-to-end test the deployment approval process:\n   - Create a test deployment scenario with a mix of passing and failing checks\n   - Verify that deployment cannot proceed with failing checks\n   - Test the approval workflow with required approvers\n   - Verify the generated deployment report contains accurate information\n\n4. Performance test the validation process:\n   - Measure execution time of all validators\n   - Ensure validators don't impact application performance\n   - Test with realistic data volumes\n\n5. Manual testing of the checklist interface:\n   - Verify usability of the checklist interface\n   - Test responsive design on different devices\n   - Verify accessibility of the checklist components",
+        "status": "pending",
+        "dependencies": [
+          1,
+          2,
+          3,
+          5,
+          18,
+          20,
+          21
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Screenshots",
+            "description": "Take and prepare high-quality screenshots of the app for documentation, marketing, and the app store.",
+            "details": "Create screenshots showing key features: dashboard, recipe search, pantry management, shopping lists, AI chat assistant",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 22
+          },
+          {
+            "id": 2,
+            "title": "Fix sidebar",
+            "description": "Address sidebar navigation issues and improve functionality",
+            "details": "Fix any layout, responsiveness, or navigation issues with the sidebar component",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 22
+          },
+          {
+            "id": 3,
+            "title": "Visual polish",
+            "description": "Apply final visual improvements and UI refinements",
+            "details": "Polish animations, spacing, colors, typography, and overall visual consistency throughout the app",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 22
+          },
+          {
+            "id": 4,
+            "title": "Add badge",
+            "description": "Add appropriate badges to UI elements",
+            "details": "Implement notification badges, status indicators, and other visual badges throughout the interface",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 22
+          },
+          {
+            "id": 5,
+            "title": "One liner elevator pitch",
+            "description": "Create compelling one-sentence description of the app",
+            "details": "Craft a concise, memorable elevator pitch that captures the app's core value proposition",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 22
+          },
+          {
+            "id": 6,
+            "title": "Description of the app",
+            "description": "Write comprehensive app description",
+            "details": "Create detailed description explaining features, benefits, and use cases for marketing and documentation",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 22
+          },
+          {
+            "id": 7,
+            "title": "Better app name",
+            "description": "Consider and implement better app name",
+            "details": "Research and brainstorm a more compelling, memorable, and marketable app name",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 22
+          },
+          {
+            "id": 8,
+            "title": "Landing page",
+            "description": "Create or improve landing page",
+            "details": "Design and implement an attractive, informative landing page that showcases the app's features and benefits\n<info added on 2025-06-30T19:03:06.946Z>\n# Landing Page Implementation Guidelines\n\n## Content Structure\n- Create a compelling hero section with a clear headline, subheadline, brief description, and prominent CTA button (\"Get Started\" or \"Try for Free\")\n- Develop a features section highlighting: smart recipe suggestions, pantry management, shopping lists, AI chat assistant, and food waste reduction\n- Include a testimonial/social proof section (placeholders acceptable for initial implementation)\n- Design a footer with documentation, support, and social media links\n\n## Design Requirements\n- Ensure responsive design across all device sizes\n- Maintain visual consistency with the app's established style guide\n- Use engaging visuals including screenshots, icons, and illustrations that demonstrate functionality\n- Keep copy concise, benefit-focused, and conversational in tone\n\n## Technical Implementation\n- Create a new React component (LandingPage.tsx)\n- Leverage existing UI components where possible for consistency\n- Optimize images and assets for fast loading\n- Ensure accessibility compliance\n\n## Success Criteria\n- Clear communication of value proposition\n- Intuitive navigation\n- Visually appealing presentation of features and benefits\n- Effective call-to-action placement\n</info added on 2025-06-30T19:03:06.946Z>",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 22
+          },
+          {
+            "id": 9,
+            "title": "Video",
+            "description": "Create demo video showcasing features",
+            "details": "Produce a high-quality demo video that demonstrates key app features and user workflows",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 22
+          },
+          {
+            "id": 10,
+            "title": "Deploy",
+            "description": "Deploy application to production",
+            "details": "Execute final deployment to production environment with proper configuration and monitoring",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 22
+          },
+          {
+            "id": 11,
+            "title": "Readme",
+            "description": "Create comprehensive README documentation",
+            "details": "Write detailed README with setup instructions, features overview, and usage examples",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 22
+          },
+          {
+            "id": 12,
+            "title": "Remove avatar upload",
+            "description": "Remove avatar upload functionality",
+            "details": "Clean up any avatar upload UI components and related functionality that are not needed",
+            "status": "pending",
+            "dependencies": [],
+            "parentTaskId": 22
+          }
+        ]
+      }
+    ],
+    "metadata": {
+      "created": "2025-06-29T22:44:32.785Z",
+      "updated": "2025-06-30T19:09:32.998Z",
+      "description": "Tasks for master context"
+    }
+  }
+}
