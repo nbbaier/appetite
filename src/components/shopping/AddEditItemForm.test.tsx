@@ -1,11 +1,9 @@
 // biome-ignore-all assist/source/organizeImports: needed for testing
 // @ts-nocheck
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { describe, it, expect, vi } from "vitest";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { AddEditItemForm } from "./AddEditItemForm";
-import { ShoppingListItems } from "../shopping/ShoppingListItems";
 
 const defaultProps = {
   visible: true,

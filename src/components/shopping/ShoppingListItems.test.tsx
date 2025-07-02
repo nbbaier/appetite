@@ -4,7 +4,7 @@ import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { describe, it, expect, vi } from "vitest";
-import { ShoppingListItems } from "../shopping/ShoppingListItems";
+import { ShoppingListItems } from "./ShoppingListItems";
 
 const items = [
   { id: "1", name: "Eggs", quantity: 1, unit: "dozen", is_purchased: false },

@@ -39,18 +39,18 @@ task-master generate                                         # Update task markd
 
 ### Core Files
 
-- `.taskmaster/tasks/tasks.json` - Main task data file (auto-managed)
-- `.taskmaster/config.json` - AI model configuration (use `task-master models` to modify)
-- `.taskmaster/docs/prd.txt` - Product Requirements Document for parsing
-- `.taskmaster/tasks/*.txt` - Individual task files (auto-generated from tasks.json)
-- `.env` - API keys for CLI usage
+-  `.taskmaster/tasks/tasks.json` - Main task data file (auto-managed)
+-  `.taskmaster/config.json` - AI model configuration (use `task-master models` to modify)
+-  `.taskmaster/docs/prd.txt` - Product Requirements Document for parsing
+-  `.taskmaster/tasks/*.txt` - Individual task files (auto-generated from tasks.json)
+-  `.env` - API keys for CLI usage
 
 ### Claude Code Integration Files
 
-- `CLAUDE.md` - Auto-loaded context for Claude Code (this file)
-- `.claude/settings.json` - Claude Code tool allowlist and preferences
-- `.claude/commands/` - Custom slash commands for repeated workflows
-- `.mcp.json` - MCP server configuration (project-specific)
+-  `CLAUDE.md` - Auto-loaded context for Claude Code (this file)
+-  `.claude/settings.json` - Claude Code tool allowlist and preferences
+-  `.claude/commands/` - Custom slash commands for repeated workflows
+-  `.mcp.json` - MCP server configuration (project-specific)
 
 ### Directory Structure
 
@@ -82,23 +82,23 @@ Task Master provides an MCP server that Claude Code can connect to. Configure in
 
 ```json
 {
-  "mcpServers": {
-    "task-master-ai": {
-      "command": "npx",
-      "args": ["-y", "--package=task-master-ai", "task-master-ai"],
-      "env": {
-        "ANTHROPIC_API_KEY": "your_key_here",
-        "PERPLEXITY_API_KEY": "your_key_here",
-        "OPENAI_API_KEY": "OPENAI_API_KEY_HERE",
-        "GOOGLE_API_KEY": "GOOGLE_API_KEY_HERE",
-        "XAI_API_KEY": "XAI_API_KEY_HERE",
-        "OPENROUTER_API_KEY": "OPENROUTER_API_KEY_HERE",
-        "MISTRAL_API_KEY": "MISTRAL_API_KEY_HERE",
-        "AZURE_OPENAI_API_KEY": "AZURE_OPENAI_API_KEY_HERE",
-        "OLLAMA_API_KEY": "OLLAMA_API_KEY_HERE"
+   "mcpServers": {
+      "task-master-ai": {
+         "command": "npx",
+         "args": ["-y", "--package=task-master-ai", "task-master-ai"],
+         "env": {
+            "ANTHROPIC_API_KEY": "your_key_here",
+            "PERPLEXITY_API_KEY": "your_key_here",
+            "OPENAI_API_KEY": "OPENAI_API_KEY_HERE",
+            "GOOGLE_API_KEY": "GOOGLE_API_KEY_HERE",
+            "XAI_API_KEY": "XAI_API_KEY_HERE",
+            "OPENROUTER_API_KEY": "OPENROUTER_API_KEY_HERE",
+            "MISTRAL_API_KEY": "MISTRAL_API_KEY_HERE",
+            "AZURE_OPENAI_API_KEY": "AZURE_OPENAI_API_KEY_HERE",
+            "OLLAMA_API_KEY": "OLLAMA_API_KEY_HERE"
+         }
       }
-    }
-  }
+   }
 }
 ```
 
@@ -212,14 +212,14 @@ Add to `.claude/settings.json`:
 
 ```json
 {
-  "allowedTools": [
-    "Edit",
-    "Bash(task-master *)",
-    "Bash(git commit:*)",
-    "Bash(git add:*)",
-    "Bash(npm run *)",
-    "mcp__task_master_ai__*"
-  ]
+   "allowedTools": [
+      "Edit",
+      "Bash(task-master *)",
+      "Bash(git commit:*)",
+      "Bash(git add:*)",
+      "Bash(npm run *)",
+      "mcp__task_master_ai__*"
+   ]
 }
 ```
 
@@ -229,13 +229,13 @@ Add to `.claude/settings.json`:
 
 At least **one** of these API keys must be configured:
 
-- `ANTHROPIC_API_KEY` (Claude models) - **Recommended**
-- `PERPLEXITY_API_KEY` (Research features) - **Highly recommended**
-- `OPENAI_API_KEY` (GPT models)
-- `GOOGLE_API_KEY` (Gemini models)
-- `MISTRAL_API_KEY` (Mistral models)
-- `OPENROUTER_API_KEY` (Multiple models)
-- `XAI_API_KEY` (Grok models)
+-  `ANTHROPIC_API_KEY` (Claude models) - **Recommended**
+-  `PERPLEXITY_API_KEY` (Research features) - **Highly recommended**
+-  `OPENAI_API_KEY` (GPT models)
+-  `GOOGLE_API_KEY` (Gemini models)
+-  `MISTRAL_API_KEY` (Mistral models)
+-  `OPENROUTER_API_KEY` (Multiple models)
+-  `XAI_API_KEY` (Grok models)
 
 An API key is required for any provider used across any of the 3 roles defined in the `models` command.
 
@@ -255,32 +255,32 @@ task-master models --set-fallback gpt-4o-mini
 
 ### Task ID Format
 
-- Main tasks: `1`, `2`, `3`, etc.
-- Subtasks: `1.1`, `1.2`, `2.1`, etc.
-- Sub-subtasks: `1.1.1`, `1.1.2`, etc.
+-  Main tasks: `1`, `2`, `3`, etc.
+-  Subtasks: `1.1`, `1.2`, `2.1`, etc.
+-  Sub-subtasks: `1.1.1`, `1.1.2`, etc.
 
 ### Task Status Values
 
-- `pending` - Ready to work on
-- `in-progress` - Currently being worked on
-- `done` - Completed and verified
-- `deferred` - Postponed
-- `cancelled` - No longer needed
-- `blocked` - Waiting on external factors
+-  `pending` - Ready to work on
+-  `in-progress` - Currently being worked on
+-  `done` - Completed and verified
+-  `deferred` - Postponed
+-  `cancelled` - No longer needed
+-  `blocked` - Waiting on external factors
 
 ### Task Fields
 
 ```json
 {
-  "id": "1.2",
-  "title": "Implement user authentication",
-  "description": "Set up JWT-based auth system",
-  "status": "pending",
-  "priority": "high",
-  "dependencies": ["1.1"],
-  "details": "Use bcrypt for hashing, JWT for tokens...",
-  "testStrategy": "Unit tests for auth functions, integration tests for login flow",
-  "subtasks": []
+   "id": "1.2",
+   "title": "Implement user authentication",
+   "description": "Set up JWT-based auth system",
+   "status": "pending",
+   "priority": "high",
+   "dependencies": ["1.1"],
+   "details": "Use bcrypt for hashing, JWT for tokens...",
+   "testStrategy": "Unit tests for auth functions, integration tests for login flow",
+   "subtasks": []
 }
 ```
 
@@ -288,9 +288,9 @@ task-master models --set-fallback gpt-4o-mini
 
 ### Context Management
 
-- Use `/clear` between different tasks to maintain focus
-- This CLAUDE.md file is automatically loaded for context
-- Use `task-master show <id>` to pull specific task context when needed
+-  Use `/clear` between different tasks to maintain focus
+-  This CLAUDE.md file is automatically loaded for context
+-  Use `task-master show <id>` to pull specific task context when needed
 
 ### Iterative Implementation
 
@@ -353,10 +353,10 @@ task-master models --set-fallback gpt-4o-mini
 
 ### MCP Connection Issues
 
-- Check `.mcp.json` configuration
-- Verify Node.js installation
-- Use `--mcp-debug` flag when starting Claude Code
-- Use CLI as fallback if MCP unavailable
+-  Check `.mcp.json` configuration
+-  Verify Node.js installation
+-  Use `--mcp-debug` flag when starting Claude Code
+-  Use CLI as fallback if MCP unavailable
 
 ### Task File Sync Issues
 
@@ -376,41 +376,41 @@ DO NOT RE-INITIALIZE. That will not do anything beyond re-adding the same Taskma
 
 These commands make AI calls and may take up to a minute:
 
-- `parse_prd` / `task-master parse-prd`
-- `analyze_project_complexity` / `task-master analyze-complexity`
-- `expand_task` / `task-master expand`
-- `expand_all` / `task-master expand --all`
-- `add_task` / `task-master add-task`
-- `update` / `task-master update`
-- `update_task` / `task-master update-task`
-- `update_subtask` / `task-master update-subtask`
+-  `parse_prd` / `task-master parse-prd`
+-  `analyze_project_complexity` / `task-master analyze-complexity`
+-  `expand_task` / `task-master expand`
+-  `expand_all` / `task-master expand --all`
+-  `add_task` / `task-master add-task`
+-  `update` / `task-master update`
+-  `update_task` / `task-master update-task`
+-  `update_subtask` / `task-master update-subtask`
 
 ### File Management
 
-- Never manually edit `tasks.json` - use commands instead
-- Never manually edit `.taskmaster/config.json` - use `task-master models`
-- Task markdown files in `tasks/` are auto-generated
-- Run `task-master generate` after manual changes to tasks.json
+-  Never manually edit `tasks.json` - use commands instead
+-  Never manually edit `.taskmaster/config.json` - use `task-master models`
+-  Task markdown files in `tasks/` are auto-generated
+-  Run `task-master generate` after manual changes to tasks.json
 
 ### Claude Code Session Management
 
-- Use `/clear` frequently to maintain focused context
-- Create custom slash commands for repeated Task Master workflows
-- Configure tool allowlist to streamline permissions
-- Use headless mode for automation: `claude -p "task-master next"`
+-  Use `/clear` frequently to maintain focused context
+-  Create custom slash commands for repeated Task Master workflows
+-  Configure tool allowlist to streamline permissions
+-  Use headless mode for automation: `claude -p "task-master next"`
 
 ### Multi-Task Updates
 
-- Use `update --from=<id>` to update multiple future tasks
-- Use `update-task --id=<id>` for single task updates
-- Use `update-subtask --id=<id>` for implementation logging
+-  Use `update --from=<id>` to update multiple future tasks
+-  Use `update-task --id=<id>` for single task updates
+-  Use `update-subtask --id=<id>` for implementation logging
 
 ### Research Mode
 
-- Add `--research` flag for research-based AI enhancement
-- Requires a research model API key like Perplexity (`PERPLEXITY_API_KEY`) in environment
-- Provides more informed task creation and updates
-- Recommended for complex technical tasks
+-  Add `--research` flag for research-based AI enhancement
+-  Requires a research model API key like Perplexity (`PERPLEXITY_API_KEY`) in environment
+-  Provides more informed task creation and updates
+-  Recommended for complex technical tasks
 
 ---
 

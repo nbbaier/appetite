@@ -37,7 +37,7 @@ function getDifficultyColor(difficulty: string | undefined) {
 }
 
 const prefetchRecipeDetailModal = () => {
-  import("../recipes/RecipeDetailModal");
+  import("./RecipeDetailModal");
 };
 
 export const RecipeCard: React.FC<RecipeCardProps> = ({
