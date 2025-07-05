@@ -100,7 +100,7 @@ function LeftoverCardRaw({
             )}
           </div>
 
-          <div className="flex flex-shrink-0 ml-2 space-x-1">
+          <div className="flex shrink-0 ml-2 space-x-1">
             {onEdit && (
               <button
                 onClick={() => onEdit(leftover)}
@@ -126,9 +126,9 @@ function LeftoverCardRaw({
             className={`flex items-center mb-2 space-x-1 text-xs sm:text-sm ${getExpirationColor()}`}
           >
             {(isExpired() || isExpiringSoon()) && (
-              <AlertTriangle className="flex-shrink-0 w-3 h-3" />
+              <AlertTriangle className="shrink-0 w-3 h-3" />
             )}
-            <Calendar className="flex-shrink-0 w-3 h-3" />
+            <Calendar className="shrink-0 w-3 h-3" />
             <span className="truncate">{getExpirationText()}</span>
           </div>
         )}

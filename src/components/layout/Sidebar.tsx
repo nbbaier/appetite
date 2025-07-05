@@ -87,15 +87,15 @@ export function Sidebar({ onClose }: SidebarProps) {
       aria-label="Sidebar navigation"
     >
       {/* Enhanced Sidebar Header with Branding */}
-      <div className="flex justify-between items-center p-4 h-14 bg-gradient-to-r from-emerald-50 border-b border-border to-emerald-100/50 sm:h-16">
+      <div className="flex justify-between items-center p-4 h-14 bg-linear-to-r from-emerald-50 border-b border-border to-emerald-100/50 sm:h-16">
         <div className="flex items-center space-x-2 sm:space-x-3">
           <div className="relative">
-            <div className="flex justify-center items-center w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg sm:h-10 sm:w-10">
+            <div className="flex justify-center items-center w-8 h-8 bg-linear-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg sm:h-10 sm:w-10">
               <ChefHat className="w-4 h-4 text-white sm:h-5 sm:w-5" />
               <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-300 animate-pulse" />
             </div>
           </div>
-          <h2 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-emerald-700 sm:text-xl">
+          <h2 className="text-lg font-bold text-transparent bg-clip-text bg-linear-to-r from-emerald-600 to-emerald-700 sm:text-xl">
             Appetite
           </h2>
         </div>
@@ -123,14 +123,14 @@ export function Sidebar({ onClose }: SidebarProps) {
               cn(
                 "group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
                 isActive
-                  ? "bg-gradient-to-r from-emerald-50 to-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm"
+                  ? "bg-linear-to-r from-emerald-50 to-emerald-100 text-emerald-700 border border-emerald-200 shadow-xs"
                   : "text-muted-foreground hover:bg-accent hover:text-accent-foreground hover:translate-x-1",
               )
             }
           >
             <item.icon
               className={cn(
-                "flex-shrink-0 mr-3 w-5 h-5 transition-all duration-200",
+                "shrink-0 mr-3 w-5 h-5 transition-all duration-200",
                 "group-hover:scale-110",
               )}
             />

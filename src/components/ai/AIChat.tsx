@@ -499,7 +499,7 @@ export function AIChat() {
             <div key={conv.id} className="flex relative items-center group">
               <Button
                 variant={
-                  conv.id === activeConversationId ? "default" : "outline"
+                  conv.id === activeConversationId ? "default" : "outline-solid"
                 }
                 className={`shrink-0 ${conv.id === activeConversationId ? "font-bold" : ""}`}
                 onClick={() =>
@@ -612,7 +612,7 @@ export function AIChat() {
                 onClick={() => handleSendMessage(prompt.text)}
                 className="flex items-center p-2 space-x-2 text-sm text-left bg-white rounded-lg border border-gray-200 transition-colors hover:border-emerald-300 hover:bg-emerald-50"
               >
-                <prompt.icon className="flex-shrink-0 w-4 h-4 text-emerald-600" />
+                <prompt.icon className="shrink-0 w-4 h-4 text-emerald-600" />
                 <span className="truncate">{prompt.text}</span>
               </button>
             ))}
@@ -635,7 +635,7 @@ export function AIChat() {
               >
                 {/* Avatar */}
                 <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-full flex-shrink-0 ${
+                  className={`flex h-8 w-8 items-center justify-center rounded-full shrink-0 ${
                     message.type === "user"
                       ? "bg-blue-500 text-white ml-2"
                       : "bg-emerald-500 text-white mr-2"
@@ -681,7 +681,7 @@ export function AIChat() {
                                 "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
                               }
                               alt={recipe.title}
-                              className="object-cover flex-shrink-0 w-12 h-12 rounded-lg"
+                              className="object-cover shrink-0 w-12 h-12 rounded-lg"
                             />
                             <div className="flex-1 min-w-0">
                               <h4 className="text-sm font-medium text-gray-900 truncate">
@@ -768,7 +768,7 @@ export function AIChat() {
             }
             onKeyDown={handleKeyPress}
             placeholder="Ask me about recipes, ingredients, or cooking tips..."
-            className="flex-1 min-h-[40px] max-h-[120px] resize-none overflow-hidden rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex-1 min-h-[40px] max-h-[120px] resize-none overflow-hidden rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
             rows={1}
             disabled={isTyping}
           />

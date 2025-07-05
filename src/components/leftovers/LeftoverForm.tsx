@@ -226,7 +226,7 @@ export function LeftoverForm({
               onChange={(e) =>
                 setFormData({ ...formData, unit: e.target.value })
               }
-              className="px-2 w-full h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+              className="px-2 w-full h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
             >
               {UNITS.map((unit) => (
                 <option key={unit} value={unit}>
@@ -259,7 +259,7 @@ export function LeftoverForm({
               setFormData({ ...formData, notes: e.target.value })
             }
             placeholder="Any additional notes about the leftovers..."
-            className="px-3 py-2 w-full h-20 text-sm rounded-lg border resize-none border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            className="px-3 py-2 w-full h-20 text-sm rounded-lg border resize-none border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
           />
         </div>
       </div>

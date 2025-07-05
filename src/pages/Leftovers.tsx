@@ -191,7 +191,7 @@ export function Leftovers() {
         <Card>
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <Package className="w-6 h-6 sm:h-8 sm:w-8 text-primary" />
               </div>
               <div className="flex-1 ml-3 min-w-0 sm:ml-4">
@@ -211,7 +211,7 @@ export function Leftovers() {
         >
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <AlertTriangle
                   className={`h-6 w-6 sm:h-8 sm:w-8 ${totalExpiring > 0 ? "text-orange-600" : "text-primary"}`}
                 />
@@ -231,7 +231,7 @@ export function Leftovers() {
         <Card>
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <ChefHat className="w-6 h-6 sm:h-8 sm:w-8 text-primary" />
               </div>
               <div className="flex-1 ml-3 min-w-0 sm:ml-4">

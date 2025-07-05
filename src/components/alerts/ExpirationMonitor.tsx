@@ -149,7 +149,7 @@ function ExpirationMonitorRaw({
                       {item.quantity} {item.unit} • {item.category}
                     </p>
                   </div>
-                  <div className="flex-shrink-0 ml-2 text-right">
+                  <div className="shrink-0 ml-2 text-right">
                     <span className="text-xs font-medium text-red-600">
                       {formatExpirationText(
                         getDaysUntilExpiration(item.expiration_date!),
@@ -181,7 +181,7 @@ function ExpirationMonitorRaw({
                       {item.quantity} {item.unit} • {item.category}
                     </p>
                   </div>
-                  <div className="flex-shrink-0 ml-2 text-right">
+                  <div className="shrink-0 ml-2 text-right">
                     <span className="text-xs font-medium text-red-600">
                       {formatExpirationText(
                         getDaysUntilExpiration(item.expiration_date!),
@@ -213,7 +213,7 @@ function ExpirationMonitorRaw({
                       {item.quantity} {item.unit} • {item.category}
                     </p>
                   </div>
-                  <div className="flex-shrink-0 ml-2 text-right">
+                  <div className="shrink-0 ml-2 text-right">
                     <span className="text-xs font-medium text-orange-600">
                       {formatExpirationText(
                         getDaysUntilExpiration(item.expiration_date!),
@@ -248,7 +248,7 @@ function ExpirationMonitorRaw({
                       {item.quantity} {item.unit} • {item.category}
                     </p>
                   </div>
-                  <div className="flex-shrink-0 ml-2 text-right">
+                  <div className="shrink-0 ml-2 text-right">
                     <span className="text-xs font-medium text-blue-600">
                       {formatExpirationText(
                         getDaysUntilExpiration(item.expiration_date!),

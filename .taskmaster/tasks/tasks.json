@@ -348,7 +348,7 @@
             "title": "Design Edge Function architecture",
             "description": "Create a high-level design for the Edge Function that will handle the Intelligent Categorization feature",
             "dependencies": [],
-            "details": "Define input/output structure, determine necessary APIs, and outline the overall flow of the Edge Function",
+            "details": "Define input/output structure, determine necessary APIs, and outline-solid the overall flow of the Edge Function",
             "status": "done",
             "testStrategy": ""
           },

@@ -33,7 +33,7 @@ function LowStockAlertRaw({
     <Card className={`bg-orange-50 border-orange-200 ${className}`}>
       <CardContent className="p-4">
         <div className="flex items-start space-x-3">
-          <div className="flex-shrink-0">
+          <div className="shrink-0">
             <div className="p-2 bg-orange-100 rounded-lg">
               <TrendingDown className="w-5 h-5 text-orange-600" />
             </div>
@@ -53,7 +53,7 @@ function LowStockAlertRaw({
             <div className="space-y-2">
               {outOfStock.length > 0 && (
                 <div className="flex items-center space-x-2">
-                  <AlertTriangle className="flex-shrink-0 w-4 h-4 text-red-600" />
+                  <AlertTriangle className="shrink-0 w-4 h-4 text-red-600" />
                   <span className="text-sm font-medium text-red-800">
                     {outOfStock.length} out of stock
                   </span>
@@ -62,7 +62,7 @@ function LowStockAlertRaw({
 
               {lowStock.length > 0 && (
                 <div className="flex items-center space-x-2">
-                  <Package className="flex-shrink-0 w-4 h-4 text-orange-600" />
+                  <Package className="shrink-0 w-4 h-4 text-orange-600" />
                   <span className="text-sm text-orange-800">
                     {lowStock.length} running low
                   </span>
@@ -80,7 +80,7 @@ function LowStockAlertRaw({
                   <span className="font-medium text-orange-900 truncate">
                     {item.name}
                   </span>
-                  <div className="flex flex-shrink-0 items-center ml-2 space-x-2">
+                  <div className="flex shrink-0 items-center ml-2 space-x-2">
                     <span
                       className={`text-xs px-2 py-1 rounded-full ${
                         item.quantity <= 0

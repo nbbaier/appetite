@@ -167,7 +167,7 @@ function NaturalLanguagePantryInputRaw({
                 value={naturalLanguageText}
                 onChange={(e) => setNaturalLanguageText(e.target.value)}
                 placeholder="Example: 3 apples, 1kg flour, 2 cans of tuna, 500ml olive oil, 1 liter milk"
-                className="px-3 py-2 w-full h-24 text-sm rounded-lg border resize-none border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                className="px-3 py-2 w-full h-24 text-sm rounded-lg border resize-none border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
                 disabled={isParsingText || isAdding}
               />
             </div>
@@ -227,7 +227,7 @@ function NaturalLanguagePantryInputRaw({
                                 e.target.value,
                               )
                             }
-                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
                           />
                         </div>
                         <div>
@@ -245,7 +245,7 @@ function NaturalLanguagePantryInputRaw({
                                 parseFloat(e.target.value) || 0,
                               )
                             }
-                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
                           />
                         </div>
                         <div>
@@ -261,7 +261,7 @@ function NaturalLanguagePantryInputRaw({
                                 e.target.value,
                               )
                             }
-                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
                           >
                             {UNITS.map((unit) => (
                               <option key={unit} value={unit}>
@@ -284,7 +284,7 @@ function NaturalLanguagePantryInputRaw({
                                   e.target.value,
                                 )
                               }
-                              className="flex-1 px-2 py-1 text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                              className="flex-1 px-2 py-1 text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
                             >
                               {CATEGORIES.map((category) => (
                                 <option key={category} value={category}>

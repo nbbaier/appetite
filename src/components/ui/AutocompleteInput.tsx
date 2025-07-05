@@ -224,7 +224,7 @@ export function AutocompleteInput({
           placeholder={placeholder}
           disabled={disabled}
           className={cn(
-            "w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed",
+            "w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:border-primary focus:outline-hidden focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed",
             className,
           )}
         />
@@ -240,7 +240,7 @@ export function AutocompleteInput({
                   type="button"
                   onClick={() => handleSelectSuggestion(suggestion)}
                   className={cn(
-                    "w-full px-3 py-2 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-none transition-colors",
+                    "w-full px-3 py-2 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden transition-colors",
                     selectedIndex === index && "bg-gray-50",
                   )}
                 >

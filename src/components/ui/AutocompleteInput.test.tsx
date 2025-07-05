@@ -86,7 +86,7 @@ describe("AutocompleteInput", () => {
     );
   });
 
-  it("closes suggestions on escape and blur", async () => {
+  it("closes suggestions on escape and blur-sm", async () => {
     render(<AutocompleteInput {...defaultProps} value="egg" />);
     const input = screen.getByRole("textbox");
     fireEvent.focus(input);

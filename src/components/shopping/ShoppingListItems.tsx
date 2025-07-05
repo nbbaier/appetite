@@ -54,7 +54,7 @@ const ShoppingListItemsComponent: React.FC<ShoppingListItemsProps> = ({
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => onTogglePurchased(item.id, item.is_purchased)}
-                  className="flex-shrink-0 w-5 h-5 rounded-full border-2 transition-colors sm:w-6 sm:h-6 border-secondary-300 hover:border-primary"
+                  className="shrink-0 w-5 h-5 rounded-full border-2 transition-colors sm:w-6 sm:h-6 border-secondary-300 hover:border-primary"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
@@ -67,7 +67,7 @@ const ShoppingListItemsComponent: React.FC<ShoppingListItemsProps> = ({
                         {item.notes && ` • ${item.notes}`}
                       </p>
                     </div>
-                    <div className="flex flex-shrink-0 items-center space-x-2">
+                    <div className="flex shrink-0 items-center space-x-2">
                       <Badge variant="outline" className="text-xs">
                         {item.category}
                       </Badge>
@@ -109,7 +109,7 @@ const ShoppingListItemsComponent: React.FC<ShoppingListItemsProps> = ({
               <div className="flex items-center space-x-3">
                 <button
                   onClick={() => onTogglePurchased(item.id, item.is_purchased)}
-                  className="flex-shrink-0 w-5 h-5 rounded-full border-2 transition-colors sm:w-6 sm:h-6 border-secondary-300 hover:border-primary"
+                  className="shrink-0 w-5 h-5 rounded-full border-2 transition-colors sm:w-6 sm:h-6 border-secondary-300 hover:border-primary"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
@@ -122,7 +122,7 @@ const ShoppingListItemsComponent: React.FC<ShoppingListItemsProps> = ({
                         {item.notes && ` • ${item.notes}`}
                       </p>
                     </div>
-                    <div className="flex flex-shrink-0 items-center space-x-2">
+                    <div className="flex shrink-0 items-center space-x-2">
                       <Badge variant="outline" className="text-xs">
                         {item.category}
                       </Badge>
@@ -163,7 +163,7 @@ const ShoppingListItemsComponent: React.FC<ShoppingListItemsProps> = ({
                       onClick={() =>
                         onTogglePurchased(item.id, item.is_purchased)
                       }
-                      className="flex flex-shrink-0 justify-center items-center w-5 h-5 bg-green-500 rounded-full border-2 border-green-500 transition-colors sm:w-6 sm:h-6 hover:bg-green-600"
+                      className="flex shrink-0 justify-center items-center w-5 h-5 bg-green-500 rounded-full border-2 border-green-500 transition-colors sm:w-6 sm:h-6 hover:bg-green-600"
                     >
                       <Check className="w-3 h-3 text-white sm:h-4 sm:w-4" />
                     </button>
@@ -180,7 +180,7 @@ const ShoppingListItemsComponent: React.FC<ShoppingListItemsProps> = ({
                         </div>
                         <button
                           onClick={() => onDelete(item.id)}
-                          className="p-1.5 text-secondary-400 hover:text-red-600 rounded flex-shrink-0"
+                          className="p-1.5 text-secondary-400 hover:text-red-600 rounded shrink-0"
                         >
                           <Trash2 className="w-3 h-3 sm:h-4 sm:w-4" />
                         </button>

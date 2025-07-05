@@ -139,7 +139,7 @@ export function Dashboard() {
         <Card className="bg-orange-50 border-orange-200">
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <div className="p-2 bg-orange-100 rounded-lg">
                   <Utensils className="w-5 h-5 text-orange-600" />
                 </div>
@@ -171,7 +171,7 @@ export function Dashboard() {
                         <span className="font-medium text-orange-900 truncate">
                           {leftover.name}
                         </span>
-                        <div className="flex flex-shrink-0 items-center ml-2 space-x-2">
+                        <div className="flex shrink-0 items-center ml-2 space-x-2">
                           <span className="text-xs text-orange-700">
                             {leftover.quantity} {leftover.unit}
                           </span>
@@ -213,7 +213,7 @@ export function Dashboard() {
         <Card>
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <Package className="w-6 h-6 sm:h-8 sm:w-8 text-primary" />
               </div>
               <div className="flex-1 ml-3 min-w-0 sm:ml-4">
@@ -231,7 +231,7 @@ export function Dashboard() {
         <Card>
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <Sparkles className="w-6 h-6 sm:h-8 sm:w-8 text-primary" />
               </div>
               <div className="flex-1 ml-3 min-w-0 sm:ml-4">
@@ -249,7 +249,7 @@ export function Dashboard() {
         <Card>
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <BookOpen className="w-6 h-6 sm:h-8 sm:w-8 text-primary" />
               </div>
               <div className="flex-1 ml-3 min-w-0 sm:ml-4">
@@ -267,7 +267,7 @@ export function Dashboard() {
         <Card>
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <Utensils className="w-6 h-6 sm:h-8 sm:w-8 text-primary" />
               </div>
               <div className="flex-1 ml-3 min-w-0 sm:ml-4">
@@ -285,7 +285,7 @@ export function Dashboard() {
         <Card>
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
-              <div className="flex-shrink-0">
+              <div className="shrink-0">
                 <Clock
                   className={`h-6 w-6 sm:h-8 sm:w-8 ${stats.expiringSoon > 0 ? "text-orange-600" : "text-primary"}`}
                 />
@@ -306,7 +306,7 @@ export function Dashboard() {
           <Card className="bg-orange-50 border-orange-200">
             <CardContent className="p-4 sm:p-6">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <Utensils className="w-6 h-6 text-orange-600 sm:h-8 sm:w-8" />
                 </div>
                 <div className="flex-1 ml-3 min-w-0 sm:ml-4">
@@ -329,7 +329,7 @@ export function Dashboard() {
           <Card className="bg-orange-50 border-orange-200">
             <CardContent className="p-4 sm:p-6">
               <div className="flex items-center">
-                <div className="flex-shrink-0">
+                <div className="shrink-0">
                   <TrendingDown className="w-6 h-6 text-orange-600 sm:h-8 sm:w-8" />
                 </div>
                 <div className="flex-1 ml-3 min-w-0 sm:ml-4">
@@ -374,7 +374,7 @@ export function Dashboard() {
                         "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
                       }
                       alt={recipe.title}
-                      className="object-cover flex-shrink-0 w-10 h-10 rounded-lg sm:w-12 sm:h-12"
+                      className="object-cover shrink-0 w-10 h-10 rounded-lg sm:w-12 sm:h-12"
                     />
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-medium truncate text-secondary-900 sm:text-base">
@@ -445,7 +445,7 @@ export function Dashboard() {
                           {item.quantity} {item.unit}
                         </p>
                       </div>
-                      <div className="flex-shrink-0 ml-2 text-right">
+                      <div className="shrink-0 ml-2 text-right">
                         <span
                           className={`text-xs sm:text-sm font-medium ${
                             daysLeft <= 1

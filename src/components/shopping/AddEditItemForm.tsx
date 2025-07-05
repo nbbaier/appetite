@@ -89,7 +89,7 @@ export const AddEditItemForm: React.FC<AddEditItemFormProps> = ({
                   onChange={(e) =>
                     setFormData({ ...formData, unit: e.target.value })
                   }
-                  className="px-2 w-full h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                  className="px-2 w-full h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
                 >
                   {units.map((unit) => (
                     <option key={unit} value={unit}>
@@ -115,7 +115,7 @@ export const AddEditItemForm: React.FC<AddEditItemFormProps> = ({
                     category: e.target.value,
                   })
                 }
-                className="px-3 w-full h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                className="px-3 w-full h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
               >
                 {categories.map((category) => (
                   <option key={category} value={category}>

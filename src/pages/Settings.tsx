@@ -475,7 +475,7 @@ export function Settings() {
                         parseInt(e.target.value) || 1,
                       )
                     }
-                    className="px-3 py-2 w-20 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                    className="px-3 py-2 w-20 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
                   />
                   <span className="text-sm text-secondary-600">
                     people (affects recipe serving suggestions)

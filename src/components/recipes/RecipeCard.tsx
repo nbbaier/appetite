@@ -156,7 +156,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
       <CardContent className="pt-0">
         <div className="flex justify-between items-center mb-3 text-xs text-gray-600 sm:text-sm">
           <div className="flex items-center space-x-1">
-            <Clock className="flex-shrink-0 w-3 h-3 sm:h-4 sm:w-4" />
+            <Clock className="shrink-0 w-3 h-3 sm:h-4 sm:w-4" />
             <span>
               {typeof prepTime === "number" && typeof cookTime === "number"
                 ? prepTime + cookTime + " min"
@@ -164,7 +164,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
             </span>
           </div>
           <div className="flex items-center space-x-1">
-            <Users className="flex-shrink-0 w-3 h-3 sm:h-4 sm:w-4" />
+            <Users className="shrink-0 w-3 h-3 sm:h-4 sm:w-4" />
             <span>{servings ?? ""}</span>
           </div>
           <Badge

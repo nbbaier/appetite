@@ -111,7 +111,7 @@ export function SmartCategorySelectorRaw({
           value={currentCategory}
           onChange={(e) => onCategoryChange(e.target.value)}
           disabled={disabled}
-          className="flex-1 px-3 h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="flex-1 px-3 h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {CATEGORIES.map((category) => (
             <option key={category} value={category}>
@@ -151,7 +151,7 @@ export function SmartCategorySelectorRaw({
         suggestion.category !== currentCategory && (
           <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
             <div className="flex items-start space-x-2">
-              <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+              <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center mb-1 space-x-2">
                   <span className="text-sm font-medium text-blue-900">

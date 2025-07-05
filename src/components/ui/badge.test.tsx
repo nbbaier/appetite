@@ -30,7 +30,7 @@ describe("Badge", () => {
     expect(badge.className).toMatch(/bg-destructive/);
   });
 
-  it("applies outline variant classes", () => {
+  it("applies outline-solid variant classes", () => {
     render(<Badge variant="outline">Outline</Badge>);
     const badge = screen.getByText("Outline");
     expect(badge.className).toMatch(/text-foreground/);

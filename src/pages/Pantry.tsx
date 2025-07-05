@@ -474,7 +474,7 @@ export function Pantry() {
               setShowAddForm(true);
               setShowNaturalLanguageInput(false);
             }}
-            variant={showAddForm ? "default" : "outline"}
+            variant={showAddForm ? "default" : "outline-solid"}
             className="flex justify-center items-center space-x-2 text-sm sm:text-base"
           >
             <Plus className="w-4 h-4" />
@@ -486,7 +486,7 @@ export function Pantry() {
               setShowAddForm(false);
               setShowExpirationMonitor(false);
             }}
-            variant={showNaturalLanguageInput ? "default" : "outline"}
+            variant={showNaturalLanguageInput ? "default" : "outline-solid"}
             className="flex justify-center items-center space-x-2 text-sm sm:text-base"
           >
             <MessageCircle className="w-4 h-4" />
@@ -499,7 +499,7 @@ export function Pantry() {
                 setShowAddForm(false);
                 setShowNaturalLanguageInput(false);
               }}
-              variant={showExpirationMonitor ? "default" : "outline"}
+              variant={showExpirationMonitor ? "default" : "outline-solid"}
               className="flex justify-center items-center space-x-2 text-sm sm:text-base"
             >
               <Calendar className="w-4 h-4" />
@@ -521,11 +521,11 @@ export function Pantry() {
           />
         </div>
         <div className="flex items-center space-x-2">
-          <Filter className="flex-shrink-0 w-4 h-4 text-secondary-600" />
+          <Filter className="shrink-0 w-4 h-4 text-secondary-600" />
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="flex-1 px-3 py-2 text-sm rounded-lg border sm:flex-none border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            className="flex-1 px-3 py-2 text-sm rounded-lg border sm:flex-none border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
           >
             <option value="All">All Categories</option>
             {CATEGORIES.map((category) => (
@@ -607,7 +607,7 @@ export function Pantry() {
                   <label className="mb-1 text-sm font-medium">Unit</label>
                   <select
                     {...register("unit")}
-                    className="px-2 w-full h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                    className="px-2 w-full h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
                   >
                     {UNITS.map((unit) => (
                       <option key={unit} value={unit}>
@@ -714,7 +714,7 @@ export function Pantry() {
                 value={naturalLanguageText}
                 onChange={(e) => setNaturalLanguageText(e.target.value)}
                 placeholder="Example: 3 apples, 1kg flour, 2 cans of tuna, 500ml olive oil, 1 liter milk"
-                className="px-3 py-2 w-full h-24 text-sm rounded-lg border resize-none border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                className="px-3 py-2 w-full h-24 text-sm rounded-lg border resize-none border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
               />
             </div>
 
@@ -777,7 +777,7 @@ export function Pantry() {
                                 e.target.value,
                               )
                             }
-                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
                           />
                         </div>
                         <div>
@@ -795,7 +795,7 @@ export function Pantry() {
                                 parseFloat(e.target.value) || 0,
                               )
                             }
-                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
                           />
                         </div>
                         <div>
@@ -811,7 +811,7 @@ export function Pantry() {
                                 e.target.value,
                               )
                             }
-                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
                           >
                             {UNITS.map((unit) => (
                               <option key={unit} value={unit}>
@@ -834,7 +834,7 @@ export function Pantry() {
                                   e.target.value,
                                 )
                               }
-                              className="flex-1 px-2 py-1 text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                              className="flex-1 px-2 py-1 text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
                             >
                               {CATEGORIES.map((category) => (
                                 <option key={category} value={category}>
@@ -924,7 +924,7 @@ export function Pantry() {
                       {ingredient.category}
                     </span>
                   </div>
-                  <div className="flex flex-shrink-0 ml-2 space-x-1">
+                  <div className="flex shrink-0 ml-2 space-x-1">
                     <button
                       onClick={() => startEdit(ingredient)}
                       className="p-1.5 text-secondary-400 hover:text-secondary-600 rounded"
@@ -949,7 +949,7 @@ export function Pantry() {
                         : "text-orange-600"
                     }`}
                   >
-                    <AlertTriangle className="flex-shrink-0 w-3 h-3" />
+                    <AlertTriangle className="shrink-0 w-3 h-3" />
                     <span className="truncate">
                       {isOutOfStock(ingredient)
                         ? "Out of stock - reorder needed"
@@ -969,9 +969,9 @@ export function Pantry() {
                   >
                     {(isExpired(ingredient.expiration_date) ||
                       isExpiringSoon(ingredient.expiration_date)) && (
-                      <AlertTriangle className="flex-shrink-0 w-3 h-3" />
+                      <AlertTriangle className="shrink-0 w-3 h-3" />
                     )}
-                    <Calendar className="flex-shrink-0 w-3 h-3" />
+                    <Calendar className="shrink-0 w-3 h-3" />
                     <span className="truncate">
                       Expires:{" "}
                       {new Date(

@@ -516,11 +516,11 @@ export function Recipes() {
 
       {/* Can Cook Banner */}
       {canCookMatches.length > 0 && !showCanCookOnly && (
-        <Card className="bg-gradient-to-r from-green-50 to-emerald-50 border-green-200">
+        <Card className="bg-linear-to-r from-green-50 to-emerald-50 border-green-200">
           <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center space-x-3">
-                <div className="flex-shrink-0 p-2 bg-green-600 rounded-lg">
+                <div className="shrink-0 p-2 bg-green-600 rounded-lg">
                   <Sparkles className="w-4 h-4 text-white sm:h-5 sm:w-5" />
                 </div>
                 <div className="min-w-0">
@@ -685,7 +685,7 @@ export function Recipes() {
                 <select
                   value={selectedShoppingListId}
                   onChange={(e) => setSelectedShoppingListId(e.target.value)}
-                  className="px-3 py-2 w-full text-sm rounded-lg border border-gray-300 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  className="px-3 py-2 w-full text-sm rounded-lg border border-gray-300 focus:border-primary focus:outline-hidden focus:ring-2 focus:ring-primary/20"
                 >
                   <option value="">Choose a list...</option>
                   {userShoppingLists.map((list) => (

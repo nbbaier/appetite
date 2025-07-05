@@ -100,7 +100,7 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
               className="object-cover w-full h-48 rounded-lg sm:h-64"
             />
             <div className="absolute right-3 bottom-3 left-3 sm:bottom-4 sm:left-4 sm:right-4">
-              <div className="p-3 rounded-lg backdrop-blur-sm bg-white/95 sm:p-4">
+              <div className="p-3 rounded-lg backdrop-blur-xs bg-white/95 sm:p-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1 min-w-0">
                     <h2 className="mb-1 text-lg font-bold text-gray-900 sm:text-2xl sm:mb-2 line-clamp-2">
@@ -131,7 +131,7 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                       e.stopPropagation();
                       onBookmark(recipe.id);
                     }}
-                    className={`p-2 rounded-full transition-colors ml-2 flex-shrink-0 ${
+                    className={`p-2 rounded-full transition-colors ml-2 shrink-0 ${
                       isBookmarked
                         ? "text-white bg-red-500"
                         : "text-gray-600 bg-gray-100 hover:bg-gray-200"
@@ -235,14 +235,14 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                               className="flex justify-between items-center p-2 rounded-lg border transition-colors sm:p-3"
                             >
                               <div className="flex flex-1 items-center space-x-2 min-w-0">
-                                <div className="flex-shrink-0 w-2 h-2 bg-gray-300 rounded-full sm:w-3 sm:h-3" />
+                                <div className="shrink-0 w-2 h-2 bg-gray-300 rounded-full sm:w-3 sm:h-3" />
                                 <div className="flex items-center space-x-1">
                                   <span className="text-sm font-medium truncate sm:text-base">
                                     {ingredient.ingredient_name}
                                   </span>
                                 </div>
                               </div>
-                              <div className="flex-shrink-0 ml-2 text-xs sm:text-sm">
+                              <div className="shrink-0 ml-2 text-xs sm:text-sm">
                                 {ingredient.quantity} {ingredient.unit}
                                 {ingredient.notes && (
                                   <span className="hidden ml-1 text-gray-500 sm:inline">
@@ -275,7 +275,7 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                             key={index}
                             className="flex space-x-3 sm:space-x-4"
                           >
-                            <div className="flex-shrink-0">
+                            <div className="shrink-0">
                               <div className="flex justify-center items-center w-6 h-6 text-xs font-medium text-white rounded-full sm:w-8 sm:h-8 bg-primary sm:text-sm">
                                 {instruction.step_number}
                               </div>

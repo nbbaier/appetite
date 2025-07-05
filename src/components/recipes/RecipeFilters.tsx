@@ -45,11 +45,11 @@ export const RecipeFilters: React.FC<RecipeFiltersProps> = ({
       </div>
       <div className="flex flex-col items-stretch space-y-3 sm:flex-row sm:items-center sm:space-y-0 sm:space-x-4">
         <div className="flex items-center space-x-2">
-          <Filter className="flex-shrink-0 w-4 h-4 text-gray-600" />
+          <Filter className="shrink-0 w-4 h-4 text-gray-600" />
           <select
             value={selectedDifficulty}
             onChange={(e) => onDifficultyChange(e.target.value)}
-            className="flex-1 px-3 py-2 text-sm rounded-md border border-gray-300 sm:flex-none focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="flex-1 px-3 py-2 text-sm rounded-md border border-gray-300 sm:flex-none focus:border-primary focus:outline-hidden focus:ring-2 focus:ring-primary/20"
           >
             <option value="All">All Difficulties</option>
             <option value="Easy">Easy</option>
@@ -65,7 +65,7 @@ export const RecipeFilters: React.FC<RecipeFiltersProps> = ({
             id="sort"
             value={sortKey}
             onChange={(e) => onSortKeyChange(e.target.value)}
-            className="px-3 py-2 text-sm rounded-md border border-gray-300 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="px-3 py-2 text-sm rounded-md border border-gray-300 focus:border-primary focus:outline-hidden focus:ring-2 focus:ring-primary/20"
           >
             {SORT_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -75,7 +75,7 @@ export const RecipeFilters: React.FC<RecipeFiltersProps> = ({
           </select>
         </div>
         <Button
-          variant={showCanCookOnly ? "default" : "outline"}
+          variant={showCanCookOnly ? "default" : "outline-solid"}
           onClick={onToggleCanCook}
           className="flex justify-center items-center space-x-2 text-sm sm:text-base"
         >

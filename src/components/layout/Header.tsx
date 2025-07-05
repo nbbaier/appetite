@@ -12,7 +12,7 @@ export function HeaderRaw({ onMenuClick }: HeaderProps) {
   const { user, signOut } = useAuth();
 
   return (
-    <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="border-b border-border bg-background/95 backdrop-blur-sm supports-backdrop-filter:bg-background/60">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-14 sm:h-16">
           <div className="flex items-center space-x-3">
@@ -29,14 +29,14 @@ export function HeaderRaw({ onMenuClick }: HeaderProps) {
             {/* Enhanced Brand Logo */}
             <div className="flex items-center space-x-2 sm:space-x-3">
               <div className="relative">
-                <div className="flex justify-center items-center w-8 h-8 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg sm:h-10 sm:w-10">
+                <div className="flex justify-center items-center w-8 h-8 bg-linear-to-br from-emerald-500 to-emerald-600 rounded-xl shadow-lg sm:h-10 sm:w-10">
                   <ChefHat className="w-4 h-4 text-white sm:h-5 sm:w-5" />
                   <Sparkles className="absolute -top-1 -right-1 w-3 h-3 text-yellow-300 animate-pulse" />
                 </div>
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center space-x-1">
-                  <h1 className="text-lg font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-emerald-700 sm:text-xl">
+                  <h1 className="text-lg font-bold text-transparent bg-clip-text bg-linear-to-r from-emerald-600 to-emerald-700 sm:text-xl">
                     Appetite
                   </h1>
                   <span className="hidden sm:inline-block px-2 py-0.5 text-xs font-medium bg-emerald-100 text-emerald-700 rounded-full">
@@ -67,7 +67,7 @@ export function HeaderRaw({ onMenuClick }: HeaderProps) {
               </div>
               <Link
                 to="/settings"
-                className="underline truncate rounded transition-colors max-w-32 sm:max-w-none text-primary hover:text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary"
+                className="underline truncate rounded transition-colors max-w-32 sm:max-w-none text-primary hover:text-primary-700 focus:outline-hidden focus:ring-2 focus:ring-primary"
                 style={{ textDecoration: "underline" }}
               >
                 {user?.user_metadata?.full_name || user?.email}
