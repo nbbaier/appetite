@@ -30,8 +30,8 @@ const features = [
 export default function LandingPage() {
   return (
     <div className="flex flex-col min-h-screen bg-white">
-      <header className="flex flex-col items-center px-4 py-6 w-full bg-gradient-to-b from-green-100 to-white sm:py-10">
-        <div className="flex relative justify-center items-center mb-4 w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl shadow-lg sm:w-20 sm:h-20">
+      <header className="flex flex-col items-center px-4 py-6 w-full bg-linear-to-b from-green-100 to-white sm:py-10">
+        <div className="flex relative justify-center items-center mb-4 w-12 h-12 bg-linear-to-br from-emerald-500 to-emerald-600 rounded-2xl shadow-lg sm:w-20 sm:h-20">
           <ChefHat className="w-6 h-6 text-white sm:w-10 sm:h-10" />
           <Sparkles className="absolute -top-2 -right-2 w-4 h-4 text-yellow-300 animate-pulse sm:w-5 sm:h-5" />
         </div>

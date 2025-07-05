@@ -31,11 +31,11 @@ export const SearchAndFilterBar: React.FC<SearchAndFilterBarProps> = ({
         />
       </div>
       <div className="flex items-center space-x-2">
-        <Filter className="flex-shrink-0 w-4 h-4 text-secondary-600" />
+        <Filter className="shrink-0 w-4 h-4 text-secondary-600" />
         <select
           value={selectedCategory}
           onChange={onCategoryChange}
-          className="flex-1 px-3 py-2 text-sm rounded-lg border sm:flex-none border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+          className="flex-1 px-3 py-2 text-sm rounded-lg border sm:flex-none border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
         >
           <option value="All">All Categories</option>
           {categories.map((category) => (
