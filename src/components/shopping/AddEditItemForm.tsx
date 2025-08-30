@@ -1,9 +1,8 @@
-import React from "react";
+import React, { useId } from "react";
 import type { ShoppingListItem } from "../../types";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
-import { useId } from "react";
 
 interface AddEditItemFormProps {
   visible: boolean;
