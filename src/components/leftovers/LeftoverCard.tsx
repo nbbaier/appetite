@@ -74,7 +74,8 @@ function LeftoverCardRaw({
           ? "bg-red-50 border-red-200"
           : isExpiringSoon()
             ? "bg-orange-50 border-orange-200"
-            : ""} ${className}`}
+            : ""
+      } ${className}`}
     >
       <CardContent className="p-3 sm:p-4">
         <div className="flex justify-between items-start mb-2">
