@@ -139,7 +139,6 @@ export function validateEnv<T>(
 
     // In development, warn but allow to continue
     console.error(errorMessage);
-    throw new Error(errorMessage);
   }
 
   return result.data;
