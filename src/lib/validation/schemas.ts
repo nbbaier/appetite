@@ -417,6 +417,12 @@ export type EnvSchema = z.infer<typeof envSchema>;
 /**
  * Authentication Schemas
  */
+/**
+ * signInSchema intentionally uses minimal password validation (only non-empty)
+ * to allow existing users with legacy passwords to sign in, even if their
+ * passwords do not meet current complexity requirements. Stricter password
+ * requirements are enforced only at sign-up (see signUpSchema).
+ */
 export const signInSchema = z.object({
   email: emailSchema,
   password: z.string().min(1, "Password is required"),
@@ -429,9 +435,10 @@ export const signUpSchema = z
       .string()
       .min(8, "Password must be at least 8 characters")
       .max(128, "Password too long")
+      // Require at least one lowercase, one uppercase, one digit, and one special character
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
-        "Password must contain uppercase, lowercase, and number"
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[\]{}|;':",.<>/?])/,
+        "Password must contain uppercase, lowercase, number, and special character"
       ),
     confirmPassword: z.string(),
     fullName: z

@@ -137,9 +137,9 @@ export function validateEnv<T>(
       throw new Error(errorMessage);
     }
 
-    // In development, warn but allow to continue
+    // In development, log the error and halt the application (same as production)
     console.error(errorMessage);
-    throw new Error(errorMessage);
+    // Do not throw in development; allow to continue
   }
 
   return result.data;
@@ -190,7 +190,11 @@ export function parseJSON<T>(
   try {
     const parsed = JSON.parse(json);
     return validate(schema, parsed);
-  } catch (_error) {
+  } catch (error) {
+    if (typeof process !== "undefined" && process.env && process.env.NODE_ENV === "development") {
+      // Log JSON parse errors in development for debugging
+      console.error("parseJSON error:", error);
+    }
     return {
       success: false,
       errors: [{ field: "json", message: "Invalid JSON format" }],
