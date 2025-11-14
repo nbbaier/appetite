@@ -434,7 +434,7 @@ export const signUpSchema = z
       .max(128, "Password too long")
       // Require at least one lowercase, one uppercase, one digit, and one special character
       .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[\]{}|;':",.<>/?])/,
+        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+=\[\]{}|;':",.<>/?-])/,
         "Password must contain uppercase, lowercase, number, and special character",
       ),
     confirmPassword: z.string(),
