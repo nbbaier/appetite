@@ -164,6 +164,19 @@ export function validateArray<T>(
 }
 
 /**
+ * Validates an array of items and throws an error if validation fails.
+ * This is more efficient than mapping over individual items as it validates
+ * the entire array at once using z.array(schema).
+ */
+export function validateArrayOrThrow<T>(
+  itemSchema: z.ZodSchema<T>,
+  data: unknown,
+): T[] {
+  const arraySchema = z.array(itemSchema);
+  return validateOrThrow(arraySchema, data);
+}
+
+/**
  * Creates a type-safe database query validator
  */
 export function createQueryValidator<TInput, TOutput>(

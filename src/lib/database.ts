@@ -40,6 +40,7 @@ import {
   userPreferencesUpdateSchema,
   userProfileSchema,
   userProfileUpdateSchema,
+  validateArrayOrThrow,
   validateOrThrow,
 } from "./validation";
 
@@ -79,11 +80,7 @@ export const ingredientService = {
     if (error) throw error;
 
     // Validate all returned ingredients
-    const validatedData = (data || []).map((item: unknown) =>
-      validateOrThrow(ingredientSchema, item),
-    );
-
-    return validatedData;
+    return validateArrayOrThrow(ingredientSchema, data || []);
   },
 
   async create(
@@ -145,11 +142,7 @@ export const ingredientService = {
     if (error) throw error;
 
     // Validate all returned ingredients
-    const validatedData = (data || []).map((item: unknown) =>
-      validateOrThrow(ingredientSchema, item),
-    );
-
-    return validatedData;
+    return validateArrayOrThrow(ingredientSchema, data || []);
   },
 
   async addOrUpdateFromShopping(
@@ -205,11 +198,7 @@ export const ingredientService = {
     if (error) throw error;
 
     // Validate all returned ingredients
-    const validatedData = (data || []).map((item: unknown) =>
-      validateOrThrow(ingredientSchema, item),
-    );
-
-    return validatedData;
+    return validateArrayOrThrow(ingredientSchema, data || []);
   },
 
   async updateStockThreshold(
@@ -244,11 +233,7 @@ export const recipeService = {
     if (error) throw error;
 
     // Validate all returned recipes
-    const validatedData = (data || []).map((item: unknown) =>
-      validateOrThrow(recipeSchema, item),
-    );
-
-    return validatedData;
+    return validateArrayOrThrow(recipeSchema, data || []);
   },
 
   async getById(id: string): Promise<Recipe | null> {
@@ -298,11 +283,7 @@ export const recipeService = {
     if (error) throw error;
 
     // Validate all returned recipe ingredients
-    const validatedData = (data || []).map((item: unknown) =>
-      validateOrThrow(recipeIngredientSchema, item),
-    );
-
-    return validatedData;
+    return validateArrayOrThrow(recipeIngredientSchema, data || []);
   },
 
   async getInstructions(recipeId: string): Promise<RecipeInstruction[]> {
@@ -315,11 +296,7 @@ export const recipeService = {
     if (error) throw error;
 
     // Validate all returned recipe instructions
-    const validatedData = (data || []).map((item: unknown) =>
-      validateOrThrow(recipeInstructionSchema, item),
-    );
-
-    return validatedData;
+    return validateArrayOrThrow(recipeInstructionSchema, data || []);
   },
 
   async getCanCook(userIngredients: string[]): Promise<Recipe[]> {
@@ -486,11 +463,7 @@ export const shoppingListService = {
     if (error) throw error;
 
     // Validate all returned shopping lists
-    const validatedData = (data || []).map((item: unknown) =>
-      validateOrThrow(shoppingListSchema, item),
-    );
-
-    return validatedData;
+    return validateArrayOrThrow(shoppingListSchema, data || []);
   },
 
   async createList(
@@ -550,11 +523,7 @@ export const shoppingListService = {
     if (error) throw error;
 
     // Validate all returned shopping list items
-    const validatedData = (data || []).map((item: unknown) =>
-      validateOrThrow(shoppingListItemSchema, item),
-    );
-
-    return validatedData;
+    return validateArrayOrThrow(shoppingListItemSchema, data || []);
   },
 
   async createItem(
@@ -662,8 +631,9 @@ export const shoppingListService = {
     }
 
     // Validate items before inserting
-    const validatedItems = items.map((item: unknown) =>
-      validateOrThrow(shoppingListItemInsertSchema, item),
+    const validatedItems = validateArrayOrThrow(
+      shoppingListItemInsertSchema,
+      items,
     );
 
     const { data, error } = await supabase
@@ -676,11 +646,7 @@ export const shoppingListService = {
     }
 
     // Validate returned data
-    const validatedData = (data || []).map((item: unknown) =>
-      validateOrThrow(shoppingListItemSchema, item),
-    );
-
-    return validatedData;
+    return validateArrayOrThrow(shoppingListItemSchema, data || []);
   },
   async addToPantryFromShopping(
     userId: string,
@@ -711,11 +677,7 @@ export const leftoverService = {
     if (error) throw error;
 
     // Validate all returned leftovers
-    const validatedData = (data || []).map((item: unknown) =>
-      validateOrThrow(leftoverSchema, item),
-    );
-
-    return validatedData;
+    return validateArrayOrThrow(leftoverSchema, data || []);
   },
 
   async create(
@@ -774,11 +736,7 @@ export const leftoverService = {
     if (error) throw error;
 
     // Validate all returned leftovers
-    const validatedData = (data || []).map((item: unknown) =>
-      validateOrThrow(leftoverSchema, item),
-    );
-
-    return validatedData;
+    return validateArrayOrThrow(leftoverSchema, data || []);
   },
 
   async createFromRecipe(
@@ -814,11 +772,7 @@ export const leftoverService = {
     if (error) throw error;
 
     // Validate all returned leftovers
-    const validatedData = (data || []).map((item: unknown) =>
-      validateOrThrow(leftoverSchema, item),
-    );
-
-    return validatedData;
+    return validateArrayOrThrow(leftoverSchema, data || []);
   },
 };
 
@@ -959,11 +913,7 @@ export const conversationService = {
     if (error) throw error;
 
     // Validate all returned conversations
-    const validatedData = (data || []).map((item: unknown) =>
-      validateOrThrow(conversationSchema, item),
-    );
-
-    return validatedData;
+    return validateArrayOrThrow(conversationSchema, data || []);
   },
 
   async create(
@@ -1026,11 +976,7 @@ export const chatMessageService = {
     if (error) throw error;
 
     // Validate all returned chat messages
-    const validatedData = (data || []).map((item: unknown) =>
-      validateOrThrow(chatMessageSchema, item),
-    );
-
-    return validatedData;
+    return validateArrayOrThrow(chatMessageSchema, data || []);
   },
 
   async create(
