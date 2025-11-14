@@ -216,10 +216,8 @@ export const ingredientService = {
     id: string,
     threshold: number,
   ): Promise<Ingredient> {
-    // Validate threshold is non-negative
-    if (threshold < 0) {
-      throw new Error("Stock threshold must be non-negative");
-    }
+    // Validate input using schema
+    validateOrThrow(ingredientUpdateSchema, { low_stock_threshold: threshold });
 
     const { data, error } = await supabase
       .from("ingredients")
