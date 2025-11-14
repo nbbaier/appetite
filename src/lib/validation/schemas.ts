@@ -52,7 +52,7 @@ export const ingredientSchema = z.object({
     .min(1, "Category is required")
     .max(100, "Category name too long")
     .trim(),
-  expiration_date: z.string().date("Invalid date format").optional(),
+  expiration_date: dateStringSchema.optional(),
   notes: z.string().max(1000, "Notes too long").optional(),
   low_stock_threshold: nonNegativeNumberSchema.optional(),
   created_at: dateStringSchema,
