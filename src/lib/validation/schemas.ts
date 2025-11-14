@@ -251,7 +251,7 @@ export const userProfileSchema = z.object({
     .min(1, "Full name is required")
     .max(255, "Full name too long")
     .trim(),
-  bio: z.string().max(1000, "Bio too long").trim().optional(),
+  bio: z.string().max(1000, "Bio too long").trim().optional().default(""),
   avatar_color: z
     .string()
     .regex(/^#[0-9A-Fa-f]{6}$/, "Invalid color format (use #RRGGBB)"),
