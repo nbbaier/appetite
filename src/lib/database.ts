@@ -13,6 +13,32 @@ import type {
 } from "../types";
 import { handleApiError, logError } from "./errorUtils";
 import { supabase } from "./supabase";
+import {
+  ingredientSchema,
+  ingredientInsertSchema,
+  ingredientUpdateSchema,
+  recipeSchema,
+  recipeInsertSchema,
+  recipeUpdateSchema,
+  recipeIngredientSchema,
+  recipeInstructionSchema,
+  shoppingListSchema,
+  shoppingListInsertSchema,
+  shoppingListUpdateSchema,
+  shoppingListItemSchema,
+  shoppingListItemInsertSchema,
+  shoppingListItemUpdateSchema,
+  leftoverSchema,
+  leftoverInsertSchema,
+  leftoverUpdateSchema,
+  userProfileSchema,
+  userProfileUpdateSchema,
+  userPreferencesSchema,
+  userPreferencesUpdateSchema,
+  conversationSchema,
+  chatMessageSchema,
+  validateOrThrow,
+} from "./validation";
 
 // Type for Supabase function result
 export type RecipeMatchResult = {
@@ -48,32 +74,48 @@ export const ingredientService = {
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return data || [];
+
+    // Validate all returned ingredients
+    const validatedData = (data || []).map((item) =>
+      validateOrThrow(ingredientSchema, item)
+    );
+
+    return validatedData;
   },
 
   async create(
     ingredient: Omit<Ingredient, "id" | "created_at" | "updated_at">,
   ): Promise<Ingredient> {
+    // Validate input data
+    const validatedInput = validateOrThrow(ingredientInsertSchema, ingredient);
+
     const { data, error } = await supabase
       .from("ingredients")
-      .insert([ingredient])
+      .insert([validatedInput])
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(ingredientSchema, data);
   },
 
   async update(id: string, updates: Partial<Ingredient>): Promise<Ingredient> {
+    // Validate input data
+    const validatedUpdates = validateOrThrow(ingredientUpdateSchema, updates);
+
     const { data, error } = await supabase
       .from("ingredients")
-      .update(updates)
+      .update(validatedUpdates)
       .eq("id", id)
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(ingredientSchema, data);
   },
 
   async delete(id: string): Promise<void> {
@@ -98,7 +140,13 @@ export const ingredientService = {
       .order("expiration_date", { ascending: true });
 
     if (error) throw error;
-    return data || [];
+
+    // Validate all returned ingredients
+    const validatedData = (data || []).map((item) =>
+      validateOrThrow(ingredientSchema, item)
+    );
+
+    return validatedData;
   },
 
   async addOrUpdateFromShopping(
@@ -152,13 +200,24 @@ export const ingredientService = {
     });
 
     if (error) throw error;
-    return data || [];
+
+    // Validate all returned ingredients
+    const validatedData = (data || []).map((item) =>
+      validateOrThrow(ingredientSchema, item)
+    );
+
+    return validatedData;
   },
 
   async updateStockThreshold(
     id: string,
     threshold: number,
   ): Promise<Ingredient> {
+    // Validate threshold is non-negative
+    if (threshold < 0) {
+      throw new Error("Stock threshold must be non-negative");
+    }
+
     const { data, error } = await supabase
       .from("ingredients")
       .update({ low_stock_threshold: threshold })
@@ -167,7 +226,9 @@ export const ingredientService = {
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(ingredientSchema, data);
   },
 };
 
@@ -180,7 +241,13 @@ export const recipeService = {
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return data || [];
+
+    // Validate all returned recipes
+    const validatedData = (data || []).map((item) =>
+      validateOrThrow(recipeSchema, item)
+    );
+
+    return validatedData;
   },
 
   async getById(id: string): Promise<Recipe | null> {
@@ -192,7 +259,9 @@ export const recipeService = {
         .single();
 
       if (error) throw error;
-      return data;
+
+      // Validate output data
+      return data ? validateOrThrow(recipeSchema, data) : null;
     } catch (error: unknown) {
       if (
         typeof error === "object" &&
@@ -226,7 +295,13 @@ export const recipeService = {
       .order("ingredient_name");
 
     if (error) throw error;
-    return data || [];
+
+    // Validate all returned recipe ingredients
+    const validatedData = (data || []).map((item) =>
+      validateOrThrow(recipeIngredientSchema, item)
+    );
+
+    return validatedData;
   },
 
   async getInstructions(recipeId: string): Promise<RecipeInstruction[]> {
@@ -237,7 +312,13 @@ export const recipeService = {
       .order("step_number");
 
     if (error) throw error;
-    return data || [];
+
+    // Validate all returned recipe instructions
+    const validatedData = (data || []).map((item) =>
+      validateOrThrow(recipeInstructionSchema, item)
+    );
+
+    return validatedData;
   },
 
   async getCanCook(userIngredients: string[]): Promise<Recipe[]> {
@@ -282,26 +363,36 @@ export const recipeService = {
   async create(
     recipe: Omit<Recipe, "id" | "created_at" | "updated_at">,
   ): Promise<Recipe> {
+    // Validate input data
+    const validatedInput = validateOrThrow(recipeInsertSchema, recipe);
+
     const { data, error } = await supabase
       .from("recipes")
-      .insert([recipe])
+      .insert([validatedInput])
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(recipeSchema, data);
   },
 
   async update(id: string, updates: Partial<Recipe>): Promise<Recipe> {
+    // Validate input data
+    const validatedUpdates = validateOrThrow(recipeUpdateSchema, updates);
+
     const { data, error } = await supabase
       .from("recipes")
-      .update(updates)
+      .update(validatedUpdates)
       .eq("id", id)
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(recipeSchema, data);
   },
 
   async delete(id: string): Promise<void> {
@@ -392,35 +483,51 @@ export const shoppingListService = {
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return data || [];
+
+    // Validate all returned shopping lists
+    const validatedData = (data || []).map((item) =>
+      validateOrThrow(shoppingListSchema, item)
+    );
+
+    return validatedData;
   },
 
   async createList(
     list: Omit<ShoppingList, "id" | "created_at" | "updated_at">,
   ): Promise<ShoppingList> {
+    // Validate input data
+    const validatedInput = validateOrThrow(shoppingListInsertSchema, list);
+
     const { data, error } = await supabase
       .from("shopping_lists")
-      .insert([list])
+      .insert([validatedInput])
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(shoppingListSchema, data);
   },
 
   async updateList(
     id: string,
     updates: Partial<ShoppingList>,
   ): Promise<ShoppingList> {
+    // Validate input data
+    const validatedUpdates = validateOrThrow(shoppingListUpdateSchema, updates);
+
     const { data, error } = await supabase
       .from("shopping_lists")
-      .update(updates)
+      .update(validatedUpdates)
       .eq("id", id)
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(shoppingListSchema, data);
   },
 
   async deleteList(id: string): Promise<void> {
@@ -440,35 +547,54 @@ export const shoppingListService = {
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return data || [];
+
+    // Validate all returned shopping list items
+    const validatedData = (data || []).map((item) =>
+      validateOrThrow(shoppingListItemSchema, item)
+    );
+
+    return validatedData;
   },
 
   async createItem(
     item: Omit<ShoppingListItem, "id" | "created_at" | "updated_at">,
   ): Promise<ShoppingListItem> {
+    // Validate input data
+    const validatedInput = validateOrThrow(shoppingListItemInsertSchema, item);
+
     const { data, error } = await supabase
       .from("shopping_list_items")
-      .insert([item])
+      .insert([validatedInput])
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(shoppingListItemSchema, data);
   },
 
   async updateItem(
     id: string,
     updates: Partial<ShoppingListItem>,
   ): Promise<ShoppingListItem> {
+    // Validate input data
+    const validatedUpdates = validateOrThrow(
+      shoppingListItemUpdateSchema,
+      updates
+    );
+
     const { data, error } = await supabase
       .from("shopping_list_items")
-      .update(updates)
+      .update(validatedUpdates)
       .eq("id", id)
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(shoppingListItemSchema, data);
   },
 
   async deleteItem(id: string): Promise<void> {
@@ -492,7 +618,9 @@ export const shoppingListService = {
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(shoppingListItemSchema, data);
   },
 
   async createFromRecipe(
@@ -570,32 +698,48 @@ export const leftoverService = {
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return data || [];
+
+    // Validate all returned leftovers
+    const validatedData = (data || []).map((item) =>
+      validateOrThrow(leftoverSchema, item)
+    );
+
+    return validatedData;
   },
 
   async create(
     leftover: Omit<Leftover, "id" | "created_at" | "updated_at">,
   ): Promise<Leftover> {
+    // Validate input data
+    const validatedInput = validateOrThrow(leftoverInsertSchema, leftover);
+
     const { data, error } = await supabase
       .from("leftovers")
-      .insert([leftover])
+      .insert([validatedInput])
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(leftoverSchema, data);
   },
 
   async update(id: string, updates: Partial<Leftover>): Promise<Leftover> {
+    // Validate input data
+    const validatedUpdates = validateOrThrow(leftoverUpdateSchema, updates);
+
     const { data, error } = await supabase
       .from("leftovers")
-      .update(updates)
+      .update(validatedUpdates)
       .eq("id", id)
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(leftoverSchema, data);
   },
 
   async delete(id: string): Promise<void> {
@@ -617,7 +761,13 @@ export const leftoverService = {
       .order("expiration_date", { ascending: true });
 
     if (error) throw error;
-    return data || [];
+
+    // Validate all returned leftovers
+    const validatedData = (data || []).map((item) =>
+      validateOrThrow(leftoverSchema, item)
+    );
+
+    return validatedData;
   },
 
   async createFromRecipe(
@@ -651,7 +801,13 @@ export const leftoverService = {
       .order("created_at", { ascending: false });
 
     if (error) throw error;
-    return data || [];
+
+    // Validate all returned leftovers
+    const validatedData = (data || []).map((item) =>
+      validateOrThrow(leftoverSchema, item)
+    );
+
+    return validatedData;
   },
 };
 
@@ -696,15 +852,20 @@ export const userProfileService = {
     userId: string,
     updates: Partial<UserProfile>,
   ): Promise<UserProfile> {
+    // Validate input data
+    const validatedUpdates = validateOrThrow(userProfileUpdateSchema, updates);
+
     const { data, error } = await supabase
       .from("user_profiles")
-      .update(updates)
+      .update(validatedUpdates)
       .eq("user_id", userId)
       .select()
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(userProfileSchema, data);
   },
 };
 
@@ -749,9 +910,15 @@ export const userPreferencesService = {
     userId: string,
     updates: Partial<UserPreferences>,
   ): Promise<UserPreferences> {
+    // Validate input data
+    const validatedUpdates = validateOrThrow(
+      userPreferencesUpdateSchema,
+      updates
+    );
+
     // Use upsert to either update existing record or create new one
     const dataToUpsert = {
-      ...updates,
+      ...validatedUpdates,
       user_id: userId, // Ensure user_id is included for upsert
     };
 
@@ -762,7 +929,9 @@ export const userPreferencesService = {
       .single();
 
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(userPreferencesSchema, data);
   },
 };
 
@@ -774,8 +943,15 @@ export const conversationService = {
       .select("*")
       .eq("user_id", userId)
       .order("updated_at", { ascending: false });
+
     if (error) throw error;
-    return data || [];
+
+    // Validate all returned conversations
+    const validatedData = (data || []).map((item) =>
+      validateOrThrow(conversationSchema, item)
+    );
+
+    return validatedData;
   },
 
   async create(
@@ -787,19 +963,30 @@ export const conversationService = {
       .insert([{ user_id: userId, title }])
       .select()
       .single();
+
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(conversationSchema, data);
   },
 
   async updateTitle(id: string, title: string): Promise<Conversation> {
+    // Validate title length
+    if (title.length > 255) {
+      throw new Error("Title too long (maximum 255 characters)");
+    }
+
     const { data, error } = await supabase
       .from("conversations")
       .update({ title })
       .eq("id", id)
       .select()
       .single();
+
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(conversationSchema, data);
   },
 
   async delete(id: string): Promise<void> {
@@ -819,8 +1006,15 @@ export const chatMessageService = {
       .select("*")
       .eq("conversation_id", conversationId)
       .order("timestamp", { ascending: true });
+
     if (error) throw error;
-    return data || [];
+
+    // Validate all returned chat messages
+    const validatedData = (data || []).map((item) =>
+      validateOrThrow(chatMessageSchema, item)
+    );
+
+    return validatedData;
   },
 
   async create(
@@ -830,6 +1024,14 @@ export const chatMessageService = {
     suggestions?: string[] | null,
     recipes?: Recipe[] | null,
   ): Promise<ChatMessage> {
+    // Validate message content length
+    if (content.length === 0) {
+      throw new Error("Message content cannot be empty");
+    }
+    if (content.length > 10000) {
+      throw new Error("Message content too long (maximum 10000 characters)");
+    }
+
     const { data, error } = await supabase
       .from("messages")
       .insert([
@@ -843,8 +1045,11 @@ export const chatMessageService = {
       ])
       .select()
       .single();
+
     if (error) throw error;
-    return data;
+
+    // Validate output data
+    return validateOrThrow(chatMessageSchema, data);
   },
 
   async delete(id: string): Promise<void> {

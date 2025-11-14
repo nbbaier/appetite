@@ -8,17 +8,23 @@ import {
   Subscription,
   SupabaseClient,
 } from "@supabase/supabase-js";
+import { envSchema, validateEnv } from "./validation";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Validate environment variables at startup
+const env = validateEnv(envSchema, {
+  VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
+  VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,
+  MODE: import.meta.env.MODE,
+});
 
-// Create a mock client if environment variables are not set
+const supabaseUrl = env.VITE_SUPABASE_URL;
+const supabaseAnonKey = env.VITE_SUPABASE_ANON_KEY;
+
+// Create Supabase client or mock for testing
 let supabase: SupabaseClient;
 
-if (supabaseUrl && supabaseAnonKey) {
-  supabase = createClient(supabaseUrl, supabaseAnonKey);
-} else {
-  // Mock Supabase client for development without environment variables
+if (import.meta.env.MODE === "test") {
+  // Mock Supabase client for testing only
   const mockSubscription: Subscription = {
     id: "mock-subscription",
     callback: () => {
@@ -51,7 +57,7 @@ if (supabaseUrl && supabaseAnonKey) {
           data: { user: null, session: null },
           error: {
             name: "AuthError",
-            message: "Please connect to Supabase first",
+            message: "Mock client - testing mode",
           } as AuthError,
         }) as Promise<AuthResponse>,
       signInWithPassword: () =>
@@ -59,12 +65,15 @@ if (supabaseUrl && supabaseAnonKey) {
           data: { user: null, session: null, weakPassword: null },
           error: {
             name: "AuthError",
-            message: "Please connect to Supabase first",
+            message: "Mock client - testing mode",
           } as AuthError,
         }) as Promise<AuthTokenResponsePassword>,
       signOut: () => Promise.resolve({ error: null }),
     },
   } as unknown as SupabaseClient;
+} else {
+  // Create real Supabase client (env vars are validated above)
+  supabase = createClient(supabaseUrl, supabaseAnonKey);
 }
 
 export { supabase };
