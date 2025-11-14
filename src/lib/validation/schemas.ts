@@ -406,7 +406,7 @@ export type ChatMessageInsert = z.infer<typeof chatMessageInsertSchema>;
 export const envSchema = z.object({
   VITE_SUPABASE_URL: z.string().url("Invalid Supabase URL"),
   VITE_SUPABASE_ANON_KEY: z.string().min(1, "Supabase anon key is required"),
-  MODE: z.enum(["development", "production", "test"]).optional(),
+  MODE: z.enum(["development", "production", "test"]),
 });
 
 export type EnvSchema = z.infer<typeof envSchema>;
