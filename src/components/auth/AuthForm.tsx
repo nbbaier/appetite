@@ -6,6 +6,19 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useAuth } from "../../contexts/AuthContext";
 import { handleApiError } from "../../lib/errorUtils";
+import {
+  signUpSchema,
+  type SignUpFormData,
+} from "../../lib/validation";
+
+// Local signInSchema uses minimal password validation (6 chars minimum) to allow
+// existing users with legacy passwords to sign in, even if their passwords do not
+// meet current complexity requirements. Stricter password requirements are enforced
+// only at sign-up (see signUpSchema in validation/schemas.ts).
+const signInSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+});
 import { Button } from "../ui/button";
 import {
   Card,
@@ -15,23 +28,6 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Input } from "../ui/input";
-
-const signInSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
-});
-
-const signUpSchema = signInSchema
-  .extend({
-    fullName: z.string().min(2, "Full name must be at least 2 characters"),
-    confirmPassword: z.string(),
-  })
-  .refine((data) => data.password === data.confirmPassword, {
-    message: "Passwords don't match",
-    path: ["confirmPassword"],
-  });
-
-type SignUpFormData = z.infer<typeof signUpSchema>;
 
 interface AuthFormProps {
   initialMode?: "signup" | "signin";
