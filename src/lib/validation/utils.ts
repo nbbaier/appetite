@@ -240,9 +240,36 @@ export function createDebouncedValidator<T>(
 }
 
 /**
- * Merges multiple validation results
+ * Collects validation errors from multiple validation results.
+ * 
+ * This function aggregates all errors from failed validations. If ANY validation
+ * fails, the entire result is considered a failure with all collected errors.
+ * If all validations succeed, returns success with the data from the last result.
+ * 
+ * **Important behavior notes:**
+ * - Returns failure if ANY input result failed (fail-fast semantics)
+ * - Accumulates ALL errors from failed results
+ * - Only returns success if ALL results succeeded
+ * - When all succeed, returns the data from the LAST successful result
+ * 
+ * **Use cases:**
+ * - Sequential validation of the same data through multiple validators
+ * - Collecting all validation errors before presenting to user
+ * - NOT suitable for merging validations of different data objects
+ * 
+ * @example
+ * ```ts
+ * // Validate user input through multiple validators
+ * const result1 = validate(emailSchema, input);
+ * const result2 = validate(passwordSchema, input);
+ * const combined = collectValidationErrors(result1, result2);
+ * // If either fails, combined contains all errors from both
+ * ```
+ * 
+ * @param results - Variable number of validation results to merge
+ * @returns A single validation result with aggregated errors or final success data
  */
-export function mergeValidationResults<T>(
+export function collectValidationErrors<T>(
   ...results: ValidationResult<T>[]
 ): ValidationResult<T> {
   const errors: ValidationError[] = [];
@@ -268,4 +295,14 @@ export function mergeValidationResults<T>(
   }
 
   return { success: true, data: lastSuccessData };
+}
+
+/**
+ * @deprecated Use collectValidationErrors instead. This function name was misleading
+ * about its actual behavior.
+ */
+export function mergeValidationResults<T>(
+  ...results: ValidationResult<T>[]
+): ValidationResult<T> {
+  return collectValidationErrors(...results);
 }
