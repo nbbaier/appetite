@@ -989,10 +989,8 @@ export const conversationService = {
   },
 
   async updateTitle(id: string, title: string): Promise<Conversation> {
-    // Validate title length
-    if (title.length > 255) {
-      throw new Error("Title too long (maximum 255 characters)");
-    }
+    // Validate title using schema
+    validateOrThrow(conversationUpdateSchema, { title });
 
     const { data, error } = await supabase
       .from("conversations")
