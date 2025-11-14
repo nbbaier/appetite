@@ -134,7 +134,6 @@ export function validateEnv<T>(
 
     // In development, log the validation error but allow the app to continue
     console.error(errorMessage);
-    return env as T;
   }
 
   return result.data;
