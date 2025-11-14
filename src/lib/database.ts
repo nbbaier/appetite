@@ -18,6 +18,7 @@ import {
   chatMessageSchema,
   conversationInsertSchema,
   conversationSchema,
+  conversationUpdateSchema,
   ingredientInsertSchema,
   ingredientSchema,
   ingredientUpdateSchema,

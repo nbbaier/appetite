@@ -92,9 +92,7 @@ export const recipeSchema = z.object({
   prep_time: nonNegativeNumberSchema,
   cook_time: nonNegativeNumberSchema,
   servings: positiveNumberSchema.int("Servings must be a whole number"),
-  difficulty: z.enum(["Easy", "Medium", "Hard"], {
-    errorMap: () => ({ message: "Difficulty must be Easy, Medium, or Hard" }),
-  }),
+  difficulty: z.enum(["Easy", "Medium", "Hard"]),
   cuisine_type: z.string().max(100, "Cuisine type too long").optional(),
   created_at: dateStringSchema,
   updated_at: dateStringSchema,
@@ -285,14 +283,13 @@ export const userPreferencesSchema = z.object({
   dietary_restrictions: z.array(z.string().max(100)).default([]),
   allergies: z.array(z.string().max(100)).default([]),
   preferred_cuisines: z.array(z.string().max(100)).default([]),
-  cooking_skill_level: z.enum(["Beginner", "Intermediate", "Advanced", "Expert"], {
-    errorMap: () => ({
-      message: "Skill level must be Beginner, Intermediate, Advanced, or Expert",
-    }),
-  }),
-  measurement_units: z.enum(["Metric", "Imperial"], {
-    errorMap: () => ({ message: "Measurement units must be Metric or Imperial" }),
-  }),
+  cooking_skill_level: z.enum([
+    "Beginner",
+    "Intermediate",
+    "Advanced",
+    "Expert",
+  ]),
+  measurement_units: z.enum(["Metric", "Imperial"]),
   family_size: positiveNumberSchema.int("Family size must be a whole number"),
   kitchen_equipment: z.array(z.string().max(100)).default([]),
   created_at: dateStringSchema,
@@ -373,6 +370,10 @@ export const conversationInsertSchema = conversationSchema.omit({
   updated_at: true,
 });
 
+export const conversationUpdateSchema = z.object({
+  title: z.string().max(255, "Title too long").nullable(),
+});
+
 export type ConversationInsert = z.infer<typeof conversationInsertSchema>;
 
 /**
@@ -381,9 +382,7 @@ export type ConversationInsert = z.infer<typeof conversationInsertSchema>;
 export const chatMessageSchema = z.object({
   id: uuidSchema,
   conversation_id: uuidSchema,
-  sender: z.enum(["user", "ai"], {
-    errorMap: () => ({ message: "Sender must be 'user' or 'ai'" }),
-  }),
+  sender: z.enum(["user", "ai"]),
   content: z
     .string()
     .min(1, "Message content is required")
@@ -406,9 +405,7 @@ export type ChatMessageInsert = z.infer<typeof chatMessageInsertSchema>;
  */
 export const envSchema = z.object({
   VITE_SUPABASE_URL: z.string().url("Invalid Supabase URL"),
-  VITE_SUPABASE_ANON_KEY: z
-    .string()
-    .min(1, "Supabase anon key is required"),
+  VITE_SUPABASE_ANON_KEY: z.string().min(1, "Supabase anon key is required"),
   MODE: z.enum(["development", "production", "test"]).optional(),
 });
 
@@ -438,7 +435,7 @@ export const signUpSchema = z
       // Require at least one lowercase, one uppercase, one digit, and one special character
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_\-+=[\]{}|;':",.<>/?])/,
-        "Password must contain uppercase, lowercase, number, and special character"
+        "Password must contain uppercase, lowercase, number, and special character",
       ),
     confirmPassword: z.string(),
     fullName: z
