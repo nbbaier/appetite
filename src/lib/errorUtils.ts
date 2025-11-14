@@ -1,6 +1,35 @@
 // Error handling utilities for frontend use
 
 /**
+ * External error monitoring service interface
+ */
+export interface ErrorMonitoringService {
+  captureError: (error: unknown, context?: Record<string, unknown>) => void;
+  captureMessage: (message: string, level?: "info" | "warning" | "error") => void;
+}
+
+/**
+ * Global error monitoring service instance
+ */
+let errorMonitoringService: ErrorMonitoringService | null = null;
+
+/**
+ * Configure the external error monitoring service (e.g., Sentry, LogRocket)
+ * @param service - The monitoring service implementation
+ */
+export function setErrorMonitoringService(service: ErrorMonitoringService | null) {
+  errorMonitoringService = service;
+}
+
+/**
+ * Get the current error monitoring service
+ * @returns The configured monitoring service or null
+ */
+export function getErrorMonitoringService(): ErrorMonitoringService | null {
+  return errorMonitoringService;
+}
+
+/**
  * Standardizes API error processing and returns a user-friendly message.
  * @param error - The error object from fetch, axios, or Supabase
  * @returns {string} User-friendly error message
@@ -36,8 +65,14 @@ export function logError(error: unknown, context?: string) {
   } else {
     console.error("[Error]", error);
   }
-  // TODO: Integrate with external monitoring/logging service
-  // TEMP: If a global notify is available (set by NotificationProvider), use it
+
+  // Send to external monitoring service if configured
+  if (errorMonitoringService) {
+    const contextData = context ? { context } : undefined;
+    errorMonitoringService.captureError(error, contextData);
+  }
+
+  // If a global notify is available (set by NotificationProvider), use it
   if (
     typeof window !== "undefined" &&
     typeof (
