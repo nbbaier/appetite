@@ -126,14 +126,8 @@ export function validateEnv<T>(
     const errorMessage = `Environment validation failed:\n${errors.map((e) => `- ${e.field}: ${e.message}`).join("\n")}`;
 
     // In production, this should halt the application
-    if (import.meta.env.MODE === "production") {
-      throw new Error(errorMessage);
-    }
-
-    // In development, log the validation error but allow the app to continue
-    // Return unvalidated env to prevent undefined errors
-    console.error(errorMessage);
-    return env as T;
+    // Always halt the application on validation failure
+    throw new Error(errorMessage);
   }
 
   return result.data;
