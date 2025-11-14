@@ -190,7 +190,7 @@ export function parseJSON<T>(
   try {
     const parsed = JSON.parse(json);
     return validate(schema, parsed);
-  } catch (error) {
+  } catch (_error) {
     return {
       success: false,
       errors: [{ field: "json", message: "Invalid JSON format" }],

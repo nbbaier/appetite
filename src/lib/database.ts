@@ -14,29 +14,31 @@ import type {
 import { handleApiError, logError } from "./errorUtils";
 import { supabase } from "./supabase";
 import {
-  ingredientSchema,
+  chatMessageInsertSchema,
+  chatMessageSchema,
+  conversationInsertSchema,
+  conversationSchema,
   ingredientInsertSchema,
+  ingredientSchema,
   ingredientUpdateSchema,
-  recipeSchema,
-  recipeInsertSchema,
-  recipeUpdateSchema,
-  recipeIngredientSchema,
-  recipeInstructionSchema,
-  shoppingListSchema,
-  shoppingListInsertSchema,
-  shoppingListUpdateSchema,
-  shoppingListItemSchema,
-  shoppingListItemInsertSchema,
-  shoppingListItemUpdateSchema,
-  leftoverSchema,
   leftoverInsertSchema,
+  leftoverSchema,
   leftoverUpdateSchema,
-  userProfileSchema,
-  userProfileUpdateSchema,
+  recipeIngredientSchema,
+  recipeInsertSchema,
+  recipeInstructionSchema,
+  recipeSchema,
+  recipeUpdateSchema,
+  shoppingListInsertSchema,
+  shoppingListItemInsertSchema,
+  shoppingListItemSchema,
+  shoppingListItemUpdateSchema,
+  shoppingListSchema,
+  shoppingListUpdateSchema,
   userPreferencesSchema,
   userPreferencesUpdateSchema,
-  conversationSchema,
-  chatMessageSchema,
+  userProfileSchema,
+  userProfileUpdateSchema,
   validateOrThrow,
 } from "./validation";
 
@@ -76,8 +78,8 @@ export const ingredientService = {
     if (error) throw error;
 
     // Validate all returned ingredients
-    const validatedData = (data || []).map((item) =>
-      validateOrThrow(ingredientSchema, item)
+    const validatedData = (data || []).map((item: unknown) =>
+      validateOrThrow(ingredientSchema, item),
     );
 
     return validatedData;
@@ -142,8 +144,8 @@ export const ingredientService = {
     if (error) throw error;
 
     // Validate all returned ingredients
-    const validatedData = (data || []).map((item) =>
-      validateOrThrow(ingredientSchema, item)
+    const validatedData = (data || []).map((item: unknown) =>
+      validateOrThrow(ingredientSchema, item),
     );
 
     return validatedData;
@@ -202,8 +204,8 @@ export const ingredientService = {
     if (error) throw error;
 
     // Validate all returned ingredients
-    const validatedData = (data || []).map((item) =>
-      validateOrThrow(ingredientSchema, item)
+    const validatedData = (data || []).map((item: unknown) =>
+      validateOrThrow(ingredientSchema, item),
     );
 
     return validatedData;
@@ -243,8 +245,8 @@ export const recipeService = {
     if (error) throw error;
 
     // Validate all returned recipes
-    const validatedData = (data || []).map((item) =>
-      validateOrThrow(recipeSchema, item)
+    const validatedData = (data || []).map((item: unknown) =>
+      validateOrThrow(recipeSchema, item),
     );
 
     return validatedData;
@@ -297,8 +299,8 @@ export const recipeService = {
     if (error) throw error;
 
     // Validate all returned recipe ingredients
-    const validatedData = (data || []).map((item) =>
-      validateOrThrow(recipeIngredientSchema, item)
+    const validatedData = (data || []).map((item: unknown) =>
+      validateOrThrow(recipeIngredientSchema, item),
     );
 
     return validatedData;
@@ -314,8 +316,8 @@ export const recipeService = {
     if (error) throw error;
 
     // Validate all returned recipe instructions
-    const validatedData = (data || []).map((item) =>
-      validateOrThrow(recipeInstructionSchema, item)
+    const validatedData = (data || []).map((item: unknown) =>
+      validateOrThrow(recipeInstructionSchema, item),
     );
 
     return validatedData;
@@ -485,8 +487,8 @@ export const shoppingListService = {
     if (error) throw error;
 
     // Validate all returned shopping lists
-    const validatedData = (data || []).map((item) =>
-      validateOrThrow(shoppingListSchema, item)
+    const validatedData = (data || []).map((item: unknown) =>
+      validateOrThrow(shoppingListSchema, item),
     );
 
     return validatedData;
@@ -549,8 +551,8 @@ export const shoppingListService = {
     if (error) throw error;
 
     // Validate all returned shopping list items
-    const validatedData = (data || []).map((item) =>
-      validateOrThrow(shoppingListItemSchema, item)
+    const validatedData = (data || []).map((item: unknown) =>
+      validateOrThrow(shoppingListItemSchema, item),
     );
 
     return validatedData;
@@ -581,7 +583,7 @@ export const shoppingListService = {
     // Validate input data
     const validatedUpdates = validateOrThrow(
       shoppingListItemUpdateSchema,
-      updates
+      updates,
     );
 
     const { data, error } = await supabase
@@ -660,16 +662,26 @@ export const shoppingListService = {
       return [];
     }
 
+    // Validate items before inserting
+    const validatedItems = items.map((item: unknown) =>
+      validateOrThrow(shoppingListItemInsertSchema, item),
+    );
+
     const { data, error } = await supabase
       .from("shopping_list_items")
-      .insert(items)
+      .insert(validatedItems)
       .select();
 
     if (error) {
       throw error;
     }
 
-    return data || [];
+    // Validate returned data
+    const validatedData = (data || []).map((item: unknown) =>
+      validateOrThrow(shoppingListItemSchema, item),
+    );
+
+    return validatedData;
   },
   async addToPantryFromShopping(
     userId: string,
@@ -700,8 +712,8 @@ export const leftoverService = {
     if (error) throw error;
 
     // Validate all returned leftovers
-    const validatedData = (data || []).map((item) =>
-      validateOrThrow(leftoverSchema, item)
+    const validatedData = (data || []).map((item: unknown) =>
+      validateOrThrow(leftoverSchema, item),
     );
 
     return validatedData;
@@ -763,8 +775,8 @@ export const leftoverService = {
     if (error) throw error;
 
     // Validate all returned leftovers
-    const validatedData = (data || []).map((item) =>
-      validateOrThrow(leftoverSchema, item)
+    const validatedData = (data || []).map((item: unknown) =>
+      validateOrThrow(leftoverSchema, item),
     );
 
     return validatedData;
@@ -803,8 +815,8 @@ export const leftoverService = {
     if (error) throw error;
 
     // Validate all returned leftovers
-    const validatedData = (data || []).map((item) =>
-      validateOrThrow(leftoverSchema, item)
+    const validatedData = (data || []).map((item: unknown) =>
+      validateOrThrow(leftoverSchema, item),
     );
 
     return validatedData;
@@ -913,7 +925,7 @@ export const userPreferencesService = {
     // Validate input data
     const validatedUpdates = validateOrThrow(
       userPreferencesUpdateSchema,
-      updates
+      updates,
     );
 
     // Use upsert to either update existing record or create new one
@@ -947,8 +959,8 @@ export const conversationService = {
     if (error) throw error;
 
     // Validate all returned conversations
-    const validatedData = (data || []).map((item) =>
-      validateOrThrow(conversationSchema, item)
+    const validatedData = (data || []).map((item: unknown) =>
+      validateOrThrow(conversationSchema, item),
     );
 
     return validatedData;
@@ -958,9 +970,15 @@ export const conversationService = {
     userId: string,
     title: string | null = null,
   ): Promise<Conversation> {
+    // Validate input data
+    const conversationInput = validateOrThrow(conversationInsertSchema, {
+      user_id: userId,
+      title,
+    });
+
     const { data, error } = await supabase
       .from("conversations")
-      .insert([{ user_id: userId, title }])
+      .insert([conversationInput])
       .select()
       .single();
 
@@ -1010,8 +1028,8 @@ export const chatMessageService = {
     if (error) throw error;
 
     // Validate all returned chat messages
-    const validatedData = (data || []).map((item) =>
-      validateOrThrow(chatMessageSchema, item)
+    const validatedData = (data || []).map((item: unknown) =>
+      validateOrThrow(chatMessageSchema, item),
     );
 
     return validatedData;
@@ -1024,25 +1042,22 @@ export const chatMessageService = {
     suggestions?: string[] | null,
     recipes?: Recipe[] | null,
   ): Promise<ChatMessage> {
-    // Validate message content length
-    if (content.length === 0) {
-      throw new Error("Message content cannot be empty");
-    }
-    if (content.length > 10000) {
-      throw new Error("Message content too long (maximum 10000 characters)");
-    }
+    const messageInput = {
+      conversation_id: conversationId,
+      sender,
+      content,
+      ...(suggestions !== undefined ? { suggestions } : {}),
+      ...(recipes !== undefined ? { recipes } : {}),
+    };
+
+    const validatedInput = validateOrThrow(
+      chatMessageInsertSchema,
+      messageInput,
+    );
 
     const { data, error } = await supabase
       .from("messages")
-      .insert([
-        {
-          conversation_id: conversationId,
-          sender,
-          content,
-          suggestions,
-          recipes,
-        },
-      ])
+      .insert([validatedInput])
       .select()
       .single();
 
