@@ -361,7 +361,7 @@ export const conversationSchema = z.object({
   user_id: uuidSchema,
   created_at: dateStringSchema,
   updated_at: dateStringSchema,
-  title: z.string().max(255, "Title too long").nullable(),
+  title: z.string().max(255, "Title too long").trim().nullable(),
 });
 
 export const conversationInsertSchema = conversationSchema.omit({
