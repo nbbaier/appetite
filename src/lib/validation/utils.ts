@@ -217,6 +217,19 @@ export function toFormErrors(
 
 /**
  * Debounced validation for form fields
+ * Returns a validator function and a cleanup function to prevent memory leaks
+ * 
+ * @example
+ * ```typescript
+ * // Create validator with cleanup
+ * const { validator, cleanup } = createDebouncedValidator(mySchema, 300);
+ * 
+ * // Use the validator
+ * const result = await validator(data);
+ * 
+ * // Clean up when component unmounts or validator is no longer needed
+ * cleanup();
+ * ```
  */
 export function createDebouncedValidator<T>(
   schema: z.ZodSchema<T>,
@@ -224,7 +237,7 @@ export function createDebouncedValidator<T>(
 ) {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  return (data: unknown): Promise<ValidationResult<T>> => {
+  const validator = (data: unknown): Promise<ValidationResult<T>> => {
     return new Promise((resolve) => {
       if (timeoutId) {
         clearTimeout(timeoutId);
@@ -232,9 +245,19 @@ export function createDebouncedValidator<T>(
 
       timeoutId = setTimeout(() => {
         resolve(validate(schema, data));
+        timeoutId = null;
       }, delay);
     });
   };
+
+  const cleanup = () => {
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+      timeoutId = null;
+    }
+  };
+
+  return { validator, cleanup };
 }
 
 /**
