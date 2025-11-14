@@ -834,7 +834,8 @@ export const userProfileService = {
         .maybeSingle();
 
       if (error) throw error;
-      return data;
+      if (!data) return null;
+      return validateOrThrow(userProfileSchema, data);
     } catch (error: unknown) {
       if (
         typeof error === "object" &&
