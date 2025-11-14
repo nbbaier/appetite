@@ -132,9 +132,9 @@ export function validateEnv<T>(
       throw new Error(errorMessage);
     }
 
-    // In development, log the error and halt the application (same as production)
+    // In development, log the validation error but allow the app to continue
     console.error(errorMessage);
-    // Do not throw in development; allow to continue
+    return env as T;
   }
 
   return result.data;
