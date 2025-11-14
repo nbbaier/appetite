@@ -188,9 +188,7 @@ export function parseJSON<T>(
     return validate(schema, parsed);
   } catch (error) {
     if (
-      typeof process !== "undefined" &&
-      process.env &&
-      process.env.NODE_ENV === "development"
+      import.meta.env.MODE === "development"
     ) {
       // Log JSON parse errors in development for debugging
       console.error("parseJSON error:", error);
