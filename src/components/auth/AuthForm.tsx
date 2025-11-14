@@ -7,10 +7,15 @@ import { z } from "zod";
 import { useAuth } from "../../contexts/AuthContext";
 import { handleApiError } from "../../lib/errorUtils";
 import {
-  signInSchema,
   signUpSchema,
   type SignUpFormData,
 } from "../../lib/validation";
+
+// Local signInSchema: only require password min 6 chars, no complexity
+const signInSchema = z.object({
+  email: z.string().email({ message: "Invalid email address" }),
+  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+});
 import { Button } from "../ui/button";
 import {
   Card,
