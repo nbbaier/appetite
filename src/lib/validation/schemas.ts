@@ -88,7 +88,7 @@ export const recipeSchema = z.object({
     .min(1, "Recipe description is required")
     .max(5000, "Recipe description too long")
     .trim(),
-  image_url: z.string().url("Invalid image URL").or(z.literal("")),
+  image_url: z.string().url("Invalid image URL").optional(),
   prep_time: nonNegativeNumberSchema,
   cook_time: nonNegativeNumberSchema,
   servings: positiveNumberSchema.int("Servings must be a whole number"),
