@@ -78,14 +78,12 @@ export function createValidatedFunction<TInput, TOutput>(
 }
 
 /**
- * Sanitizes user input to prevent XSS attacks
+ * Sanitizes user input to prevent XSS attacks by escaping HTML special characters.
+ * Does not strip existing HTML tags to avoid double-escaping already-escaped entities.
  */
 export function sanitizeString(input: string): string {
-  // Remove any HTML tags
-  const withoutTags = input.replace(/<[^>]*>/g, "");
-
-  // Escape special characters
-  const escaped = withoutTags
+  // Escape special characters only
+  const escaped = input
     .replace(/&/g, "&amp;")
     .replace(/</g, "&lt;")
     .replace(/>/g, "&gt;")
@@ -133,7 +131,9 @@ export function validateEnv<T>(
     }
 
     // In development, log the validation error but allow the app to continue
+    // Return unvalidated env to prevent undefined errors
     console.error(errorMessage);
+    return env as T;
   }
 
   return result.data;
