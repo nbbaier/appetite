@@ -3,6 +3,33 @@ import { createRoot } from "react-dom/client";
 import App from "./App.tsx";
 import "./index.css";
 import type { ErrorInfo, ReactNode } from "react";
+import { onCLS, onFCP, onINP, onLCP, onTTFB } from "web-vitals";
+
+// Performance monitoring with Web Vitals
+// Only log in production to avoid noise during development
+if (import.meta.env.PROD) {
+  const logWebVital = (metric: {
+    name: string;
+    value: number;
+    rating: string;
+  }) => {
+    // Log to console in production (can be replaced with analytics service)
+    const isUnitless = metric.name === "CLS";
+    console.log(
+      `[Web Vitals] ${metric.name}: ${metric.value.toFixed(2)}${isUnitless ? "" : "ms"} (${metric.rating})`,
+    );
+
+    // TODO: Send to analytics service (e.g., Google Analytics, Sentry, etc.)
+    // Example: analytics.track('web-vitals', metric);
+  };
+
+  // Track Core Web Vitals
+  onCLS(logWebVital); // Cumulative Layout Shift
+  onFCP(logWebVital); // First Contentful Paint
+  onINP(logWebVital); // Interaction to Next Paint
+  onLCP(logWebVital); // Largest Contentful Paint
+  onTTFB(logWebVital); // Time to First Byte
+}
 
 // Add error boundary for debugging
 class ErrorBoundary extends React.Component<
