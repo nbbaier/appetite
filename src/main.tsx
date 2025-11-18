@@ -14,8 +14,9 @@ if (import.meta.env.PROD) {
     rating: string;
   }) => {
     // Log to console in production (can be replaced with analytics service)
+    const isUnitless = metric.name === "CLS";
     console.log(
-      `[Web Vitals] ${metric.name}: ${metric.value.toFixed(2)}ms (${metric.rating})`,
+      `[Web Vitals] ${metric.name}: ${metric.value.toFixed(2)}${isUnitless ? "" : "ms"} (${metric.rating})`,
     );
 
     // TODO: Send to analytics service (e.g., Google Analytics, Sentry, etc.)
