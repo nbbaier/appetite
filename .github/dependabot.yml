@@ -34,8 +34,8 @@ updates:
         update-types:
           - "minor"
           - "patch"
-    # Ignore specific packages if needed
-    ignore:
+    # Ignore specific packages if needed (Commented out key to prevent error)
+    # ignore:
       # Example: Ignore React 19 updates until stable
       # - dependency-name: "react"
       #   versions: ["19.x"]
