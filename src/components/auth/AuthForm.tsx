@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, ChefHat, Sparkles } from "lucide-react";
+import { AlertCircle, ChefHat } from "lucide-react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -76,20 +76,19 @@ function AuthFormRaw({ initialMode }: AuthFormProps) {
   };
 
   return (
-    <div className="flex justify-center items-center p-4 min-h-screen bg-gradient-to-br from-emerald-50 via-white to-emerald-100">
+    <div className="flex justify-center items-center p-4 min-h-dvh bg-emerald-50 pb-[env(safe-area-inset-bottom)]">
       <Card className="w-full max-w-md border-emerald-100 shadow-2xl">
         <CardHeader className="pb-8 text-center">
-          <div className="relative mx-auto mb-6">
-            <div className="flex justify-center items-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl shadow-xl">
-              <ChefHat className="w-8 h-8 text-white" />
-              <Sparkles className="absolute -top-2 -right-2 w-5 h-5 text-yellow-300 animate-pulse" />
+          <div className="mx-auto mb-6">
+            <div className="flex justify-center items-center size-16 bg-emerald-600 rounded-2xl shadow-xl">
+              <ChefHat className="size-8 text-white" />
             </div>
           </div>
           <div className="space-y-2">
-            <CardTitle className="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-emerald-600 to-emerald-700">
+            <CardTitle className="text-2xl font-bold text-emerald-700 text-balance">
               {isSignUp ? "Join Appetite" : "Welcome Back"}
             </CardTitle>
-            <CardDescription className="text-base">
+            <CardDescription className="text-base text-pretty">
               {isSignUp
                 ? "Start your AI-powered cooking journey today"
                 : "Your intelligent cooking companion awaits"}
@@ -107,7 +106,7 @@ function AuthFormRaw({ initialMode }: AuthFormProps) {
           {!isSupabaseConnected && (
             <div className="p-4 mb-6 bg-amber-50 rounded-lg border border-amber-200 dark:bg-amber-950 dark:border-amber-800">
               <div className="flex items-start space-x-3">
-                <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                <AlertCircle className="size-5 text-amber-600 mt-0.5 flex-shrink-0" />
                 <div>
                   <h4 className="text-sm font-medium text-amber-800 dark:text-amber-200">
                     Setup Required
@@ -169,7 +168,7 @@ function AuthFormRaw({ initialMode }: AuthFormProps) {
 
             <Button
               type="submit"
-              className="w-full bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800"
+              className="w-full bg-emerald-600 hover:bg-emerald-700"
               disabled={loading || !isSupabaseConnected}
             >
               {loading ? "Loading..." : isSignUp ? "Create Account" : "Sign In"}

@@ -4,6 +4,16 @@ import { ListPlus, Plus, ShoppingCart } from "lucide-react";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../components/ui/alert-dialog";
 import { AddEditItemForm } from "../components/shopping/AddEditItemForm";
 import { AddFromRecipeModal } from "../components/shopping/AddFromRecipeModal";
 import { CreateListForm } from "../components/shopping/CreateListForm";
@@ -82,6 +92,8 @@ export function Shopping() {
   const [showRecipeModal, setShowRecipeModal] = useState(false);
   const [editingItem, setEditingItem] = useState<ShoppingListItem | null>(null);
   const [error, _setError] = useState<string | null>(null);
+  const [deleteListDialogOpen, setDeleteListDialogOpen] = useState(false);
+  const [listToDelete, setListToDelete] = useState<string | null>(null);
 
   const [listFormData, setListFormData] = useState({
     name: "",
@@ -239,19 +251,27 @@ export function Shopping() {
     }
   };
 
-  const deleteList = async (listId: string) => {
-    if (!confirm("Are you sure you want to delete this shopping list?")) return;
+  const handleDeleteListClick = (listId: string) => {
+    setListToDelete(listId);
+    setDeleteListDialogOpen(true);
+  };
+
+  const handleDeleteListConfirm = async () => {
+    if (!listToDelete) return;
 
     try {
-      await shoppingListService.deleteList(listId);
-      const updatedLists = shoppingLists.filter((list) => list.id !== listId);
+      await shoppingListService.deleteList(listToDelete);
+      const updatedLists = shoppingLists.filter((list) => list.id !== listToDelete);
       setShoppingLists(updatedLists);
 
-      if (selectedList?.id === listId) {
+      if (selectedList?.id === listToDelete) {
         setSelectedList(updatedLists[0] || null);
       }
     } catch (error) {
       console.error("Error deleting list:", error);
+    } finally {
+      setDeleteListDialogOpen(false);
+      setListToDelete(null);
     }
   };
 
@@ -415,8 +435,8 @@ export function Shopping() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <div className="w-8 h-8 rounded-full border-b-2 animate-spin border-primary"></div>
+      <div className="flex justify-center items-center py-12" role="status" aria-label="Loading shopping lists">
+        <div className="size-8 rounded-full border-b-2 animate-spin border-primary"></div>
       </div>
     );
   }
@@ -425,10 +445,10 @@ export function Shopping() {
     <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-center sm:text-left">
-          <h1 className="text-xl font-bold sm:text-2xl text-secondary-900">
+          <h1 className="text-xl font-bold sm:text-2xl text-secondary-900 text-balance">
             Shopping Lists
           </h1>
-          <p className="text-sm sm:text-base text-secondary-600">
+          <p className="text-sm sm:text-base text-secondary-600 text-pretty">
             Plan your grocery trips and track purchases
           </p>
         </div>
@@ -438,7 +458,7 @@ export function Shopping() {
             variant="outline"
             className="flex justify-center items-center space-x-2 text-sm sm:text-base"
           >
-            <ListPlus className="w-4 h-4" />
+            <ListPlus className="size-4" />
             <span>New List</span>
           </Button>
           <Button
@@ -446,7 +466,7 @@ export function Shopping() {
             disabled={!selectedList}
             className="flex justify-center items-center space-x-2 text-sm sm:text-base"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="size-4" />
             <span>Add Item</span>
           </Button>
         </div>
@@ -458,7 +478,7 @@ export function Shopping() {
           shoppingLists={shoppingLists}
           selectedList={selectedList}
           onSelect={setSelectedList}
-          onDelete={deleteList}
+          onDelete={handleDeleteListClick}
         />
       )}
 
@@ -510,7 +530,7 @@ export function Shopping() {
           {filteredItems.length === 0 ? (
             <EmptyState
               icon={
-                <ShoppingCart className="mx-auto mb-4 w-10 h-10 sm:h-12 sm:w-12 text-secondary-400" />
+                <ShoppingCart className="mx-auto mb-4 size-10 sm:size-12 text-secondary-400" />
               }
               message={
                 searchTerm || selectedCategory !== "All"
@@ -569,7 +589,7 @@ export function Shopping() {
       ) : (
         <Card>
           <CardContent className="py-8 text-center sm:py-12">
-            <ShoppingCart className="mx-auto mb-4 w-10 h-10 sm:h-12 sm:w-12 text-secondary-400" />
+            <ShoppingCart className="mx-auto mb-4 size-10 sm:size-12 text-secondary-400" />
             <h3 className="mb-2 text-base font-medium sm:text-lg text-secondary-900">
               No shopping lists yet
             </h3>
@@ -601,6 +621,27 @@ export function Shopping() {
           {error}
         </div>
       )}
+
+      {/* Delete List Confirmation Dialog */}
+      <AlertDialog open={deleteListDialogOpen} onOpenChange={setDeleteListDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Shopping List</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this shopping list? All items in the list will be permanently removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteListConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
