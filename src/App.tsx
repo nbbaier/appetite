@@ -45,9 +45,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-background">
+      <div className="flex justify-center items-center min-h-dvh bg-background">
         <div className="text-center">
-          <div className="mx-auto w-8 h-8 rounded-full border-b-2 animate-spin border-primary"></div>
+          <div className="mx-auto size-8 rounded-full border-b-2 animate-spin border-primary"></div>
           <p className="mt-2 text-muted-foreground">Loading...</p>
         </div>
       </div>
@@ -66,9 +66,9 @@ function AppRoutes() {
   const { user, loading, isSupabaseConnected } = useAuth();
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-background">
+      <div className="flex justify-center items-center min-h-dvh bg-background">
         <div className="text-center">
-          <div className="mx-auto w-8 h-8 rounded-full border-b-2 animate-spin border-primary"></div>
+          <div className="mx-auto size-8 rounded-full border-b-2 animate-spin border-primary"></div>
           <p className="mt-2 text-muted-foreground">Loading...</p>
         </div>
       </div>
@@ -169,9 +169,9 @@ function App() {
                   <Toaster position="top-right" richColors />
                   <Suspense
                     fallback={
-                      <div className="flex justify-center items-center min-h-screen bg-background">
+                      <div className="flex justify-center items-center min-h-dvh bg-background">
                         <div className="text-center">
-                          <div className="mx-auto w-8 h-8 rounded-full border-b-2 animate-spin border-primary"></div>
+                          <div className="mx-auto size-8 rounded-full border-b-2 animate-spin border-primary"></div>
                           <p className="mt-2 text-muted-foreground">
                             Loading...
                           </p>
@@ -191,7 +191,7 @@ function App() {
   } catch (error) {
     console.error("App render error:", error);
     return (
-      <div className="flex justify-center items-center p-4 min-h-screen bg-red-50">
+      <div className="flex justify-center items-center p-4 min-h-dvh bg-red-50">
         <div className="text-center">
           <h1 className="mb-2 text-2xl font-bold text-red-600">
             Application Error

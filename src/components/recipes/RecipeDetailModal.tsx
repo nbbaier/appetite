@@ -79,16 +79,17 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
   if (!open || !recipe) return null;
   const missingIngredients = getMissingIngredients();
   return (
-    <div className="flex fixed inset-0 z-50 justify-center items-center p-4">
+    <div className="flex fixed inset-0 z-modal justify-center items-center p-4 pb-[env(safe-area-inset-bottom)]">
       <Card className="max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
         <CardHeader className="relative pb-3 sm:pb-4">
           <Button
             variant="ghost"
             size="icon"
             onClick={onClose}
-            className="absolute top-2 right-2 z-10 sm:right-4 sm:top-4"
+            className="absolute top-2 right-2 z-dropdown sm:right-4 sm:top-4"
+            aria-label="Close recipe details"
           >
-            <X className="w-4 h-4" />
+            <X className="size-4" />
           </Button>
           <div className="relative">
             <img
@@ -103,10 +104,10 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
               <div className="p-3 rounded-lg backdrop-blur-sm bg-white/95 sm:p-4">
                 <div className="flex justify-between items-start">
                   <div className="flex-1 min-w-0">
-                    <h2 className="mb-1 text-lg font-bold text-gray-900 sm:text-2xl sm:mb-2 line-clamp-2">
+                    <h2 className="mb-1 text-lg font-bold text-gray-900 sm:text-2xl sm:mb-2 line-clamp-2 text-balance">
                       {recipe.title}
                     </h2>
-                    <p className="mb-2 text-sm text-gray-600 sm:text-base sm:mb-3 line-clamp-2">
+                    <p className="mb-2 text-sm text-gray-600 sm:text-base sm:mb-3 line-clamp-2 text-pretty">
                       {recipe.description}
                     </p>
                     <div className="flex flex-wrap gap-2 items-center">
@@ -120,7 +121,7 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                       )}
                       {canCook && (
                         <Badge className="text-xs bg-green-600">
-                          <Sparkles className="mr-1 w-2 h-2 sm:h-3 sm:w-3" />
+                          <Sparkles className="mr-1 size-2 sm:size-3" />
                           Can Cook
                         </Badge>
                       )}
@@ -131,6 +132,7 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                       e.stopPropagation();
                       onBookmark(recipe.id);
                     }}
+                    aria-label={isBookmarked ? "Remove from bookmarks" : "Add to bookmarks"}
                     className={`p-2 rounded-full transition-colors ml-2 flex-shrink-0 ${
                       isBookmarked
                         ? "text-white bg-red-500"
@@ -138,7 +140,7 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                     }`}
                   >
                     <Heart
-                      className={`h-4 w-4 sm:h-5 sm:w-5 ${isBookmarked ? "fill-current" : ""}`}
+                      className={`size-4 sm:size-5 ${isBookmarked ? "fill-current" : ""}`}
                     />
                   </button>
                 </div>
@@ -149,8 +151,8 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
         <ScrollArea className="h-[calc(90vh-300px)]">
           <CardContent className="p-4 sm:p-6">
             {loading ? (
-              <div className="flex justify-center items-center py-8">
-                <div className="w-8 h-8 rounded-full border-b-2 animate-spin border-primary"></div>
+              <div className="flex justify-center items-center py-8" role="status" aria-label="Loading recipe details">
+                <div className="size-8 rounded-full border-b-2 animate-spin border-primary"></div>
               </div>
             ) : (
               <div className="space-y-6">
@@ -163,7 +165,7 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                         variant="default"
                         className="flex items-center space-x-2"
                       >
-                        <ShoppingCart className="mr-2 w-4 h-4" />
+                        <ShoppingCart className="mr-2 size-4" />
                         <span>Add missing ingredients to shopping list</span>
                       </Button>
                     </div>
@@ -172,9 +174,9 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                 <div className="grid grid-cols-3 gap-2 text-center sm:gap-4">
                   <div className="p-3 bg-gray-50 rounded-lg sm:p-4">
                     <div className="flex justify-center items-center mb-1 sm:mb-2">
-                      <Timer className="w-4 h-4 text-blue-600 sm:h-5 sm:w-5" />
+                      <Timer className="size-4 text-blue-600 sm:size-5" />
                     </div>
-                    <div className="text-lg font-bold text-gray-900 sm:text-2xl">
+                    <div className="text-lg font-bold text-gray-900 sm:text-2xl tabular-nums">
                       {recipe.prep_time}
                     </div>
                     <div className="text-xs text-gray-600 sm:text-sm">
@@ -183,9 +185,9 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                   </div>
                   <div className="p-3 bg-gray-50 rounded-lg sm:p-4">
                     <div className="flex justify-center items-center mb-1 sm:mb-2">
-                      <ChefHat className="w-4 h-4 text-orange-600 sm:h-5 sm:w-5" />
+                      <ChefHat className="size-4 text-orange-600 sm:size-5" />
                     </div>
-                    <div className="text-lg font-bold text-gray-900 sm:text-2xl">
+                    <div className="text-lg font-bold text-gray-900 sm:text-2xl tabular-nums">
                       {recipe.cook_time}
                     </div>
                     <div className="text-xs text-gray-600 sm:text-sm">
@@ -194,9 +196,9 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                   </div>
                   <div className="p-3 bg-gray-50 rounded-lg sm:p-4">
                     <div className="flex justify-center items-center mb-1 sm:mb-2">
-                      <Users className="w-4 h-4 text-green-600 sm:h-5 sm:w-5" />
+                      <Users className="size-4 text-green-600 sm:size-5" />
                     </div>
-                    <div className="text-lg font-bold text-gray-900 sm:text-2xl">
+                    <div className="text-lg font-bold text-gray-900 sm:text-2xl tabular-nums">
                       {recipe.servings}
                     </div>
                     <div className="text-xs text-gray-600 sm:text-sm">
@@ -208,8 +210,8 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                   {/* Ingredients */}
                   <div>
                     <div className="flex items-center mb-3 space-x-2 sm:mb-4">
-                      <Utensils className="w-4 h-4 text-gray-600 sm:h-5 sm:w-5" />
-                      <h3 className="text-base font-semibold text-gray-900 sm:text-lg">
+                      <Utensils className="size-4 text-gray-600 sm:size-5" />
+                      <h3 className="text-base font-semibold text-gray-900 sm:text-lg text-balance">
                         Ingredients
                       </h3>
                     </div>
@@ -220,7 +222,7 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                         variant="outline"
                         className="flex items-center space-x-2 text-sm"
                       >
-                        <Utensils className="w-4 h-4" />
+                        <Utensils className="size-4" />
                         <span>Create Leftover</span>
                       </Button>
                     </div>
@@ -235,7 +237,7 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                               className="flex justify-between items-center p-2 rounded-lg border transition-colors sm:p-3"
                             >
                               <div className="flex flex-1 items-center space-x-2 min-w-0">
-                                <div className="flex-shrink-0 w-2 h-2 bg-gray-300 rounded-full sm:w-3 sm:h-3" />
+                                <div className="flex-shrink-0 size-2 bg-gray-300 rounded-full sm:size-3" />
                                 <div className="flex items-center space-x-1">
                                   <span className="text-sm font-medium truncate sm:text-base">
                                     {ingredient.ingredient_name}
@@ -263,8 +265,8 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                   {/* Instructions */}
                   <div>
                     <div className="flex items-center mb-3 space-x-2 sm:mb-4">
-                      <BookOpen className="w-4 h-4 text-gray-600 sm:h-5 sm:w-5" />
-                      <h3 className="text-base font-semibold text-gray-900 sm:text-lg">
+                      <BookOpen className="size-4 text-gray-600 sm:size-5" />
+                      <h3 className="text-base font-semibold text-gray-900 sm:text-lg text-balance">
                         Instructions
                       </h3>
                     </div>
@@ -276,7 +278,7 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                             className="flex space-x-3 sm:space-x-4"
                           >
                             <div className="flex-shrink-0">
-                              <div className="flex justify-center items-center w-6 h-6 text-xs font-medium text-white rounded-full sm:w-8 sm:h-8 bg-primary sm:text-sm">
+                              <div className="flex justify-center items-center size-6 text-xs font-medium text-white rounded-full sm:size-8 bg-primary sm:text-sm tabular-nums">
                                 {instruction.step_number}
                               </div>
                             </div>

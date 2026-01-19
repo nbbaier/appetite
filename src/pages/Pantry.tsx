@@ -20,6 +20,16 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { ExpirationMonitor } from "../components/alerts/ExpirationMonitor";
 import { SmartCategorySelector } from "../components/categories/SmartCategorySelector";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../components/ui/alert-dialog";
 import { AutocompleteInput } from "../components/ui/AutocompleteInput";
 import { Button } from "../components/ui/button";
 import {
@@ -148,6 +158,8 @@ export function Pantry() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [itemsToShow, setItemsToShow] = useState(12);
   const [error, _setError] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [ingredientToDelete, setIngredientToDelete] = useState<string | null>(null);
   const { register, handleSubmit, reset, setValue, control, getValues } =
     useForm<IngredientFormData>({
       resolver: zodResolver(ingredientSchema),
@@ -189,11 +201,11 @@ export function Pantry() {
                 : "bg-yellow-50 text-yellow-800 border-yellow-200",
           icon:
             notificationType === "expired" ? (
-              <AlertTriangle className="w-5 h-5 text-red-600" />
+              <AlertTriangle className="size-5 text-red-600" />
             ) : notificationType === "critical" ? (
-              <AlertTriangle className="w-5 h-5 text-orange-600" />
+              <AlertTriangle className="size-5 text-orange-600" />
             ) : (
-              <AlertTriangle className="w-5 h-5 text-yellow-600" />
+              <AlertTriangle className="size-5 text-yellow-600" />
             ),
         });
       },
@@ -239,18 +251,23 @@ export function Pantry() {
     [user, editingIngredient, updateIngredient, addIngredient, reset, notify],
   );
 
-  const handleDelete = useCallback(
-    async (id: string) => {
-      if (!confirm("Are you sure you want to delete this ingredient?")) return;
-      try {
-        await deleteIngredient(id);
-      } catch (error) {
-        console.error("Error deleting ingredient:", error);
-        notify(handleApiError(error), { type: "error" });
-      }
-    },
-    [deleteIngredient, notify],
-  );
+  const handleDeleteClick = useCallback((id: string) => {
+    setIngredientToDelete(id);
+    setDeleteDialogOpen(true);
+  }, []);
+
+  const handleDeleteConfirm = useCallback(async () => {
+    if (!ingredientToDelete) return;
+    try {
+      await deleteIngredient(ingredientToDelete);
+    } catch (error) {
+      console.error("Error deleting ingredient:", error);
+      notify(handleApiError(error), { type: "error" });
+    } finally {
+      setDeleteDialogOpen(false);
+      setIngredientToDelete(null);
+    }
+  }, [ingredientToDelete, deleteIngredient, notify]);
 
   const resetNaturalLanguageForm = useCallback(() => {
     setNaturalLanguageText("");
@@ -446,8 +463,8 @@ export function Pantry() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <div className="w-8 h-8 rounded-full border-b-2 animate-spin border-primary"></div>
+      <div className="flex justify-center items-center py-12" role="status" aria-label="Loading pantry">
+        <div className="size-8 rounded-full border-b-2 animate-spin border-primary"></div>
       </div>
     );
   }
@@ -461,10 +478,10 @@ export function Pantry() {
       )}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-center sm:text-left">
-          <h1 className="text-xl font-bold sm:text-2xl text-secondary-900">
+          <h1 className="text-xl font-bold sm:text-2xl text-secondary-900 text-balance">
             My Pantry
           </h1>
-          <p className="text-sm sm:text-base text-secondary-600">
+          <p className="text-sm sm:text-base text-secondary-600 text-pretty">
             Track your ingredients and expiration dates
           </p>
         </div>
@@ -477,7 +494,7 @@ export function Pantry() {
             variant={showAddForm ? "default" : "outline"}
             className="flex justify-center items-center space-x-2 text-sm sm:text-base"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="size-4" />
             <span>Add Ingredient</span>
           </Button>
           <Button
@@ -489,7 +506,7 @@ export function Pantry() {
             variant={showNaturalLanguageInput ? "default" : "outline"}
             className="flex justify-center items-center space-x-2 text-sm sm:text-base"
           >
-            <MessageCircle className="w-4 h-4" />
+            <MessageCircle className="size-4" />
             <span>Add from Text</span>
           </Button>
           {ingredientsWithExpiration.length > 0 && (
@@ -502,7 +519,7 @@ export function Pantry() {
               variant={showExpirationMonitor ? "default" : "outline"}
               className="flex justify-center items-center space-x-2 text-sm sm:text-base"
             >
-              <Calendar className="w-4 h-4" />
+              <Calendar className="size-4" />
               <span>Monitor Expiration</span>
             </Button>
           )}
@@ -512,7 +529,7 @@ export function Pantry() {
       {/* Search and Filter */}
       <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:gap-4">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 w-4 h-4 transform -translate-y-1/2 text-secondary-400" />
+          <Search className="absolute left-3 top-1/2 size-4 transform -translate-y-1/2 text-secondary-400" />
           <Input
             placeholder="Search ingredients..."
             value={searchTerm}
@@ -521,7 +538,7 @@ export function Pantry() {
           />
         </div>
         <div className="flex items-center space-x-2">
-          <Filter className="flex-shrink-0 w-4 h-4 text-secondary-600" />
+          <Filter className="flex-shrink-0 size-4 text-secondary-600" />
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
@@ -697,7 +714,7 @@ export function Pantry() {
         <Card>
           <CardHeader className="pb-3 sm:pb-6">
             <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-              <MessageCircle className="w-5 h-5" />
+              <MessageCircle className="size-5" />
               <span>Add Ingredients from Text</span>
             </CardTitle>
             <CardDescription>
@@ -724,7 +741,7 @@ export function Pantry() {
                 disabled={!naturalLanguageText.trim() || isParsingText}
                 className="flex justify-center items-center space-x-2"
               >
-                <Wand2 className="w-4 h-4" />
+                <Wand2 className="size-4" />
                 <span>{isParsingText ? "Parsing..." : "Parse Text"}</span>
               </Button>
               <Button
@@ -749,7 +766,7 @@ export function Pantry() {
                     disabled={isAddingToPantry}
                     className="flex items-center space-x-2"
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="size-4" />
                     <span>
                       {isAddingToPantry ? "Adding..." : "Add All to Pantry"}
                     </span>
@@ -846,7 +863,7 @@ export function Pantry() {
                               onClick={() => removeParsedIngredient(index)}
                               className="p-1 rounded text-secondary-400 hover:text-red-600"
                             >
-                              <X className="w-4 h-4" />
+                              <X className="size-4" />
                             </button>
                           </div>
                         </div>
@@ -869,7 +886,7 @@ export function Pantry() {
       {paginatedIngredients.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center sm:py-12">
-            <Package className="mx-auto mb-4 w-10 h-10 sm:h-12 sm:w-12 text-secondary-400" />
+            <Package className="mx-auto mb-4 size-10 sm:size-12 text-secondary-400" />
             <h3 className="mb-2 text-base font-medium sm:text-lg text-secondary-900">
               No ingredients found
             </h3>
@@ -928,14 +945,16 @@ export function Pantry() {
                     <button
                       onClick={() => startEdit(ingredient)}
                       className="p-1.5 text-secondary-400 hover:text-secondary-600 rounded"
+                      aria-label={`Edit ${ingredient.name}`}
                     >
-                      <Edit3 className="w-3 h-3 sm:h-4 sm:w-4" />
+                      <Edit3 className="size-3 sm:size-4" />
                     </button>
                     <button
-                      onClick={() => handleDelete(ingredient.id)}
+                      onClick={() => handleDeleteClick(ingredient.id)}
                       className="p-1.5 text-secondary-400 hover:text-red-600 rounded"
+                      aria-label={`Delete ${ingredient.name}`}
                     >
-                      <Trash2 className="w-3 h-3 sm:h-4 sm:w-4" />
+                      <Trash2 className="size-3 sm:size-4" />
                     </button>
                   </div>
                 </div>
@@ -949,7 +968,7 @@ export function Pantry() {
                         : "text-orange-600"
                     }`}
                   >
-                    <AlertTriangle className="flex-shrink-0 w-3 h-3" />
+                    <AlertTriangle className="flex-shrink-0 size-3" />
                     <span className="truncate">
                       {isOutOfStock(ingredient)
                         ? "Out of stock - reorder needed"
@@ -969,9 +988,9 @@ export function Pantry() {
                   >
                     {(isExpired(ingredient.expiration_date) ||
                       isExpiringSoon(ingredient.expiration_date)) && (
-                      <AlertTriangle className="flex-shrink-0 w-3 h-3" />
+                      <AlertTriangle className="flex-shrink-0 size-3" />
                     )}
-                    <Calendar className="flex-shrink-0 w-3 h-3" />
+                    <Calendar className="flex-shrink-0 size-3" />
                     <span className="truncate">
                       Expires:{" "}
                       {new Date(
@@ -1003,6 +1022,27 @@ export function Pantry() {
           </Button>
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Ingredient</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this ingredient? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

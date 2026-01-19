@@ -8,6 +8,16 @@ import {
   Search,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "../components/ui/alert-dialog";
 import { LeftoverCard } from "../components/leftovers/LeftoverCard";
 import { LeftoverForm } from "../components/leftovers/LeftoverForm";
 import { Button } from "../components/ui/button";
@@ -36,6 +46,8 @@ export function Leftovers() {
   const [saving, setSaving] = useState(false);
   const { settings } = useSettings();
   const [error, _setError] = useState<string | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [leftoverToDelete, setLeftoverToDelete] = useState<string | null>(null);
   const { notify } = useNotification();
 
   const loadLeftovers = useCallback(async () => {
@@ -73,11 +85,11 @@ export function Leftovers() {
           duration: 8000,
           icon:
             notificationType === "expired" ? (
-              <AlertTriangle className="w-5 h-5 text-red-600" />
+              <AlertTriangle className="size-5 text-red-600" />
             ) : notificationType === "critical" ? (
-              <AlertTriangle className="w-5 h-5 text-orange-600" />
+              <AlertTriangle className="size-5 text-orange-600" />
             ) : (
-              <AlertTriangle className="w-5 h-5 text-yellow-600" />
+              <AlertTriangle className="size-5 text-yellow-600" />
             ),
         });
       },
@@ -103,14 +115,22 @@ export function Leftovers() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this leftover?")) return;
+  const handleDeleteClick = (id: string) => {
+    setLeftoverToDelete(id);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!leftoverToDelete) return;
 
     try {
-      await leftoverService.delete(id);
+      await leftoverService.delete(leftoverToDelete);
       await loadLeftovers();
     } catch (error) {
       console.error("Error deleting leftover:", error);
+    } finally {
+      setDeleteDialogOpen(false);
+      setLeftoverToDelete(null);
     }
   };
 
@@ -160,8 +180,8 @@ export function Leftovers() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <div className="w-8 h-8 rounded-full border-b-2 animate-spin border-primary"></div>
+      <div className="flex justify-center items-center py-12" role="status" aria-label="Loading leftovers">
+        <div className="size-8 rounded-full border-b-2 animate-spin border-primary"></div>
       </div>
     );
   }
@@ -170,10 +190,10 @@ export function Leftovers() {
     <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-center sm:text-left">
-          <h1 className="text-xl font-bold sm:text-2xl text-secondary-900">
+          <h1 className="text-xl font-bold sm:text-2xl text-secondary-900 text-balance">
             Leftovers
           </h1>
-          <p className="text-sm sm:text-base text-secondary-600">
+          <p className="text-sm sm:text-base text-secondary-600 text-pretty">
             Track your leftovers and reduce food waste
           </p>
         </div>
@@ -181,7 +201,7 @@ export function Leftovers() {
           onClick={() => setShowAddForm(true)}
           className="flex justify-center items-center space-x-2 text-sm sm:text-base"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="size-4" />
           <span>Add Leftover</span>
         </Button>
       </div>
@@ -192,7 +212,7 @@ export function Leftovers() {
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <Package className="w-6 h-6 sm:h-8 sm:w-8 text-primary" />
+                <Package className="size-6 sm:size-8 text-primary" />
               </div>
               <div className="flex-1 ml-3 min-w-0 sm:ml-4">
                 <p className="text-xs font-medium truncate sm:text-sm text-secondary-600">
@@ -318,7 +338,7 @@ export function Leftovers() {
                     key={leftover.id}
                     leftover={leftover}
                     onEdit={startEdit}
-                    onDelete={handleDelete}
+                    onDelete={handleDeleteClick}
                   />
                 ))}
               </div>
@@ -338,7 +358,7 @@ export function Leftovers() {
                     key={leftover.id}
                     leftover={leftover}
                     onEdit={startEdit}
-                    onDelete={handleDelete}
+                    onDelete={handleDeleteClick}
                   />
                 ))}
               </div>
@@ -358,7 +378,7 @@ export function Leftovers() {
                     key={leftover.id}
                     leftover={leftover}
                     onEdit={startEdit}
-                    onDelete={handleDelete}
+                    onDelete={handleDeleteClick}
                   />
                 ))}
               </div>
@@ -372,6 +392,27 @@ export function Leftovers() {
           {error}
         </div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Leftover</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this leftover? This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
