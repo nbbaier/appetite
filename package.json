@@ -34,7 +34,7 @@
     "lodash": "^4.17.21",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
-    "lucide-react": "^0.563.0",
+    "lucide-react": "^0.564.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
     "react-hook-form": "^7.68.0",
