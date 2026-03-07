@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import debounce from "lodash.debounce";
-import throttle from "lodash.throttle";
 import {
   AlertTriangle,
   Calendar,
@@ -20,6 +19,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { ExpirationMonitor } from "../components/alerts/ExpirationMonitor";
 import { SmartCategorySelector } from "../components/categories/SmartCategorySelector";
+import { AutocompleteInput } from "../components/ui/AutocompleteInput";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -30,7 +30,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../components/ui/alert-dialog";
-import { AutocompleteInput } from "../components/ui/AutocompleteInput";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -45,12 +44,7 @@ import { useNotification } from "../contexts/NotificationContext";
 import { usePantry } from "../contexts/PantryContext";
 import { useSettings } from "../contexts/SettingsContext";
 import { useIngredientHistory } from "../hooks/useIngredientHistory";
-import {
-  clearCache,
-  getFromCache,
-  ingredientService,
-  setToCache,
-} from "../lib/database";
+import { clearCache } from "../lib/database";
 import { handleApiError, logError } from "../lib/errorUtils";
 import { checkExpiringItems } from "../lib/notificationService";
 import type { Ingredient } from "../types";
@@ -131,6 +125,7 @@ export function Pantry() {
     ingredients,
     loading,
     addIngredient,
+    addIngredients,
     updateIngredient,
     deleteIngredient,
   } = usePantry();
@@ -159,7 +154,9 @@ export function Pantry() {
   const [itemsToShow, setItemsToShow] = useState(12);
   const [error, _setError] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [ingredientToDelete, setIngredientToDelete] = useState<string | null>(null);
+  const [ingredientToDelete, setIngredientToDelete] = useState<string | null>(
+    null,
+  );
   const { register, handleSubmit, reset, setValue, control, getValues } =
     useForm<IngredientFormData>({
       resolver: zodResolver(ingredientSchema),
@@ -211,19 +208,6 @@ export function Pantry() {
       },
     });
   }, [user, loading, ingredients, settings]);
-
-  // Replace ingredient fetch with caching and throttling
-  useEffect(() => {
-    const fetchIngredients = throttle(async () => {
-      if (!user) return;
-      let cached = getFromCache<Ingredient[]>(`ingredients_${user.id}`);
-      if (!cached) {
-        cached = await ingredientService.getAll(user.id);
-        setToCache(`ingredients_${user.id}`, cached);
-      }
-    }, 1000);
-    fetchIngredients();
-  }, [user]);
 
   const onSubmit = useCallback(
     async (data: IngredientFormData) => {
@@ -328,18 +312,23 @@ export function Pantry() {
     if (!user || parsedIngredients.length === 0) return;
     setIsAddingToPantry(true);
     try {
-      for (const ingredient of parsedIngredients) {
-        await addIngredient({
-          user_id: user.id,
-          name: ingredient.name,
-          quantity: ingredient.quantity,
-          unit: ingredient.unit,
-          category: ingredient.category,
-          notes: "Added via natural language input",
-          low_stock_threshold: getDefaultThreshold(ingredient.unit),
-          expiration_date: undefined,
-        });
-      }
+      const ingredientBatch = parsedIngredients.map((ingredient) => ({
+        user_id: user.id,
+        name: ingredient.name,
+        quantity: ingredient.quantity,
+        unit: ingredient.unit,
+        category: ingredient.category,
+        notes: "Added via natural language input",
+        low_stock_threshold: getDefaultThreshold(ingredient.unit),
+        expiration_date: undefined,
+      }));
+
+      await addIngredients(ingredientBatch);
+      clearCache(`ingredients_${user.id}`);
+      notify(
+        `Added ${ingredientBatch.length} ingredient${ingredientBatch.length === 1 ? "" : "s"} to your pantry`,
+        { type: "success" },
+      );
       resetNaturalLanguageForm();
     } catch (error) {
       console.error("Error adding parsed ingredients:", error);
@@ -350,7 +339,7 @@ export function Pantry() {
   }, [
     user,
     parsedIngredients,
-    addIngredient,
+    addIngredients,
     resetNaturalLanguageForm,
     notify,
   ]);
@@ -463,7 +452,11 @@ export function Pantry() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12" role="status" aria-label="Loading pantry">
+      <div
+        className="flex justify-center items-center py-12"
+        role="status"
+        aria-label="Loading pantry"
+      >
         <div className="size-8 rounded-full border-b-2 animate-spin border-primary"></div>
       </div>
     );
@@ -1029,7 +1022,8 @@ export function Pantry() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Ingredient</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this ingredient? This action cannot be undone.
+              Are you sure you want to delete this ingredient? This action
+              cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

@@ -1,9 +1,23 @@
 import debounce from "lodash.debounce";
 import throttle from "lodash.throttle";
 import { ListPlus, Plus, ShoppingCart } from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { toast } from "sonner";
 import { z } from "zod";
+import { AddEditItemForm } from "../components/shopping/AddEditItemForm";
+import { AddFromRecipeModal } from "../components/shopping/AddFromRecipeModal";
+import { CreateListForm } from "../components/shopping/CreateListForm";
+import { EmptyState } from "../components/shopping/EmptyState";
+import { ListHeaderWithStats } from "../components/shopping/ListHeaderWithStats";
+import { SearchAndFilterBar } from "../components/shopping/SearchAndFilterBar";
+import { ShoppingListItems } from "../components/shopping/ShoppingListItems";
+import { ShoppingListsTabs } from "../components/shopping/ShoppingListsTabs";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -14,17 +28,10 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../components/ui/alert-dialog";
-import { AddEditItemForm } from "../components/shopping/AddEditItemForm";
-import { AddFromRecipeModal } from "../components/shopping/AddFromRecipeModal";
-import { CreateListForm } from "../components/shopping/CreateListForm";
-import { EmptyState } from "../components/shopping/EmptyState";
-import { ListHeaderWithStats } from "../components/shopping/ListHeaderWithStats";
-import { SearchAndFilterBar } from "../components/shopping/SearchAndFilterBar";
-import { ShoppingListItems } from "../components/shopping/ShoppingListItems";
-import { ShoppingListsTabs } from "../components/shopping/ShoppingListsTabs";
 import { Button } from "../components/ui/button";
 import { Card, CardContent } from "../components/ui/card";
 import { useAuth } from "../contexts/AuthContext";
+import { useNotification } from "../contexts/NotificationContext";
 
 import {
   clearCache,
@@ -34,6 +41,7 @@ import {
   setToCache,
   shoppingListService,
 } from "../lib/database";
+import { handleApiError, logError } from "../lib/errorUtils";
 import { supabase } from "../lib/supabase";
 import type {
   Ingredient,
@@ -77,8 +85,11 @@ const ItemFormSchema = z.object({
   notes: z.string().optional(),
 });
 
+const ITEMS_PER_PAGE = 12;
+
 export function Shopping() {
   const { user } = useAuth();
+  const { notify } = useNotification();
   const [shoppingLists, setShoppingLists] = useState<ShoppingList[]>([]);
   const [selectedList, setSelectedList] = useState<ShoppingList | null>(null);
   const [listItems, setListItems] = useState<ShoppingListItem[]>([]);
@@ -91,9 +102,10 @@ export function Shopping() {
   const [showListForm, setShowListForm] = useState(false);
   const [showRecipeModal, setShowRecipeModal] = useState(false);
   const [editingItem, setEditingItem] = useState<ShoppingListItem | null>(null);
-  const [error, _setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [deleteListDialogOpen, setDeleteListDialogOpen] = useState(false);
   const [listToDelete, setListToDelete] = useState<string | null>(null);
+  const [visibleItemsCount, setVisibleItemsCount] = useState(ITEMS_PER_PAGE);
 
   const [listFormData, setListFormData] = useState({
     name: "",
@@ -112,38 +124,47 @@ export function Shopping() {
     debounce((value: string) => setSearchTerm(value), 300),
   ).current;
 
-  const loadData = useCallback(
-    throttle(async () => {
-      if (!user) return;
-      setLoading(true);
-      try {
-        // Caching for shopping lists
-        let lists = getFromCache<ShoppingList[]>(`shoppingLists_${user.id}`);
-        if (!lists) {
-          lists = await shoppingListService.getAllLists(user.id);
-          setToCache(`shoppingLists_${user.id}`, lists);
-        }
-        setShoppingLists(lists);
-        // Caching for ingredients
-        let ingredients = getFromCache<Ingredient[]>(`ingredients_${user.id}`);
-        if (!ingredients) {
-          ingredients = await ingredientService.getAll(user.id);
-          setToCache(`ingredients_${user.id}`, ingredients);
-        }
-        setUserIngredients(ingredients);
-        // Caching for recipes
-        let recipes = getFromCache<Recipe[]>(`recipes_all`);
-        if (!recipes) {
-          recipes = await recipeService.getAll();
-          setToCache(`recipes_all`, recipes);
-        }
-        setAvailableRecipes(recipes);
-        // No caching for list items (list-specific, often changing)
-      } finally {
-        setLoading(false);
+  const loadData = useCallback(async () => {
+    if (!user) return;
+    setLoading(true);
+    setError(null);
+    try {
+      // Caching for shopping lists
+      let lists = getFromCache<ShoppingList[]>(`shoppingLists_${user.id}`);
+      if (!lists) {
+        lists = await shoppingListService.getAllLists(user.id);
+        setToCache(`shoppingLists_${user.id}`, lists);
       }
-    }, 1000),
-    [],
+      setShoppingLists(lists);
+
+      // Caching for ingredients
+      let ingredients = getFromCache<Ingredient[]>(`ingredients_${user.id}`);
+      if (!ingredients) {
+        ingredients = await ingredientService.getAll(user.id);
+        setToCache(`ingredients_${user.id}`, ingredients);
+      }
+      setUserIngredients(ingredients);
+
+      // Caching for recipes
+      let recipes = getFromCache<Recipe[]>("recipes_all");
+      if (!recipes) {
+        recipes = await recipeService.getAll();
+        setToCache("recipes_all", recipes);
+      }
+      setAvailableRecipes(recipes);
+    } catch (error) {
+      const message = handleApiError(error);
+      setError(message);
+      notify(message, { type: "error" });
+      logError(error, "Shopping.loadData");
+    } finally {
+      setLoading(false);
+    }
+  }, [notify, user]);
+
+  const throttledRefreshData = useMemo(
+    () => throttle(() => void loadData(), 1000),
+    [loadData],
   );
 
   const loadListItems = useCallback(async () => {
@@ -153,9 +174,12 @@ export function Shopping() {
       const items = await shoppingListService.getListItems(selectedList.id);
       setListItems(items);
     } catch (error) {
-      console.error("Error loading list items:", error);
+      const message = handleApiError(error);
+      setError(message);
+      notify(message, { type: "error" });
+      logError(error, "Shopping.loadListItems");
     }
-  }, [selectedList]);
+  }, [notify, selectedList]);
 
   useEffect(() => {
     if (user) {
@@ -165,9 +189,20 @@ export function Shopping() {
 
   useEffect(() => {
     if (selectedList) {
+      setVisibleItemsCount(ITEMS_PER_PAGE);
       loadListItems();
+      return;
     }
+
+    setListItems([]);
   }, [selectedList, loadListItems]);
+
+  useEffect(() => {
+    return () => {
+      debouncedSetSearchTerm.cancel();
+      throttledRefreshData.cancel();
+    };
+  }, [debouncedSetSearchTerm, throttledRefreshData]);
 
   useEffect(() => {
     if (!user) return;
@@ -183,14 +218,14 @@ export function Shopping() {
           filter: `user_id=eq.${user.id}`,
         },
         (_payload) => {
-          loadData();
+          throttledRefreshData();
         },
       )
       .subscribe();
     return () => {
       channel.unsubscribe();
     };
-  }, [user, loadData]);
+  }, [user, throttledRefreshData]);
 
   useEffect(() => {
     if (!selectedList) return;
@@ -217,13 +252,33 @@ export function Shopping() {
 
   // Restore last selected list from localStorage on mount
   useEffect(() => {
-    const lastListId = localStorage.getItem("lastSelectedShoppingListId");
-    if (lastListId && shoppingLists.length > 0) {
-      const found = shoppingLists.find((l) => l.id === lastListId);
-      if (found) setSelectedList(found);
-    } else if (shoppingLists.length === 1) {
-      setSelectedList(shoppingLists[0]);
+    if (shoppingLists.length === 0) {
+      setSelectedList(null);
+      return;
     }
+
+    setSelectedList((current) => {
+      if (current) {
+        const matchedCurrent = shoppingLists.find(
+          (list) => list.id === current.id,
+        );
+        if (matchedCurrent) {
+          return matchedCurrent;
+        }
+      }
+
+      const lastListId = localStorage.getItem("lastSelectedShoppingListId");
+      if (lastListId) {
+        const lastSelected = shoppingLists.find(
+          (list) => list.id === lastListId,
+        );
+        if (lastSelected) {
+          return lastSelected;
+        }
+      }
+
+      return shoppingLists[0];
+    });
   }, [shoppingLists]);
 
   // Save selected list id to localStorage
@@ -237,17 +292,21 @@ export function Shopping() {
     e.preventDefault();
     if (!user) return;
     try {
+      setError(null);
       const newList = await shoppingListService.createList({
         user_id: user.id,
         name: listFormData.name,
         description: listFormData.description,
       });
       clearCache(`shoppingLists_${user.id}`);
-      setShoppingLists([newList, ...shoppingLists]);
+      setShoppingLists((previousLists) => [newList, ...previousLists]);
       setSelectedList(newList);
       resetListForm();
     } catch (error) {
-      console.error("Error creating list:", error);
+      const message = handleApiError(error);
+      setError(message);
+      notify(message, { type: "error" });
+      logError(error, "Shopping.createList");
     }
   };
 
@@ -260,15 +319,24 @@ export function Shopping() {
     if (!listToDelete) return;
 
     try {
+      setError(null);
       await shoppingListService.deleteList(listToDelete);
-      const updatedLists = shoppingLists.filter((list) => list.id !== listToDelete);
+      const updatedLists = shoppingLists.filter(
+        (list) => list.id !== listToDelete,
+      );
+      if (user) {
+        clearCache(`shoppingLists_${user.id}`);
+      }
       setShoppingLists(updatedLists);
 
       if (selectedList?.id === listToDelete) {
         setSelectedList(updatedLists[0] || null);
       }
     } catch (error) {
-      console.error("Error deleting list:", error);
+      const message = handleApiError(error);
+      setError(message);
+      notify(message, { type: "error" });
+      logError(error, "Shopping.handleDeleteListConfirm");
     } finally {
       setDeleteListDialogOpen(false);
       setListToDelete(null);
@@ -287,6 +355,7 @@ export function Shopping() {
     }
 
     try {
+      setError(null);
       const itemData = {
         shopping_list_id: selectedList.id,
         name: itemFormData.name,
@@ -306,46 +375,37 @@ export function Shopping() {
       await loadListItems();
       resetItemForm();
     } catch (error) {
-      console.error("Error saving item:", error);
+      const message = handleApiError(error);
+      setError(message);
+      notify(message, { type: "error" });
+      logError(error, "Shopping.createItem");
     }
   };
 
   const deleteItem = async (itemId: string) => {
     try {
+      setError(null);
       await shoppingListService.deleteItem(itemId);
       await loadListItems();
     } catch (error) {
-      console.error("Error deleting item:", error);
+      const message = handleApiError(error);
+      setError(message);
+      notify(message, { type: "error" });
+      logError(error, "Shopping.deleteItem");
     }
   };
 
   const togglePurchased = async (itemId: string, isPurchased: boolean) => {
     try {
-      console.log("Toggling purchase status:", {
-        itemId,
-        isPurchased,
-        newStatus: !isPurchased,
-      });
-
-      // Find the item being toggled
-      const item = listItems.find((item) => item.id === itemId);
-      if (!item) {
-        console.error("Item not found:", itemId);
-        return;
-      }
-
-      console.log("Found item:", item);
+      setError(null);
 
       const updatedItem = await shoppingListService.togglePurchased(
         itemId,
         !isPurchased,
       );
-      console.log("Updated item:", updatedItem);
 
       // If item was just marked as purchased, add it to pantry
       if (!isPurchased && user) {
-        // Item was just marked as purchased
-        console.log("Item marked as purchased, adding to pantry...");
         await shoppingListService.addToPantryFromShopping(
           user.id,
           updatedItem.name,
@@ -353,14 +413,15 @@ export function Shopping() {
           updatedItem.unit,
           updatedItem.category,
         );
-      } else {
-        console.log("Item unmarked as purchased or no user");
+        clearCache(`ingredients_${user.id}`);
       }
 
       await loadListItems();
     } catch (error) {
-      console.error("Error toggling purchase status:", error);
-      alert("Failed to update item. Please try again.");
+      const message = handleApiError(error);
+      setError(message);
+      notify(message, { type: "error" });
+      logError(error, "Shopping.togglePurchased");
     }
   };
 
@@ -368,7 +429,7 @@ export function Shopping() {
     if (!selectedList) return;
 
     try {
-      console.log("Adding from recipe:", recipeId, "to list:", selectedList.id);
+      setError(null);
       await shoppingListService.createFromRecipe(
         selectedList.id,
         recipeId,
@@ -377,8 +438,10 @@ export function Shopping() {
       await loadListItems();
       setShowRecipeModal(false);
     } catch (error) {
-      console.error("Error adding from recipe:", error);
-      alert("Failed to add recipe ingredients. Please try again.");
+      const message = handleApiError(error);
+      setError(message);
+      notify(message, { type: "error" });
+      logError(error, "Shopping.addFromRecipe");
     }
   };
 
@@ -411,31 +474,69 @@ export function Shopping() {
     setShowAddForm(true);
   };
 
-  const filteredItems = listItems.filter((item) => {
-    const matchesSearch = item.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
-    const matchesCategory =
-      selectedCategory === "All" || item.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  });
+  const handleSelectList = useCallback((list: ShoppingList) => {
+    setVisibleItemsCount(ITEMS_PER_PAGE);
+    setSelectedList(list);
+  }, []);
 
-  const categoryCounts = CATEGORIES.reduce(
-    (acc, category) => {
-      acc[category] = listItems.filter(
-        (item) => item.category === category,
-      ).length;
-      return acc;
+  const handleSearchChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => {
+      setVisibleItemsCount(ITEMS_PER_PAGE);
+      debouncedSetSearchTerm(event.target.value);
     },
-    {} as Record<string, number>,
+    [debouncedSetSearchTerm],
   );
+
+  const handleCategoryChange = useCallback(
+    (event: React.ChangeEvent<HTMLSelectElement>) => {
+      setVisibleItemsCount(ITEMS_PER_PAGE);
+      setSelectedCategory(event.target.value);
+    },
+    [],
+  );
+
+  const filteredItems = useMemo(() => {
+    return listItems.filter((item) => {
+      const matchesSearch = item.name
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase());
+      const matchesCategory =
+        selectedCategory === "All" || item.category === selectedCategory;
+      return matchesSearch && matchesCategory;
+    });
+  }, [listItems, searchTerm, selectedCategory]);
+
+  const visibleItems = useMemo(
+    () => filteredItems.slice(0, visibleItemsCount),
+    [filteredItems, visibleItemsCount],
+  );
+
+  const categoryCounts = useMemo(
+    () =>
+      CATEGORIES.reduce(
+        (acc, category) => {
+          acc[category] = listItems.filter(
+            (item) => item.category === category,
+          ).length;
+          return acc;
+        },
+        {} as Record<string, number>,
+      ),
+    [listItems],
+  );
+
+  const hasMoreVisibleItems = visibleItems.length < filteredItems.length;
 
   const purchasedCount = listItems.filter((item) => item.is_purchased).length;
   const totalCount = listItems.length;
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12" role="status" aria-label="Loading shopping lists">
+      <div
+        className="flex justify-center items-center py-12"
+        role="status"
+        aria-label="Loading shopping lists"
+      >
         <div className="size-8 rounded-full border-b-2 animate-spin border-primary"></div>
       </div>
     );
@@ -477,7 +578,7 @@ export function Shopping() {
         <ShoppingListsTabs
           shoppingLists={shoppingLists}
           selectedList={selectedList}
-          onSelect={setSelectedList}
+          onSelect={handleSelectList}
           onDelete={handleDeleteListClick}
         />
       )}
@@ -497,19 +598,16 @@ export function Shopping() {
             selectedList={selectedList}
             totalCount={totalCount}
             purchasedCount={purchasedCount}
-            onAddFromRecipe={() => {
-              console.log("Add from Recipe button clicked, opening modal");
-              setShowRecipeModal(true);
-            }}
+            onAddFromRecipe={() => setShowRecipeModal(true)}
             onAddItem={() => setShowAddForm(true)}
           />
 
           {/* Search and Filter */}
           <SearchAndFilterBar
             searchTerm={searchTerm}
-            onSearchChange={(e) => debouncedSetSearchTerm(e.target.value)}
+            onSearchChange={handleSearchChange}
             selectedCategory={selectedCategory}
-            onCategoryChange={(e) => setSelectedCategory(e.target.value)}
+            onCategoryChange={handleCategoryChange}
             categories={CATEGORIES}
             categoryCounts={categoryCounts}
           />
@@ -564,22 +662,19 @@ export function Shopping() {
             />
           ) : (
             <ShoppingListItems
-              items={filteredItems}
+              items={visibleItems}
               onEdit={startEditItem}
               onDelete={deleteItem}
               onTogglePurchased={togglePurchased}
             />
           )}
 
-          {filteredItems.length < listItems.length && (
+          {hasMoreVisibleItems && (
             <div className="flex justify-center mt-6">
               <Button
-                onClick={throttle(
-                  () =>
-                    setListItems(listItems.slice(0, filteredItems.length + 12)),
-                  500,
-                )}
-                disabled={loading}
+                onClick={() =>
+                  setVisibleItemsCount((current) => current + ITEMS_PER_PAGE)
+                }
               >
                 Load More
               </Button>
@@ -623,12 +718,16 @@ export function Shopping() {
       )}
 
       {/* Delete List Confirmation Dialog */}
-      <AlertDialog open={deleteListDialogOpen} onOpenChange={setDeleteListDialogOpen}>
+      <AlertDialog
+        open={deleteListDialogOpen}
+        onOpenChange={setDeleteListDialogOpen}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Shopping List</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this shopping list? All items in the list will be permanently removed.
+              Are you sure you want to delete this shopping list? All items in
+              the list will be permanently removed.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

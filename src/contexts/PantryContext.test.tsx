@@ -63,6 +63,28 @@ function TestComponent() {
       >
         Add
       </button>
+      <button
+        onClick={() =>
+          pantry.addIngredients([
+            {
+              name: "Rice",
+              user_id: "user1",
+              quantity: 2,
+              unit: "kg",
+              category: "Grains",
+            },
+            {
+              name: "Beans",
+              user_id: "user1",
+              quantity: 1,
+              unit: "kg",
+              category: "Grains",
+            },
+          ])
+        }
+      >
+        Add Batch
+      </button>
       <button onClick={() => pantry.updateIngredient("i1", { name: "Salt" })}>
         Update
       </button>
@@ -104,7 +126,7 @@ describe("PantryContext", () => {
     expect(ingredientService.getAll).toHaveBeenCalledWith("user1");
   });
 
-  it("addIngredient, updateIngredient, deleteIngredient call service and reload", async () => {
+  it("ingredient mutations call service and reload once per mutation", async () => {
     render(
       <PantryProvider>
         <TestComponent />
@@ -116,19 +138,27 @@ describe("PantryContext", () => {
       expect(ingredientService.create).toHaveBeenCalled();
       expect(ingredientService.getAll).toHaveBeenCalledTimes(2); // initial + after add
     });
+
+    // Add Batch
+    screen.getByText("Add Batch").click();
+    await waitFor(() => {
+      expect(ingredientService.create).toHaveBeenCalledTimes(3); // one from add + two in batch
+      expect(ingredientService.getAll).toHaveBeenCalledTimes(3); // initial + add + batch
+    });
+
     // Update
     screen.getByText("Update").click();
     await waitFor(() => {
       expect(ingredientService.update).toHaveBeenCalledWith("i1", {
         name: "Salt",
       });
-      expect(ingredientService.getAll).toHaveBeenCalledTimes(3);
+      expect(ingredientService.getAll).toHaveBeenCalledTimes(4);
     });
     // Delete
     screen.getByText("Delete").click();
     await waitFor(() => {
       expect(ingredientService.delete).toHaveBeenCalledWith("i1");
-      expect(ingredientService.getAll).toHaveBeenCalledTimes(4);
+      expect(ingredientService.getAll).toHaveBeenCalledTimes(5);
     });
   });
 });

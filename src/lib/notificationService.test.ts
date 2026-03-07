@@ -1,11 +1,17 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { Ingredient, Leftover } from "../types";
-import { checkExpiringItems } from "./notificationService";
+import {
+  checkExpiringItems,
+  clearNotificationCooldownCache,
+} from "./notificationService";
 
 describe("checkExpiringItems", () => {
-  const today = new Date();
-  today.setHours(0, 0, 0, 0);
   const formatDate = (date: Date) => date.toISOString().split("T")[0];
+  const getToday = () => {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return today;
+  };
 
   const baseIngredient: Ingredient = {
     id: "1",
@@ -27,7 +33,13 @@ describe("checkExpiringItems", () => {
     updated_at: "",
   };
 
+  beforeEach(() => {
+    clearNotificationCooldownCache();
+    vi.useRealTimers();
+  });
+
   it("notifies for expired items", () => {
+    const today = getToday();
     const expiredDate = new Date(today);
     expiredDate.setDate(today.getDate() - 2);
     const onNotify = vi.fn();
@@ -44,6 +56,7 @@ describe("checkExpiringItems", () => {
   });
 
   it("notifies for critical items", () => {
+    const today = getToday();
     const criticalDate = new Date(today);
     criticalDate.setDate(today.getDate() + 2);
     const onNotify = vi.fn();
@@ -61,6 +74,7 @@ describe("checkExpiringItems", () => {
   });
 
   it("notifies for warning items", () => {
+    const today = getToday();
     const warningDate = new Date(today);
     warningDate.setDate(today.getDate() + 5);
     const onNotify = vi.fn();
@@ -89,6 +103,7 @@ describe("checkExpiringItems", () => {
   });
 
   it("notifies for leftovers as well", () => {
+    const today = getToday();
     const criticalDate = new Date(today);
     criticalDate.setDate(today.getDate() + 1);
     const onNotify = vi.fn();
@@ -106,5 +121,69 @@ describe("checkExpiringItems", () => {
         item: expect.objectContaining({ type: "leftover" }),
       }),
     );
+  });
+
+  it("deduplicates repeated alerts within cooldown", () => {
+    const today = getToday();
+    const criticalDate = new Date(today);
+    criticalDate.setDate(today.getDate() + 1);
+    const onNotify = vi.fn();
+
+    checkExpiringItems({
+      ingredients: [
+        { ...baseIngredient, expiration_date: formatDate(criticalDate) },
+      ],
+      leftovers: [],
+      criticalDays: 2,
+      notificationCooldownMs: 60_000,
+      onNotify,
+    });
+
+    checkExpiringItems({
+      ingredients: [
+        { ...baseIngredient, expiration_date: formatDate(criticalDate) },
+      ],
+      leftovers: [],
+      criticalDays: 2,
+      notificationCooldownMs: 60_000,
+      onNotify,
+    });
+
+    expect(onNotify).toHaveBeenCalledTimes(1);
+  });
+
+  it("notifies again after cooldown expires", () => {
+    const now = new Date("2026-03-01T10:00:00.000Z");
+    vi.useFakeTimers();
+    vi.setSystemTime(now);
+
+    const today = getToday();
+    const criticalDate = new Date(today);
+    criticalDate.setDate(today.getDate() + 1);
+    const onNotify = vi.fn();
+
+    checkExpiringItems({
+      ingredients: [
+        { ...baseIngredient, expiration_date: formatDate(criticalDate) },
+      ],
+      leftovers: [],
+      criticalDays: 2,
+      notificationCooldownMs: 60_000,
+      onNotify,
+    });
+
+    vi.advanceTimersByTime(60_001);
+
+    checkExpiringItems({
+      ingredients: [
+        { ...baseIngredient, expiration_date: formatDate(criticalDate) },
+      ],
+      leftovers: [],
+      criticalDays: 2,
+      notificationCooldownMs: 60_000,
+      onNotify,
+    });
+
+    expect(onNotify).toHaveBeenCalledTimes(2);
   });
 });

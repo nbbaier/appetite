@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useState,
 } from "react";
 import { ingredientService } from "../lib/database";
@@ -16,6 +17,9 @@ interface PantryContextType {
   loadIngredients: () => Promise<void>;
   addIngredient: (
     ingredient: Omit<Ingredient, "id" | "created_at" | "updated_at">,
+  ) => Promise<void>;
+  addIngredients: (
+    ingredients: Omit<Ingredient, "id" | "created_at" | "updated_at">[],
   ) => Promise<void>;
   updateIngredient: (id: string, updates: Partial<Ingredient>) => Promise<void>;
   deleteIngredient: (id: string) => Promise<void>;
@@ -32,7 +36,6 @@ export const PantryProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
 
   const loadIngredients = useCallback(async () => {
-    console.log("loadIngredients called");
     if (!user) return;
     try {
       setLoading(true);
@@ -55,6 +58,28 @@ export const PantryProvider: React.FC<{ children: React.ReactNode }> = ({
         await loadIngredients();
       } catch (error) {
         console.error("Error adding ingredient:", error);
+      }
+    },
+    [user, loadIngredients],
+  );
+
+  const addIngredients = useCallback(
+    async (
+      ingredientsToCreate: Omit<
+        Ingredient,
+        "id" | "created_at" | "updated_at"
+      >[],
+    ) => {
+      if (!user || ingredientsToCreate.length === 0) return;
+      try {
+        await Promise.all(
+          ingredientsToCreate.map((ingredient) =>
+            ingredientService.create(ingredient),
+          ),
+        );
+        await loadIngredients();
+      } catch (error) {
+        console.error("Error adding ingredients:", error);
       }
     },
     [user, loadIngredients],
@@ -116,18 +141,30 @@ export const PantryProvider: React.FC<{ children: React.ReactNode }> = ({
     };
   }, [user, loadIngredients]);
 
+  const contextValue = useMemo(
+    () => ({
+      ingredients,
+      loading,
+      loadIngredients,
+      addIngredient,
+      addIngredients,
+      updateIngredient,
+      deleteIngredient,
+      setIngredients,
+    }),
+    [
+      ingredients,
+      loading,
+      loadIngredients,
+      addIngredient,
+      addIngredients,
+      updateIngredient,
+      deleteIngredient,
+    ],
+  );
+
   return (
-    <PantryContext.Provider
-      value={{
-        ingredients,
-        loading,
-        loadIngredients,
-        addIngredient,
-        updateIngredient,
-        deleteIngredient,
-        setIngredients,
-      }}
-    >
+    <PantryContext.Provider value={contextValue}>
       {children}
     </PantryContext.Provider>
   );
