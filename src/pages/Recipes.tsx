@@ -356,7 +356,6 @@ export function Recipes() {
             (diffOrder[aRecipe.difficulty as keyof typeof diffOrder] || 0)
           );
         }
-        case "recent":
         default:
           return (
             new Date(bRecipe.created_at).getTime() -
@@ -663,8 +662,11 @@ export function Recipes() {
                 <div className="space-y-1">
                   {getMissingIngredients()
                     .slice(0, 5)
-                    .map((ingredient, index) => (
-                      <div key={index} className="text-xs text-orange-800">
+                    .map((ingredient) => (
+                      <div
+                        key={`${ingredient.ingredient_name}-${ingredient.quantity}-${ingredient.unit}`}
+                        className="text-xs text-orange-800"
+                      >
                         • {ingredient.ingredient_name} ({ingredient.quantity}{" "}
                         {ingredient.unit})
                       </div>
@@ -679,10 +681,14 @@ export function Recipes() {
 
               {/* Shopping List Selection */}
               <div>
-                <label className="block mb-2 text-sm font-medium text-gray-700">
+                <label
+                  htmlFor="add-to-shopping-list-select"
+                  className="block mb-2 text-sm font-medium text-gray-700"
+                >
                   Select Shopping List:
                 </label>
                 <select
+                  id="add-to-shopping-list-select"
                   value={selectedShoppingListId}
                   onChange={(e) => setSelectedShoppingListId(e.target.value)}
                   className="px-3 py-2 w-full text-sm rounded-lg border border-gray-300 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"

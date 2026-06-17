@@ -1,4 +1,5 @@
-import React, { useId } from "react";
+import type React from "react";
+import { useId } from "react";
 import type { ShoppingListItem } from "../../types";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -48,7 +49,7 @@ export const AddEditItemForm: React.FC<AddEditItemFormProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={onSubmit} className="space-y-4" role="form">
+        <form onSubmit={onSubmit} className="space-y-4">
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <Input

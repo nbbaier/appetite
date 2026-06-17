@@ -5,8 +5,6 @@
  * services like Sentry, LogRocket, or custom logging endpoints.
  */
 
-import { setErrorMonitoringService, type ErrorMonitoringService } from './errorUtils';
-
 // Example 1: Sentry integration
 // npm install @sentry/react
 /*

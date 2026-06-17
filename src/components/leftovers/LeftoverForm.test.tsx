@@ -1,12 +1,9 @@
-// biome-ignore-all assist/source/organizeImports: needed for testing
-// @ts-nocheck
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { describe, it, expect, vi } from "vitest";
-import { LeftoverForm } from "./LeftoverForm";
-import { AuthProvider } from "../../contexts/AuthContext";
+import { describe, expect, it, vi } from "vitest";
 import * as AuthContext from "../../contexts/AuthContext";
+import { AuthProvider } from "../../contexts/AuthContext";
+import { LeftoverForm } from "./LeftoverForm";
 
 // Mock useAuth to always return a user
 vi.spyOn(AuthContext, "useAuth").mockReturnValue({ user: { id: "test-user" } });

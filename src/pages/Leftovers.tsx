@@ -8,6 +8,8 @@ import {
   Search,
 } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
+import { LeftoverCard } from "../components/leftovers/LeftoverCard";
+import { LeftoverForm } from "../components/leftovers/LeftoverForm";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -18,8 +20,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "../components/ui/alert-dialog";
-import { LeftoverCard } from "../components/leftovers/LeftoverCard";
-import { LeftoverForm } from "../components/leftovers/LeftoverForm";
 import { Button } from "../components/ui/button";
 import {
   Card,
@@ -180,7 +180,11 @@ export function Leftovers() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12" role="status" aria-label="Loading leftovers">
+      <div
+        className="flex justify-center items-center py-12"
+        role="status"
+        aria-label="Loading leftovers"
+      >
         <div className="size-8 rounded-full border-b-2 animate-spin border-primary"></div>
       </div>
     );
@@ -399,7 +403,8 @@ export function Leftovers() {
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Leftover</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete this leftover? This action cannot be undone.
+              Are you sure you want to delete this leftover? This action cannot
+              be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

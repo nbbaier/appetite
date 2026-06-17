@@ -194,9 +194,7 @@ export function parseJSON<T>(
     const parsed = JSON.parse(json);
     return validate(schema, parsed);
   } catch (error) {
-    if (
-      import.meta.env.MODE === "development"
-    ) {
+    if (import.meta.env.MODE === "development") {
       // Log JSON parse errors in development for debugging
       console.error("parseJSON error:", error);
     }
@@ -225,15 +223,15 @@ export function toFormErrors(
 /**
  * Debounced validation for form fields
  * Returns a validator function and a cleanup function to prevent memory leaks
- * 
+ *
  * @example
  * ```typescript
  * // Create validator with cleanup
  * const { validator, cleanup } = createDebouncedValidator(mySchema, 300);
- * 
+ *
  * // Use the validator
  * const result = await validator(data);
- * 
+ *
  * // Clean up when component unmounts or validator is no longer needed
  * cleanup();
  * ```
@@ -269,22 +267,22 @@ export function createDebouncedValidator<T>(
 
 /**
  * Collects validation errors from multiple validation results.
- * 
+ *
  * This function aggregates all errors from failed validations. If ANY validation
  * fails, the entire result is considered a failure with all collected errors.
  * If all validations succeed, returns success with the data from the last result.
- * 
+ *
  * **Important behavior notes:**
  * - Returns failure if ANY input result failed (fail-fast semantics)
  * - Accumulates ALL errors from failed results
  * - Only returns success if ALL results succeeded
  * - When all succeed, returns the data from the LAST successful result
- * 
+ *
  * **Use cases:**
  * - Sequential validation of the same data through multiple validators
  * - Collecting all validation errors before presenting to user
  * - NOT suitable for merging validations of different data objects
- * 
+ *
  * @example
  * ```ts
  * // Validate user input through multiple validators
@@ -293,7 +291,7 @@ export function createDebouncedValidator<T>(
  * const combined = collectValidationErrors(result1, result2);
  * // If either fails, combined contains all errors from both
  * ```
- * 
+ *
  * @param results - Variable number of validation results to merge
  * @returns A single validation result with aggregated errors or final success data
  */

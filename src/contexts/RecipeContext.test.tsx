@@ -79,6 +79,7 @@ describe("RecipeContext", () => {
       const ctx = useRecipe();
       return (
         <button
+          type="button"
           onClick={() =>
             ctx.addRecipe({
               title: "R",
@@ -118,6 +119,7 @@ describe("RecipeContext", () => {
       return (
         <>
           <button
+            type="button"
             data-testid="toggle-btn"
             onClick={() => ctx.toggleBookmark("recipe1")}
           >
@@ -209,6 +211,7 @@ describe("RecipeContext", () => {
       return (
         <>
           <button
+            type="button"
             data-testid="toggle-btn"
             onClick={() => ctx.toggleBookmark("recipe2")}
           >
@@ -242,12 +245,14 @@ describe("RecipeContext", () => {
       return (
         <>
           <button
+            type="button"
             data-testid="update-btn"
             onClick={() => ctx.updateRecipe("id1", { title: "T" })}
           >
             Update
           </button>
           <button
+            type="button"
             data-testid="delete-btn"
             onClick={() => ctx.deleteRecipe("id1")}
           >
@@ -277,6 +282,7 @@ describe("RecipeContext", () => {
       return (
         <>
           <button
+            type="button"
             data-testid="select-btn"
             onClick={() => ctx.setSelectedRecipe("id2")}
           >
@@ -305,6 +311,7 @@ describe("RecipeContext", () => {
       const ctx = useRecipe();
       return (
         <button
+          type="button"
           onClick={() =>
             ctx.addRecipe({
               title: "R",

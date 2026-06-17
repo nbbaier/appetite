@@ -1,4 +1,5 @@
-import React, { lazy, Suspense } from "react";
+import type React from "react";
+import { lazy, Suspense } from "react";
 import {
   Navigate,
   Route,

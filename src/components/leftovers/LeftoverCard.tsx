@@ -104,6 +104,7 @@ function LeftoverCardRaw({
           <div className="flex flex-shrink-0 ml-2 space-x-1">
             {onEdit && (
               <button
+                type="button"
                 onClick={() => onEdit(leftover)}
                 className="p-1.5 text-secondary-400 hover:text-secondary-600 rounded"
               >
@@ -112,6 +113,7 @@ function LeftoverCardRaw({
             )}
             {onDelete && (
               <button
+                type="button"
                 onClick={() => onDelete(leftover.id)}
                 className="p-1.5 text-secondary-400 hover:text-red-600 rounded"
               >

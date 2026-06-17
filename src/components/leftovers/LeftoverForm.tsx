@@ -1,5 +1,6 @@
 import { ChefHat, X } from "lucide-react";
-import React, { useCallback, useEffect, useId, useState } from "react";
+import type React from "react";
+import { useCallback, useEffect, useId, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { recipeService } from "../../lib/database";
 import type { Leftover, Recipe } from "../../types";
@@ -45,6 +46,7 @@ export function LeftoverForm({
     notes: leftover?.notes || "",
   });
   const unitSelectId = useId();
+  const notesId = useId();
 
   const loadRecipes = useCallback(async () => {
     try {
@@ -108,13 +110,13 @@ export function LeftoverForm({
   );
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" role="form">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div className="grid grid-cols-1 gap-4">
         {/* Recipe Selection */}
         <div>
-          <label className="block mb-2 text-sm font-medium text-secondary-700">
+          <p className="block mb-2 text-sm font-medium text-secondary-700">
             Source Recipe (Optional)
-          </label>
+          </p>
           {selectedRecipe ? (
             <div className="flex items-center p-3 space-x-2 bg-blue-50 rounded-lg border border-blue-200">
               <ChefHat className="w-4 h-4 text-blue-600" />
@@ -149,6 +151,7 @@ export function LeftoverForm({
               <div className="flex justify-between items-center p-4 border-b">
                 <h3 className="text-lg font-semibold">Select Recipe</h3>
                 <button
+                  type="button"
                   onClick={() => setShowRecipeSelector(false)}
                   className="p-1 text-gray-400 rounded hover:text-gray-600"
                 >
@@ -159,8 +162,8 @@ export function LeftoverForm({
                 <div className="space-y-2">
                   {recipes.map((recipe) => (
                     <button
-                      key={recipe.id}
                       type="button"
+                      key={recipe.id}
                       onClick={() => selectRecipe(recipe)}
                       className="p-3 w-full text-left rounded-lg border border-gray-200 transition-colors hover:bg-gray-50"
                     >
@@ -250,10 +253,14 @@ export function LeftoverForm({
 
         {/* Notes */}
         <div>
-          <label className="block mb-1 text-sm font-medium text-secondary-700">
+          <label
+            htmlFor={notesId}
+            className="block mb-1 text-sm font-medium text-secondary-700"
+          >
             Notes (Optional)
           </label>
           <textarea
+            id={notesId}
             value={formData.notes}
             onChange={(e) =>
               setFormData({ ...formData, notes: e.target.value })

@@ -11,7 +11,8 @@ import {
   User,
   Utensils,
 } from "lucide-react";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import type React from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import { useAuth } from "../../contexts/AuthContext";
 import {
@@ -512,6 +513,7 @@ export function AIChat() {
                 </span>
               </Button>
               <button
+                type="button"
                 className="absolute right-10 top-1/2 p-1 opacity-0 transition-opacity -translate-y-1/2 group-hover:opacity-100"
                 tabIndex={0}
                 onClick={async (e) => {
@@ -544,6 +546,7 @@ export function AIChat() {
                 <Pencil className="w-4 h-4 text-gray-400 hover:text-blue-500" />
               </button>
               <button
+                type="button"
                 className="absolute right-2 top-1/2 p-1 opacity-0 transition-opacity -translate-y-1/2 group-hover:opacity-100"
                 tabIndex={0}
                 onClick={async (e) => {
@@ -606,9 +609,10 @@ export function AIChat() {
         <div className="p-4 bg-gray-50 rounded-t-lg border-b border-border">
           <p className="mb-3 text-sm text-gray-600">Try asking me about:</p>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-            {QUICK_PROMPTS.map((prompt, index: number) => (
+            {QUICK_PROMPTS.map((prompt) => (
               <button
-                key={index}
+                type="button"
+                key={prompt.text}
                 onClick={() => handleSendMessage(prompt.text)}
                 className="flex items-center p-2 space-x-2 text-sm text-left bg-white rounded-lg border border-gray-200 transition-colors hover:border-emerald-300 hover:bg-emerald-50"
               >
@@ -709,17 +713,16 @@ export function AIChat() {
                   {/* Suggestions */}
                   {message.suggestions && message.suggestions.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-3">
-                      {message.suggestions.map(
-                        (suggestion: string, index: number) => (
-                          <button
-                            key={index}
-                            onClick={() => handleSendMessage(suggestion)}
-                            className="px-2 py-1 text-xs text-gray-700 bg-gray-100 rounded-full transition-colors hover:bg-gray-200"
-                          >
-                            {suggestion}
-                          </button>
-                        ),
-                      )}
+                      {message.suggestions.map((suggestion: string) => (
+                        <button
+                          type="button"
+                          key={suggestion}
+                          onClick={() => handleSendMessage(suggestion)}
+                          className="px-2 py-1 text-xs text-gray-700 bg-gray-100 rounded-full transition-colors hover:bg-gray-200"
+                        >
+                          {suggestion}
+                        </button>
+                      ))}
                     </div>
                   )}
 

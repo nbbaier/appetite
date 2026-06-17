@@ -1,4 +1,4 @@
-import { FC } from "react";
+import type { FC } from "react";
 
 interface NotificationToggleProps {
   value: boolean;
@@ -12,10 +12,14 @@ export const NotificationToggle: FC<NotificationToggleProps> = ({
   loading,
 }) => (
   <div className="flex items-center space-x-2">
-    <label className="text-sm font-medium text-secondary-700">
+    <label
+      htmlFor="notifications-enabled"
+      className="text-sm font-medium text-secondary-700"
+    >
       Enable Notifications
     </label>
     <input
+      id="notifications-enabled"
       type="checkbox"
       checked={!!value}
       onChange={(e) => onChange(e.target.checked)}

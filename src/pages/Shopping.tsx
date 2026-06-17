@@ -1,13 +1,8 @@
 import debounce from "lodash.debounce";
 import throttle from "lodash.throttle";
 import { ListPlus, Plus, ShoppingCart } from "lucide-react";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import type React from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { AddEditItemForm } from "../components/shopping/AddEditItemForm";
@@ -77,9 +72,11 @@ const UNITS = [
 // Add Zod schema for item form validation
 const ItemFormSchema = z.object({
   name: z.string().min(1, "Item name is required."),
-  quantity: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-    message: "Quantity must be a positive number.",
-  }),
+  quantity: z
+    .string()
+    .refine((val) => !Number.isNaN(Number(val)) && Number(val) > 0, {
+      message: "Quantity must be a positive number.",
+    }),
   unit: z.string().min(1, "Unit is required."),
   category: z.string().min(1, "Category is required."),
   notes: z.string().optional(),

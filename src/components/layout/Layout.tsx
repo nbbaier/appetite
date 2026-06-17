@@ -13,10 +13,11 @@ export function LayoutRaw({ children }: LayoutProps) {
     <div className="flex h-dvh bg-muted/20">
       {/* Mobile sidebar overlay */}
       {sidebarOpen && (
-        <div
+        <button
+          type="button"
+          aria-label="Close sidebar"
           className="fixed inset-0 z-overlay bg-black/50 lg:hidden"
           onClick={() => setSidebarOpen(false)}
-          role="presentation"
         />
       )}
 

@@ -94,7 +94,7 @@ function errorResponse(
     headers: { ...corsHeaders, "Content-Type": "application/json" },
   });
 }
-// @ts-ignore
+// @ts-expect-error
 Deno.serve(async (req: Request) => {
   const requestId = crypto.randomUUID();
   if (req.method === "OPTIONS") {
@@ -113,7 +113,7 @@ Deno.serve(async (req: Request) => {
         requestId,
       );
     }
-    // @ts-ignore
+    // @ts-expect-error
     const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
     if (!openaiApiKey) {
       return errorResponse(
@@ -124,9 +124,9 @@ Deno.serve(async (req: Request) => {
         requestId,
       );
     }
-    // @ts-ignore
+    // @ts-expect-error
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    // @ts-ignore
+    // @ts-expect-error
     const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     let { messages, userIngredients, userPreferences, userId }: ChatRequest =
       await req.json();
@@ -252,7 +252,7 @@ Deno.serve(async (req: Request) => {
       "anonymous";
     if (supabaseUrl && supabaseServiceRoleKey) {
       const { createClient } = await import(
-        // @ts-ignore
+        // @ts-expect-error
         "https://esm.sh/@supabase/supabase-js@2"
       );
       const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
@@ -308,7 +308,7 @@ Deno.serve(async (req: Request) => {
     }
     if (userId && supabaseUrl && supabaseServiceRoleKey) {
       const { createClient } = await import(
-        // @ts-ignore
+        // @ts-expect-error
         "https://esm.sh/@supabase/supabase-js@2"
       );
       const supabase = createClient(supabaseUrl, supabaseServiceRoleKey);
@@ -381,7 +381,7 @@ Deno.serve(async (req: Request) => {
       const errorData = await openaiResponse.json().catch(() => null);
       let code = "openai_api_error";
       let message = "Failed to get AI response";
-      if (errorData && errorData.error && typeof errorData.error === "object") {
+      if (errorData?.error && typeof errorData.error === "object") {
         if (errorData.error.code === "invalid_api_key") {
           code = "openai_invalid_api_key";
           message = "Invalid OpenAI API key";

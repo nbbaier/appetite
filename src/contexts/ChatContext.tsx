@@ -1,10 +1,7 @@
-// biome-ignore-all assist/source/organizeImports: needed for testing
-// @ts-nocheck
-import React from "react";
 import {
   createContext,
-  Dispatch,
-  ReactNode,
+  type Dispatch,
+  type ReactNode,
   useContext,
   useReducer,
 } from "react";

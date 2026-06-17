@@ -1,5 +1,5 @@
 import { Bot, Clock, User } from "lucide-react";
-import React from "react";
+import type React from "react";
 import { Badge } from "../ui/badge";
 import type { Message, Recipe } from "./AIChat";
 
@@ -77,9 +77,10 @@ export const ChatMessageBubble: React.FC<ChatMessageBubbleProps> = ({
         {/* Suggestions */}
         {message.suggestions && message.suggestions.length > 0 && (
           <div className="flex flex-wrap gap-1 mt-3">
-            {message.suggestions.map((suggestion: string, index: number) => (
+            {message.suggestions.map((suggestion: string) => (
               <button
-                key={index}
+                type="button"
+                key={suggestion}
                 onClick={() => onSuggestionClick(suggestion)}
                 className="px-2 py-1 text-xs text-gray-700 bg-gray-100 rounded-full transition-colors hover:bg-gray-200"
               >

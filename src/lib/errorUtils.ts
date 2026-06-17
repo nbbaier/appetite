@@ -5,7 +5,10 @@
  */
 export interface ErrorMonitoringService {
   captureError: (error: unknown, context?: Record<string, unknown>) => void;
-  captureMessage: (message: string, level?: "info" | "warning" | "error") => void;
+  captureMessage: (
+    message: string,
+    level?: "info" | "warning" | "error",
+  ) => void;
 }
 
 /**
@@ -17,7 +20,9 @@ let errorMonitoringService: ErrorMonitoringService | null = null;
  * Configure the external error monitoring service (e.g., Sentry, LogRocket)
  * @param service - The monitoring service implementation
  */
-export function setErrorMonitoringService(service: ErrorMonitoringService | null) {
+export function setErrorMonitoringService(
+  service: ErrorMonitoringService | null,
+) {
   errorMonitoringService = service;
 }
 

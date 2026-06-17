@@ -1,5 +1,5 @@
 import { Clock, Heart, Info, Sparkles, Users } from "lucide-react";
-import React from "react";
+import type React from "react";
 import type { RecipeMatchResult } from "../../lib/database";
 import type { Recipe } from "../../types";
 import { Badge } from "../ui/badge";
@@ -81,6 +81,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
         />
         <div className="flex absolute top-2 right-2 z-10 space-x-1">
           <button
+            type="button"
             onClick={(e) => {
               e.stopPropagation();
               onBookmark(recipeId);
@@ -97,6 +98,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
           </button>
           {onEdit && "id" in recipe && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onEdit(recipe as Recipe);
@@ -109,6 +111,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
           )}
           {onDelete && "id" in recipe && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(recipe as Recipe);
@@ -159,7 +162,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
             <Clock className="flex-shrink-0 w-3 h-3 sm:h-4 sm:w-4" />
             <span>
               {typeof prepTime === "number" && typeof cookTime === "number"
-                ? prepTime + cookTime + " min"
+                ? `${prepTime + cookTime} min`
                 : ""}
             </span>
           </div>

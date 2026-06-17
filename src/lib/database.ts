@@ -64,7 +64,9 @@ export function clearCache(key?: string): void {
   if (key) {
     delete _cache[key];
   } else {
-    Object.keys(_cache).forEach((k) => delete _cache[k]);
+    Object.keys(_cache).forEach((k) => {
+      delete _cache[k];
+    });
   }
 }
 
@@ -233,7 +235,7 @@ export const recipeService = {
     if (error) throw error;
 
     // Validate all returned recipes
-    return validateArrayOrThrow(recipeSchema, data || []);
+    return validateArrayOrThrow(recipeSchema, data || []) as Recipe[];
   },
 
   async getById(id: string): Promise<Recipe | null> {
@@ -247,7 +249,7 @@ export const recipeService = {
       if (error) throw error;
 
       // Validate output data
-      return data ? validateOrThrow(recipeSchema, data) : null;
+      return data ? (validateOrThrow(recipeSchema, data) as Recipe) : null;
     } catch (error: unknown) {
       if (
         typeof error === "object" &&
@@ -262,7 +264,7 @@ export const recipeService = {
         error !== null &&
         "message" in error &&
         typeof (error as { message?: string }).message === "string" &&
-        (error as { message?: string }).message!.includes(
+        (error as { message?: string }).message?.includes(
           "multiple (or no) rows returned",
         )
       ) {
@@ -353,7 +355,7 @@ export const recipeService = {
     if (error) throw error;
 
     // Validate output data
-    return validateOrThrow(recipeSchema, data);
+    return validateOrThrow(recipeSchema, data) as Recipe;
   },
 
   async update(id: string, updates: Partial<Recipe>): Promise<Recipe> {
@@ -370,7 +372,7 @@ export const recipeService = {
     if (error) throw error;
 
     // Validate output data
-    return validateOrThrow(recipeSchema, data);
+    return validateOrThrow(recipeSchema, data) as Recipe;
   },
 
   async delete(id: string): Promise<void> {
@@ -463,7 +465,10 @@ export const shoppingListService = {
     if (error) throw error;
 
     // Validate all returned shopping lists
-    return validateArrayOrThrow(shoppingListSchema, data || []);
+    return validateArrayOrThrow(
+      shoppingListSchema,
+      data || [],
+    ) as ShoppingList[];
   },
 
   async createList(
@@ -481,7 +486,7 @@ export const shoppingListService = {
     if (error) throw error;
 
     // Validate output data
-    return validateOrThrow(shoppingListSchema, data);
+    return validateOrThrow(shoppingListSchema, data) as ShoppingList;
   },
 
   async updateList(
@@ -501,7 +506,7 @@ export const shoppingListService = {
     if (error) throw error;
 
     // Validate output data
-    return validateOrThrow(shoppingListSchema, data);
+    return validateOrThrow(shoppingListSchema, data) as ShoppingList;
   },
 
   async deleteList(id: string): Promise<void> {
@@ -523,7 +528,10 @@ export const shoppingListService = {
     if (error) throw error;
 
     // Validate all returned shopping list items
-    return validateArrayOrThrow(shoppingListItemSchema, data || []);
+    return validateArrayOrThrow(
+      shoppingListItemSchema,
+      data || [],
+    ) as ShoppingListItem[];
   },
 
   async createItem(
@@ -541,7 +549,7 @@ export const shoppingListService = {
     if (error) throw error;
 
     // Validate output data
-    return validateOrThrow(shoppingListItemSchema, data);
+    return validateOrThrow(shoppingListItemSchema, data) as ShoppingListItem;
   },
 
   async updateItem(
@@ -564,7 +572,7 @@ export const shoppingListService = {
     if (error) throw error;
 
     // Validate output data
-    return validateOrThrow(shoppingListItemSchema, data);
+    return validateOrThrow(shoppingListItemSchema, data) as ShoppingListItem;
   },
 
   async deleteItem(id: string): Promise<void> {
@@ -590,7 +598,7 @@ export const shoppingListService = {
     if (error) throw error;
 
     // Validate output data
-    return validateOrThrow(shoppingListItemSchema, data);
+    return validateOrThrow(shoppingListItemSchema, data) as ShoppingListItem;
   },
 
   async createFromRecipe(
@@ -646,7 +654,10 @@ export const shoppingListService = {
     }
 
     // Validate returned data
-    return validateArrayOrThrow(shoppingListItemSchema, data || []);
+    return validateArrayOrThrow(
+      shoppingListItemSchema,
+      data || [],
+    ) as ShoppingListItem[];
   },
   async addToPantryFromShopping(
     userId: string,
@@ -677,7 +688,7 @@ export const leftoverService = {
     if (error) throw error;
 
     // Validate all returned leftovers
-    return validateArrayOrThrow(leftoverSchema, data || []);
+    return validateArrayOrThrow(leftoverSchema, data || []) as Leftover[];
   },
 
   async create(
@@ -695,7 +706,7 @@ export const leftoverService = {
     if (error) throw error;
 
     // Validate output data
-    return validateOrThrow(leftoverSchema, data);
+    return validateOrThrow(leftoverSchema, data) as Leftover;
   },
 
   async update(id: string, updates: Partial<Leftover>): Promise<Leftover> {
@@ -712,7 +723,7 @@ export const leftoverService = {
     if (error) throw error;
 
     // Validate output data
-    return validateOrThrow(leftoverSchema, data);
+    return validateOrThrow(leftoverSchema, data) as Leftover;
   },
 
   async delete(id: string): Promise<void> {
@@ -736,7 +747,7 @@ export const leftoverService = {
     if (error) throw error;
 
     // Validate all returned leftovers
-    return validateArrayOrThrow(leftoverSchema, data || []);
+    return validateArrayOrThrow(leftoverSchema, data || []) as Leftover[];
   },
 
   async createFromRecipe(
@@ -788,7 +799,7 @@ export const userProfileService = {
 
       if (error) throw error;
       if (!data) return null;
-      return validateOrThrow(userProfileSchema, data);
+      return validateOrThrow(userProfileSchema, data) as UserProfile;
     } catch (error: unknown) {
       if (
         typeof error === "object" &&
@@ -803,7 +814,7 @@ export const userProfileService = {
         error !== null &&
         "message" in error &&
         typeof (error as { message?: string }).message === "string" &&
-        (error as { message?: string }).message!.includes(
+        (error as { message?: string }).message?.includes(
           "multiple (or no) rows returned",
         )
       ) {
@@ -831,7 +842,7 @@ export const userProfileService = {
     if (error) throw error;
 
     // Validate output data
-    return validateOrThrow(userProfileSchema, data);
+    return validateOrThrow(userProfileSchema, data) as UserProfile;
   },
 };
 
@@ -846,7 +857,7 @@ export const userPreferencesService = {
         .maybeSingle();
 
       if (error) throw error;
-      return data;
+      return validateOrThrow(userPreferencesSchema, data) as UserPreferences;
     } catch (error: unknown) {
       if (
         typeof error === "object" &&
@@ -861,7 +872,7 @@ export const userPreferencesService = {
         error !== null &&
         "message" in error &&
         typeof (error as { message?: string }).message === "string" &&
-        (error as { message?: string }).message!.includes(
+        (error as { message?: string }).message?.includes(
           "multiple (or no) rows returned",
         )
       ) {
@@ -897,7 +908,7 @@ export const userPreferencesService = {
     if (error) throw error;
 
     // Validate output data
-    return validateOrThrow(userPreferencesSchema, data);
+    return validateOrThrow(userPreferencesSchema, data) as UserPreferences;
   },
 };
 
@@ -913,7 +924,10 @@ export const conversationService = {
     if (error) throw error;
 
     // Validate all returned conversations
-    return validateArrayOrThrow(conversationSchema, data || []);
+    return validateArrayOrThrow(
+      conversationSchema,
+      data || [],
+    ) as Conversation[];
   },
 
   async create(
@@ -935,7 +949,7 @@ export const conversationService = {
     if (error) throw error;
 
     // Validate output data
-    return validateOrThrow(conversationSchema, data);
+    return validateOrThrow(conversationSchema, data) as Conversation;
   },
 
   async updateTitle(id: string, title: string): Promise<Conversation> {
@@ -952,7 +966,7 @@ export const conversationService = {
     if (error) throw error;
 
     // Validate output data
-    return validateOrThrow(conversationSchema, data);
+    return validateOrThrow(conversationSchema, data) as Conversation;
   },
 
   async delete(id: string): Promise<void> {
@@ -976,7 +990,7 @@ export const chatMessageService = {
     if (error) throw error;
 
     // Validate all returned chat messages
-    return validateArrayOrThrow(chatMessageSchema, data || []);
+    return validateArrayOrThrow(chatMessageSchema, data || []) as ChatMessage[];
   },
 
   async create(
@@ -1008,7 +1022,7 @@ export const chatMessageService = {
     if (error) throw error;
 
     // Validate output data
-    return validateOrThrow(chatMessageSchema, data);
+    return validateOrThrow(chatMessageSchema, data) as ChatMessage;
   },
 
   async delete(id: string): Promise<void> {

@@ -21,7 +21,7 @@ export async function fetchWithErrorHandling(
           let errorMsg = `API request failed: ${response.status}`;
           try {
             const data = await response.json();
-            if (data && data.error) errorMsg = data.error;
+            if (data?.error) errorMsg = data.error;
           } catch {
             // ignore JSON parse errors
           }

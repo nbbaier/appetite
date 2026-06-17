@@ -1,5 +1,5 @@
 import { Check, ChefHat, Package, Plus } from "lucide-react";
-import React from "react";
+import type React from "react";
 import type { ShoppingList } from "../../types";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";

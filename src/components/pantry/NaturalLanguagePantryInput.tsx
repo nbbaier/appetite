@@ -60,6 +60,7 @@ function NaturalLanguagePantryInputRaw({
   const [isAdding, setIsAdding] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { notify } = useNotification();
+  const naturalLanguageInputId = React.useId();
 
   const resetForm = () => {
     setNaturalLanguageText("");
@@ -160,10 +161,14 @@ function NaturalLanguagePantryInputRaw({
               </div>
             )}
             <div>
-              <label className="block mb-2 text-sm font-medium text-secondary-700">
+              <label
+                htmlFor={naturalLanguageInputId}
+                className="block mb-2 text-sm font-medium text-secondary-700"
+              >
                 Describe your ingredients:
               </label>
               <textarea
+                id={naturalLanguageInputId}
                 value={naturalLanguageText}
                 onChange={(e) => setNaturalLanguageText(e.target.value)}
                 placeholder="Example: 3 apples, 1kg flour, 2 cans of tuna, 500ml olive oil, 1 liter milk"
@@ -209,15 +214,19 @@ function NaturalLanguagePantryInputRaw({
                 <div className="space-y-3">
                   {parsedIngredients.map((ingredient, index) => (
                     <div
-                      key={index}
+                      key={`${ingredient.name}-${ingredient.quantity}-${ingredient.unit}-${ingredient.category}`}
                       className="p-4 rounded-lg border bg-secondary-50 border-secondary-200"
                     >
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
                         <div>
-                          <label className="block mb-1 text-xs font-medium text-secondary-700">
+                          <label
+                            htmlFor={`parsed-ingredient-${index}-name`}
+                            className="block mb-1 text-xs font-medium text-secondary-700"
+                          >
                             Name
                           </label>
                           <input
+                            id={`parsed-ingredient-${index}-name`}
                             type="text"
                             value={ingredient.name}
                             onChange={(e) =>
@@ -231,10 +240,14 @@ function NaturalLanguagePantryInputRaw({
                           />
                         </div>
                         <div>
-                          <label className="block mb-1 text-xs font-medium text-secondary-700">
+                          <label
+                            htmlFor={`parsed-ingredient-${index}-quantity`}
+                            className="block mb-1 text-xs font-medium text-secondary-700"
+                          >
                             Quantity
                           </label>
                           <input
+                            id={`parsed-ingredient-${index}-quantity`}
                             type="number"
                             step="0.1"
                             value={ingredient.quantity}
@@ -249,10 +262,14 @@ function NaturalLanguagePantryInputRaw({
                           />
                         </div>
                         <div>
-                          <label className="block mb-1 text-xs font-medium text-secondary-700">
+                          <label
+                            htmlFor={`parsed-ingredient-${index}-unit`}
+                            className="block mb-1 text-xs font-medium text-secondary-700"
+                          >
                             Unit
                           </label>
                           <select
+                            id={`parsed-ingredient-${index}-unit`}
                             value={ingredient.unit}
                             onChange={(e) =>
                               updateParsedIngredient(
@@ -271,11 +288,15 @@ function NaturalLanguagePantryInputRaw({
                           </select>
                         </div>
                         <div>
-                          <label className="block mb-1 text-xs font-medium text-secondary-700">
+                          <label
+                            htmlFor={`parsed-ingredient-${index}-category`}
+                            className="block mb-1 text-xs font-medium text-secondary-700"
+                          >
                             Category
                           </label>
                           <div className="flex items-center space-x-2">
                             <select
+                              id={`parsed-ingredient-${index}-category`}
                               value={ingredient.category}
                               onChange={(e) =>
                                 updateParsedIngredient(
@@ -293,9 +314,9 @@ function NaturalLanguagePantryInputRaw({
                               ))}
                             </select>
                             <button
+                              type="button"
                               onClick={() => removeParsedIngredient(index)}
                               className="p-1 rounded text-secondary-400 hover:text-red-600"
-                              type="button"
                             >
                               <X className="w-4 h-4" />
                             </button>

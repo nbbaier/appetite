@@ -1,5 +1,5 @@
 import { ShoppingCart, X } from "lucide-react";
-import React from "react";
+import type React from "react";
 import type { ShoppingList } from "../../types";
 
 interface ShoppingListsTabsProps {
@@ -19,6 +19,7 @@ export const ShoppingListsTabs: React.FC<ShoppingListsTabsProps> = ({
     <div className="flex flex-wrap gap-2">
       {shoppingLists.map((list) => (
         <button
+          type="button"
           key={list.id}
           onClick={() => onSelect(list)}
           className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -31,6 +32,7 @@ export const ShoppingListsTabs: React.FC<ShoppingListsTabsProps> = ({
           <span>{list.name}</span>
           {selectedList?.id === list.id && (
             <button
+              type="button"
               onClick={(e) => {
                 e.stopPropagation();
                 onDelete(list.id);

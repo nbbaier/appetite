@@ -128,11 +128,16 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                     </div>
                   </div>
                   <button
+                    type="button"
                     onClick={(e) => {
                       e.stopPropagation();
                       onBookmark(recipe.id);
                     }}
-                    aria-label={isBookmarked ? "Remove from bookmarks" : "Add to bookmarks"}
+                    aria-label={
+                      isBookmarked
+                        ? "Remove from bookmarks"
+                        : "Add to bookmarks"
+                    }
                     className={`p-2 rounded-full transition-colors ml-2 flex-shrink-0 ${
                       isBookmarked
                         ? "text-white bg-red-500"
@@ -151,7 +156,11 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
         <ScrollArea className="h-[calc(90vh-300px)]">
           <CardContent className="p-4 sm:p-6">
             {loading ? (
-              <div className="flex justify-center items-center py-8" role="status" aria-label="Loading recipe details">
+              <div
+                className="flex justify-center items-center py-8"
+                role="status"
+                aria-label="Loading recipe details"
+              >
                 <div className="size-8 rounded-full border-b-2 animate-spin border-primary"></div>
               </div>
             ) : (
@@ -228,12 +237,12 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                     </div>
                     {ingredients.length > 0 ? (
                       <div className="space-y-2 sm:space-y-3">
-                        {ingredients.map((ingredient, index) => {
+                        {ingredients.map((ingredient) => {
                           // You may want to pass in a checkIngredientAvailability function as a prop for full generality
                           // For now, just show all ingredients
                           return (
                             <div
-                              key={index}
+                              key={ingredient.id}
                               className="flex justify-between items-center p-2 rounded-lg border transition-colors sm:p-3"
                             >
                               <div className="flex flex-1 items-center space-x-2 min-w-0">
@@ -272,9 +281,9 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                     </div>
                     {instructions.length > 0 ? (
                       <div className="space-y-3 sm:space-y-4">
-                        {instructions.map((instruction, index) => (
+                        {instructions.map((instruction) => (
                           <div
-                            key={index}
+                            key={instruction.id}
                             className="flex space-x-3 sm:space-x-4"
                           >
                             <div className="flex-shrink-0">

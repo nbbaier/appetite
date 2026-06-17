@@ -1,5 +1,6 @@
 import { Clock, Package, Search, TrendingUp } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import type React from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn } from "../../lib/utils";
 
 interface Suggestion {
@@ -11,6 +12,7 @@ interface Suggestion {
 }
 
 interface AutocompleteInputProps {
+  id?: string;
   value: string;
   onChange: (value: string) => void;
   onSelect?: (suggestion: Suggestion) => void;
@@ -62,6 +64,7 @@ const BRAND_PRODUCTS = [
 ];
 
 export function AutocompleteInput({
+  id,
   value,
   onChange,
   onSelect,
@@ -209,6 +212,7 @@ export function AutocompleteInput({
       <div className="relative">
         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
         <input
+          id={id}
           ref={inputRef}
           type="text"
           value={value}

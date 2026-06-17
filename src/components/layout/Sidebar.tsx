@@ -79,10 +79,9 @@ export function Sidebar({ onClose }: SidebarProps) {
   }, [onClose]);
 
   return (
-    <div
+    <nav
       ref={sidebarRef}
       className="flex flex-col w-64 h-full border-r bg-background border-border"
-      role="navigation"
       aria-label="Sidebar navigation"
     >
       {/* Sidebar Header with Branding */}
@@ -151,6 +150,6 @@ export function Sidebar({ onClose }: SidebarProps) {
           />
         </div>
       </div>
-    </div>
+    </nav>
   );
 }

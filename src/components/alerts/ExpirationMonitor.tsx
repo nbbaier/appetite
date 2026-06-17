@@ -20,6 +20,13 @@ interface ExpirationGroup {
   upcoming: Ingredient[];
 }
 
+type IngredientWithExpiration = Ingredient & { expiration_date: string };
+
+const hasExpirationDate = (
+  ingredient: Ingredient,
+): ingredient is IngredientWithExpiration =>
+  Boolean(ingredient.expiration_date);
+
 function ExpirationMonitorRaw({
   ingredients,
   className,
@@ -43,28 +50,26 @@ function ExpirationMonitorRaw({
       warning: [],
       upcoming: [],
     };
-    ingredients
-      .filter((ingredient) => ingredient.expiration_date)
-      .forEach((ingredient) => {
-        const expDate = new Date(ingredient.expiration_date!);
-        expDate.setHours(0, 0, 0, 0);
-        const diffTime = expDate.getTime() - today.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-        if (diffDays < 0) {
-          newGroups.expired.push(ingredient);
-        } else if (diffDays <= criticalDays) {
-          newGroups.critical.push(ingredient);
-        } else if (diffDays <= warningDays) {
-          newGroups.warning.push(ingredient);
-        } else if (diffDays <= 14) {
-          newGroups.upcoming.push(ingredient);
-        }
-      });
+    ingredients.filter(hasExpirationDate).forEach((ingredient) => {
+      const expDate = new Date(ingredient.expiration_date);
+      expDate.setHours(0, 0, 0, 0);
+      const diffTime = expDate.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      if (diffDays < 0) {
+        newGroups.expired.push(ingredient);
+      } else if (diffDays <= criticalDays) {
+        newGroups.critical.push(ingredient);
+      } else if (diffDays <= warningDays) {
+        newGroups.warning.push(ingredient);
+      } else if (diffDays <= 14) {
+        newGroups.upcoming.push(ingredient);
+      }
+    });
     Object.values(newGroups).forEach((group) => {
       group.sort(
         (a: Ingredient, b: Ingredient) =>
-          new Date(a.expiration_date!).getTime() -
-          new Date(b.expiration_date!).getTime(),
+          new Date(a.expiration_date ?? "").getTime() -
+          new Date(b.expiration_date ?? "").getTime(),
       );
     });
     setGroups(newGroups);
@@ -152,7 +157,7 @@ function ExpirationMonitorRaw({
                   <div className="flex-shrink-0 ml-2 text-right">
                     <span className="text-xs font-medium text-red-600">
                       {formatExpirationText(
-                        getDaysUntilExpiration(item.expiration_date!),
+                        getDaysUntilExpiration(item.expiration_date ?? ""),
                       )}
                     </span>
                   </div>
@@ -184,7 +189,7 @@ function ExpirationMonitorRaw({
                   <div className="flex-shrink-0 ml-2 text-right">
                     <span className="text-xs font-medium text-red-600">
                       {formatExpirationText(
-                        getDaysUntilExpiration(item.expiration_date!),
+                        getDaysUntilExpiration(item.expiration_date ?? ""),
                       )}
                     </span>
                   </div>
@@ -216,7 +221,7 @@ function ExpirationMonitorRaw({
                   <div className="flex-shrink-0 ml-2 text-right">
                     <span className="text-xs font-medium text-orange-600">
                       {formatExpirationText(
-                        getDaysUntilExpiration(item.expiration_date!),
+                        getDaysUntilExpiration(item.expiration_date ?? ""),
                       )}
                     </span>
                   </div>
@@ -251,7 +256,7 @@ function ExpirationMonitorRaw({
                   <div className="flex-shrink-0 ml-2 text-right">
                     <span className="text-xs font-medium text-blue-600">
                       {formatExpirationText(
-                        getDaysUntilExpiration(item.expiration_date!),
+                        getDaysUntilExpiration(item.expiration_date ?? ""),
                       )}
                     </span>
                   </div>

@@ -1,6 +1,3 @@
-// biome-ignore-all assist/source/organizeImports: needed for testing
-// @ts-nocheck
-import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ingredientService } from "../lib/database";
@@ -25,15 +22,9 @@ vi.mock("../lib/database", () => {
 
 // Mock supabase.channel
 const channelMock = {
-  on: vi.fn(function () {
-    return channelMock;
-  }),
-  subscribe: vi.fn(function () {
-    return channelMock;
-  }),
-  unsubscribe: vi.fn(function () {
-    return channelMock;
-  }),
+  on: vi.fn(() => channelMock),
+  subscribe: vi.fn(() => channelMock),
+  unsubscribe: vi.fn(() => channelMock),
 };
 vi.mock("../lib/supabase", () => ({
   supabase: {
@@ -49,8 +40,11 @@ function TestComponent() {
       <span data-testid="ingredients">
         {JSON.stringify(pantry.ingredients)}
       </span>
-      <button onClick={() => pantry.loadIngredients()}>Reload</button>
+      <button type="button" onClick={() => pantry.loadIngredients()}>
+        Reload
+      </button>
       <button
+        type="button"
         onClick={() =>
           pantry.addIngredient({
             name: "Sugar",
@@ -64,6 +58,7 @@ function TestComponent() {
         Add
       </button>
       <button
+        type="button"
         onClick={() =>
           pantry.addIngredients([
             {
@@ -85,10 +80,15 @@ function TestComponent() {
       >
         Add Batch
       </button>
-      <button onClick={() => pantry.updateIngredient("i1", { name: "Salt" })}>
+      <button
+        type="button"
+        onClick={() => pantry.updateIngredient("i1", { name: "Salt" })}
+      >
         Update
       </button>
-      <button onClick={() => pantry.deleteIngredient("i1")}>Delete</button>
+      <button type="button" onClick={() => pantry.deleteIngredient("i1")}>
+        Delete
+      </button>
     </>
   );
 }

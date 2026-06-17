@@ -1,9 +1,6 @@
-// biome-ignore-all assist/source/organizeImports: needed for testing
-// @ts-nocheck
-import React from "react";
 import { render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 import { Badge } from "./badge";
 
 describe("Badge", () => {

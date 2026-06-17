@@ -66,7 +66,6 @@ export const AddFromRecipeModal: React.FC<AddFromRecipeModalProps> = ({
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             className="px-3 py-2 mb-4 w-full text-sm rounded border"
-            autoFocus
           />
           {loading ? (
             <div className="py-8 text-center">Loading recipes...</div>

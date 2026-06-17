@@ -12,6 +12,7 @@ function TestComponent() {
     <>
       <div data-testid="inputValue">{state.inputValue}</div>
       <button
+        type="button"
         onClick={() => dispatch({ type: "SET_INPUT", payload: "hello" })}
         data-testid="set-input"
       >

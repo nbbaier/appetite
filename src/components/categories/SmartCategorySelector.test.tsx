@@ -1,15 +1,12 @@
-// biome-ignore-all assist/source/organizeImports: needed for testing
-// @ts-nocheck
-import React from "react";
 import {
+  fireEvent,
   render,
   screen,
-  fireEvent,
   waitFor,
   within,
 } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { SmartCategorySelector } from "./SmartCategorySelector";
 
 const defaultProps = {
@@ -50,9 +47,12 @@ describe("SmartCategorySelector", () => {
     await waitFor(() => {
       const banner = screen.getByText(/smart suggestion:/i).closest("div");
       expect(banner).toBeInTheDocument();
+      if (!banner) {
+        throw new Error("Expected smart suggestion banner to render");
+      }
       // Look for the 'Fruits' badge inside the banner
       expect(
-        within(banner!).getByText("Fruits", { selector: "div" }),
+        within(banner).getByText("Fruits", { selector: "div" }),
       ).toBeInTheDocument();
     });
   });

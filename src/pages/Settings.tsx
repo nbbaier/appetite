@@ -28,10 +28,7 @@ import { Input } from "../components/ui/input";
 import { Separator } from "../components/ui/separator";
 import { useAuth } from "../contexts/AuthContext";
 import { useSettings } from "../contexts/SettingsContext";
-import { fetchWithErrorHandling } from "../lib/api";
 import { userProfileService } from "../lib/database";
-import { handleApiError, logError } from "../lib/errorUtils";
-import { supabase } from "../lib/supabase";
 import type { UserPreferences, UserProfile } from "../types";
 
 const DIETARY_RESTRICTIONS = [
@@ -209,6 +206,7 @@ export function Settings() {
       <div className="flex flex-wrap gap-2">
         {tabs.map((tab) => (
           <button
+            type="button"
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -270,8 +268,8 @@ export function Settings() {
                 <div className="flex flex-wrap gap-2">
                   {DIETARY_RESTRICTIONS.map((restriction) => (
                     <button
-                      key={restriction}
                       type="button"
+                      key={restriction}
                       onClick={() => {
                         const current =
                           preferencesForm.dietary_restrictions || [];
@@ -312,8 +310,8 @@ export function Settings() {
                 <div className="flex flex-wrap gap-2">
                   {COMMON_ALLERGIES.map((allergy) => (
                     <button
-                      key={allergy}
                       type="button"
+                      key={allergy}
                       onClick={() => {
                         const current = preferencesForm.allergies || [];
                         handlePreferencesChange(
@@ -351,8 +349,8 @@ export function Settings() {
                 <div className="flex flex-wrap gap-2">
                   {CUISINE_TYPES.map((cuisine) => (
                     <button
-                      key={cuisine}
                       type="button"
+                      key={cuisine}
                       onClick={() => {
                         const current =
                           preferencesForm.preferred_cuisines || [];
@@ -394,8 +392,8 @@ export function Settings() {
                   {["Beginner", "Intermediate", "Advanced", "Expert"].map(
                     (level) => (
                       <button
-                        key={level}
                         type="button"
+                        key={level}
                         onClick={() =>
                           handlePreferencesChange("cooking_skill_level", level)
                         }
@@ -428,8 +426,8 @@ export function Settings() {
                 <div className="flex gap-2">
                   {["Metric", "Imperial"].map((unit) => (
                     <button
-                      key={unit}
                       type="button"
+                      key={unit}
                       onClick={() =>
                         handlePreferencesChange("measurement_units", unit)
                       }
@@ -472,7 +470,7 @@ export function Settings() {
                     onChange={(e) =>
                       handlePreferencesChange(
                         "family_size",
-                        parseInt(e.target.value) || 1,
+                        parseInt(e.target.value, 10) || 1,
                       )
                     }
                     className="px-3 py-2 w-20 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
@@ -499,8 +497,8 @@ export function Settings() {
                 <div className="flex flex-wrap gap-2">
                   {KITCHEN_EQUIPMENT.map((equipment) => (
                     <button
-                      key={equipment}
                       type="button"
+                      key={equipment}
                       onClick={() => {
                         const current = preferencesForm.kitchen_equipment || [];
                         handlePreferencesChange(

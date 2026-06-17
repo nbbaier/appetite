@@ -48,13 +48,16 @@ class ErrorBoundary extends React.Component<
   componentDidCatch(error: unknown, errorInfo: ErrorInfo) {
     console.error("React Error Boundary caught an error:", error, errorInfo);
     // Trigger global notification if available
-    if (
-      typeof window !== "undefined" &&
-      typeof (window as unknown as { notify?: Function }).notify === "function"
-    ) {
-      (
-        window as unknown as { notify: (msg: string, opts?: unknown) => void }
-      ).notify(
+    if (typeof window !== "undefined") {
+      const globalNotifier = (
+        window as unknown as {
+          notify?: (msg: string, opts?: unknown) => void;
+        }
+      ).notify;
+      if (typeof globalNotifier !== "function") {
+        return;
+      }
+      globalNotifier(
         error instanceof Error
           ? error.message
           : "An unexpected error occurred.",

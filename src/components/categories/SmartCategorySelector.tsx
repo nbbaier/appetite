@@ -2,7 +2,7 @@
 // @ts-nocheck
 import React from "react";
 import { AlertCircle, Check, Wand2 } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 
@@ -103,11 +103,15 @@ export function SmartCategorySelectorRaw({
 
   return (
     <div className="flex flex-col w-full">
-      <label className="block mb-1 text-sm font-medium text-secondary-700">
+      <label
+        htmlFor="smart-category-select"
+        className="block mb-1 text-sm font-medium text-secondary-700"
+      >
         Category
       </label>
       <div className="flex flex-row gap-2 w-full">
         <select
+          id="smart-category-select"
           value={currentCategory}
           onChange={(e) => onCategoryChange(e.target.value)}
           disabled={disabled}
@@ -129,7 +133,11 @@ export function SmartCategorySelectorRaw({
           title="Suggest category based on ingredient name"
         >
           {isAnalyzing ? (
-            <svg className="w-4 h-4 animate-spin" viewBox="0 0 24 24">
+            <svg
+              aria-hidden="true"
+              className="w-4 h-4 animate-spin"
+              viewBox="0 0 24 24"
+            >
               <circle
                 cx="12"
                 cy="12"

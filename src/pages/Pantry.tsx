@@ -110,9 +110,6 @@ const getDefaultThreshold = (unit: string): number => {
     case "tbsp":
     case "tsp":
       return 2;
-    case "pieces":
-    case "cans":
-    case "bottles":
     default:
       return 1;
   }
@@ -549,8 +546,11 @@ export function Pantry() {
 
       {/* Sorting Controls */}
       <div className="flex gap-2 items-center mb-4">
-        <label className="text-sm font-medium">Sort by:</label>
+        <label htmlFor="pantry-sort-key" className="text-sm font-medium">
+          Sort by:
+        </label>
         <select
+          id="pantry-sort-key"
           value={sortKey}
           onChange={(e) => setSortKey(e.target.value)}
           className="px-2 py-1 text-sm rounded border border-secondary-300"
@@ -584,7 +584,10 @@ export function Pantry() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {/* Ingredient Name - full width */}
                 <div className="flex flex-col col-span-1 sm:col-span-2 lg:col-span-4">
-                  <label className="mb-1 text-sm font-medium">
+                  <label
+                    htmlFor="pantry-ingredient-name"
+                    className="mb-1 text-sm font-medium"
+                  >
                     Ingredient Name
                   </label>
                   <Controller
@@ -592,6 +595,7 @@ export function Pantry() {
                     control={control}
                     render={({ field }) => (
                       <AutocompleteInput
+                        id="pantry-ingredient-name"
                         value={field.value}
                         onChange={(value) => field.onChange(value)}
                         onSelect={(suggestion) => {
@@ -609,13 +613,29 @@ export function Pantry() {
                 </div>
                 {/* Quantity */}
                 <div className="flex flex-col col-span-1">
-                  <label className="mb-1 text-sm font-medium">Quantity</label>
-                  <Input type="number" step="0.1" {...register("quantity")} />
+                  <label
+                    htmlFor="pantry-ingredient-quantity"
+                    className="mb-1 text-sm font-medium"
+                  >
+                    Quantity
+                  </label>
+                  <Input
+                    id="pantry-ingredient-quantity"
+                    type="number"
+                    step="0.1"
+                    {...register("quantity")}
+                  />
                 </div>
                 {/* Unit */}
                 <div className="flex flex-col col-span-1">
-                  <label className="mb-1 text-sm font-medium">Unit</label>
+                  <label
+                    htmlFor="pantry-ingredient-unit"
+                    className="mb-1 text-sm font-medium"
+                  >
+                    Unit
+                  </label>
                   <select
+                    id="pantry-ingredient-unit"
                     {...register("unit")}
                     className="px-2 w-full h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                   >
@@ -628,10 +648,17 @@ export function Pantry() {
                 </div>
                 {/* Expiration Date */}
                 <div className="flex flex-col col-span-1">
-                  <label className="mb-1 text-sm font-medium">
+                  <label
+                    htmlFor="pantry-ingredient-expiration-date"
+                    className="mb-1 text-sm font-medium"
+                  >
                     Expiration Date
                   </label>
-                  <Input type="date" {...register("expiration_date")} />
+                  <Input
+                    id="pantry-ingredient-expiration-date"
+                    type="date"
+                    {...register("expiration_date")}
+                  />
                 </div>
                 {/* Category - always its own row, but next to Expiration Date on sm+ */}
                 <div className="flex overflow-x-auto flex-col col-span-1 min-w-0">
@@ -657,10 +684,14 @@ export function Pantry() {
               {/* Threshold and Notes */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-12">
                 <div className="flex flex-col sm:col-span-6">
-                  <label className="mb-1 text-sm font-medium">
+                  <label
+                    htmlFor="pantry-ingredient-low-stock-threshold"
+                    className="mb-1 text-sm font-medium"
+                  >
                     Low Stock Threshold
                   </label>
                   <Input
+                    id="pantry-ingredient-low-stock-threshold"
                     type="number"
                     step="0.1"
                     {...register("low_stock_threshold")}
@@ -672,8 +703,14 @@ export function Pantry() {
                   </p>
                 </div>
                 <div className="flex flex-col sm:col-span-6">
-                  <label className="mb-1 text-sm font-medium">Notes</label>
+                  <label
+                    htmlFor="pantry-ingredient-notes"
+                    className="mb-1 text-sm font-medium"
+                  >
+                    Notes
+                  </label>
                   <Input
+                    id="pantry-ingredient-notes"
                     {...register("notes")}
                     placeholder="Any additional notes..."
                   />
@@ -717,10 +754,14 @@ export function Pantry() {
           </CardHeader>
           <CardContent className="space-y-4">
             <div>
-              <label className="block mb-2 text-sm font-medium text-secondary-700">
+              <label
+                htmlFor="pantry-natural-language-text"
+                className="block mb-2 text-sm font-medium text-secondary-700"
+              >
                 Describe your ingredients:
               </label>
               <textarea
+                id="pantry-natural-language-text"
                 value={naturalLanguageText}
                 onChange={(e) => setNaturalLanguageText(e.target.value)}
                 placeholder="Example: 3 apples, 1kg flour, 2 cans of tuna, 500ml olive oil, 1 liter milk"
@@ -769,15 +810,19 @@ export function Pantry() {
                 <div className="space-y-3">
                   {parsedIngredients.map((ingredient, index) => (
                     <div
-                      key={index}
+                      key={`${ingredient.name}-${ingredient.quantity}-${ingredient.unit}-${ingredient.category}`}
                       className="p-4 rounded-lg border bg-secondary-50 border-secondary-200"
                     >
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
                         <div>
-                          <label className="block mb-1 text-xs font-medium text-secondary-700">
+                          <label
+                            htmlFor={`pantry-parsed-ingredient-${index}-name`}
+                            className="block mb-1 text-xs font-medium text-secondary-700"
+                          >
                             Name
                           </label>
                           <input
+                            id={`pantry-parsed-ingredient-${index}-name`}
                             type="text"
                             value={ingredient.name}
                             onChange={(e) =>
@@ -791,10 +836,14 @@ export function Pantry() {
                           />
                         </div>
                         <div>
-                          <label className="block mb-1 text-xs font-medium text-secondary-700">
+                          <label
+                            htmlFor={`pantry-parsed-ingredient-${index}-quantity`}
+                            className="block mb-1 text-xs font-medium text-secondary-700"
+                          >
                             Quantity
                           </label>
                           <input
+                            id={`pantry-parsed-ingredient-${index}-quantity`}
                             type="number"
                             step="0.1"
                             value={ingredient.quantity}
@@ -809,10 +858,14 @@ export function Pantry() {
                           />
                         </div>
                         <div>
-                          <label className="block mb-1 text-xs font-medium text-secondary-700">
+                          <label
+                            htmlFor={`pantry-parsed-ingredient-${index}-unit`}
+                            className="block mb-1 text-xs font-medium text-secondary-700"
+                          >
                             Unit
                           </label>
                           <select
+                            id={`pantry-parsed-ingredient-${index}-unit`}
                             value={ingredient.unit}
                             onChange={(e) =>
                               updateParsedIngredient(
@@ -831,11 +884,15 @@ export function Pantry() {
                           </select>
                         </div>
                         <div>
-                          <label className="block mb-1 text-xs font-medium text-secondary-700">
+                          <label
+                            htmlFor={`pantry-parsed-ingredient-${index}-category`}
+                            className="block mb-1 text-xs font-medium text-secondary-700"
+                          >
                             Category
                           </label>
                           <div className="flex items-center space-x-2">
                             <select
+                              id={`pantry-parsed-ingredient-${index}-category`}
                               value={ingredient.category}
                               onChange={(e) =>
                                 updateParsedIngredient(
@@ -853,6 +910,7 @@ export function Pantry() {
                               ))}
                             </select>
                             <button
+                              type="button"
                               onClick={() => removeParsedIngredient(index)}
                               className="p-1 rounded text-secondary-400 hover:text-red-600"
                             >
@@ -936,6 +994,7 @@ export function Pantry() {
                   </div>
                   <div className="flex flex-shrink-0 ml-2 space-x-1">
                     <button
+                      type="button"
                       onClick={() => startEdit(ingredient)}
                       className="p-1.5 text-secondary-400 hover:text-secondary-600 rounded"
                       aria-label={`Edit ${ingredient.name}`}
@@ -943,6 +1002,7 @@ export function Pantry() {
                       <Edit3 className="size-3 sm:size-4" />
                     </button>
                     <button
+                      type="button"
                       onClick={() => handleDeleteClick(ingredient.id)}
                       className="p-1.5 text-secondary-400 hover:text-red-600 rounded"
                       aria-label={`Delete ${ingredient.name}`}

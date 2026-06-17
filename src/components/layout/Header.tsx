@@ -52,9 +52,7 @@ export function HeaderRaw({ onMenuClick }: HeaderProps) {
 
           <div className="flex items-center space-x-2 sm:space-x-4">
             <div className="hidden sm:flex items-center space-x-2 text-sm text-muted-foreground bg-muted/50 rounded-lg px-3 py-1.5">
-              <div
-                className="flex justify-center items-center size-6 text-xs font-bold text-white bg-emerald-500 rounded-full"
-              >
+              <div className="flex justify-center items-center size-6 text-xs font-bold text-white bg-emerald-500 rounded-full">
                 {user?.user_metadata?.full_name
                   ? user.user_metadata.full_name
                       .split(" ")

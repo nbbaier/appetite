@@ -20,6 +20,17 @@ interface VirtualizedShoppingRowData {
   onTogglePurchased: (itemId: string, isPurchased: boolean) => void;
 }
 
+const SHOPPING_LIST_SKELETON_KEYS = [
+  "shopping-list-skeleton-1",
+  "shopping-list-skeleton-2",
+  "shopping-list-skeleton-3",
+  "shopping-list-skeleton-4",
+  "shopping-list-skeleton-5",
+  "shopping-list-skeleton-6",
+  "shopping-list-skeleton-7",
+  "shopping-list-skeleton-8",
+];
+
 const VirtualizedShoppingRow: React.FC<
   RowComponentProps<VirtualizedShoppingRowData>
 > = ({
@@ -43,6 +54,7 @@ const VirtualizedShoppingRow: React.FC<
         <CardContent className="p-3 sm:p-4">
           <div className="flex items-center space-x-3">
             <button
+              type="button"
               onClick={() => onTogglePurchased(item.id, item.is_purchased)}
               className="flex-shrink-0 w-5 h-5 rounded-full border-2 transition-colors sm:w-6 sm:h-6 border-secondary-300 hover:border-primary"
             />
@@ -62,12 +74,14 @@ const VirtualizedShoppingRow: React.FC<
                     {item.category}
                   </Badge>
                   <button
+                    type="button"
                     onClick={() => onEdit(item)}
                     className="p-1.5 text-secondary-400 hover:text-secondary-600 rounded"
                   >
                     <Edit3 className="w-3 h-3 sm:h-4 sm:w-4" />
                   </button>
                   <button
+                    type="button"
                     onClick={() => onDelete(item.id)}
                     className="p-1.5 text-secondary-400 hover:text-red-600 rounded"
                   >
@@ -94,8 +108,8 @@ const ShoppingListItemsComponent: React.FC<ShoppingListItemsProps> = ({
     // Render 8 skeleton cards
     return (
       <div className="space-y-3">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <Card key={i} className="bg-gray-100 animate-pulse">
+        {SHOPPING_LIST_SKELETON_KEYS.map((key) => (
+          <Card key={key} className="bg-gray-100 animate-pulse">
             <CardContent className="p-3 sm:p-4">
               <div className="mb-2 w-1/3 h-4 bg-gray-300 rounded" />
               <div className="mb-2 w-2/3 h-3 bg-gray-200 rounded" />
@@ -133,6 +147,7 @@ const ShoppingListItemsComponent: React.FC<ShoppingListItemsProps> = ({
             <CardContent className="p-3 sm:p-4">
               <div className="flex items-center space-x-3">
                 <button
+                  type="button"
                   onClick={() => onTogglePurchased(item.id, item.is_purchased)}
                   className="flex-shrink-0 w-5 h-5 rounded-full border-2 transition-colors sm:w-6 sm:h-6 border-secondary-300 hover:border-primary"
                 />
@@ -152,12 +167,14 @@ const ShoppingListItemsComponent: React.FC<ShoppingListItemsProps> = ({
                         {item.category}
                       </Badge>
                       <button
+                        type="button"
                         onClick={() => onEdit(item)}
                         className="p-1.5 text-secondary-400 hover:text-secondary-600 rounded"
                       >
                         <Edit3 className="w-3 h-3 sm:h-4 sm:w-4" />
                       </button>
                       <button
+                        type="button"
                         onClick={() => onDelete(item.id)}
                         className="p-1.5 text-secondary-400 hover:text-red-600 rounded"
                       >
@@ -185,6 +202,7 @@ const ShoppingListItemsComponent: React.FC<ShoppingListItemsProps> = ({
                 <CardContent className="p-3 sm:p-4">
                   <div className="flex items-center space-x-3">
                     <button
+                      type="button"
                       onClick={() =>
                         onTogglePurchased(item.id, item.is_purchased)
                       }
@@ -204,6 +222,7 @@ const ShoppingListItemsComponent: React.FC<ShoppingListItemsProps> = ({
                           </p>
                         </div>
                         <button
+                          type="button"
                           onClick={() => onDelete(item.id)}
                           className="p-1.5 text-secondary-400 hover:text-red-600 rounded flex-shrink-0"
                         >

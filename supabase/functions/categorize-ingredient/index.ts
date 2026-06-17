@@ -15,7 +15,7 @@ interface CategorizeResponse {
   suggestions?: string[];
   error?: string;
 }
-// @ts-ignore
+// @ts-expect-error
 Deno.serve(async (req: Request) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -37,7 +37,7 @@ Deno.serve(async (req: Request) => {
     }
 
     // Get the OpenAI API key from environment variables
-    // @ts-ignore
+    // @ts-expect-error
     const openaiApiKey = Deno.env.get("OPENAI_API_KEY");
     if (!openaiApiKey) {
       return new Response(

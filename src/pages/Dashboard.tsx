@@ -161,7 +161,7 @@ export function Dashboard() {
                 <div className="space-y-2">
                   {expiringLeftovers.map((leftover) => {
                     const daysLeft = getDaysUntilExpiration(
-                      leftover.expiration_date!,
+                      leftover.expiration_date ?? "",
                     );
                     return (
                       <div
@@ -193,7 +193,10 @@ export function Dashboard() {
                 </div>
 
                 <Link to="/leftovers">
-                  <button className="mt-3 text-sm font-medium text-orange-700 underline hover:text-orange-800">
+                  <button
+                    type="button"
+                    className="mt-3 text-sm font-medium text-orange-700 underline hover:text-orange-800"
+                  >
                     View All Leftovers →
                   </button>
                 </Link>
@@ -430,7 +433,7 @@ export function Dashboard() {
               <div className="space-y-3">
                 {expiringSoonItems.map((item) => {
                   const daysLeft = getDaysUntilExpiration(
-                    item.expiration_date!,
+                    item.expiration_date ?? "",
                   );
                   return (
                     <div

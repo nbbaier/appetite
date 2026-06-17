@@ -1,5 +1,5 @@
 import { Filter, Search } from "lucide-react";
-import React from "react";
+import type React from "react";
 import { Input } from "../ui/input";
 
 interface SearchAndFilterBarProps {

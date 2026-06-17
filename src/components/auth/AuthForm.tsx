@@ -6,10 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useAuth } from "../../contexts/AuthContext";
 import { handleApiError } from "../../lib/errorUtils";
-import {
-  signUpSchema,
-  type SignUpFormData,
-} from "../../lib/validation";
+import { type SignUpFormData, signUpSchema } from "../../lib/validation";
 
 // Local signInSchema uses minimal password validation (6 chars minimum) to allow
 // existing users with legacy passwords to sign in, even if their passwords do not
@@ -17,8 +14,11 @@ import {
 // only at sign-up (see signUpSchema in validation/schemas.ts).
 const signInSchema = z.object({
   email: z.string().email({ message: "Invalid email address" }),
-  password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+  password: z
+    .string()
+    .min(6, { message: "Password must be at least 6 characters" }),
 });
+
 import { Button } from "../ui/button";
 import {
   Card,

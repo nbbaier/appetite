@@ -105,6 +105,7 @@ function LowStockAlertRaw({
 
             {onViewPantry && (
               <button
+                type="button"
                 onClick={onViewPantry}
                 className="mt-3 text-sm font-medium text-orange-700 underline hover:text-orange-800"
               >
