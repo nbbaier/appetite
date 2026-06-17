@@ -49,7 +49,11 @@ export const AddEditItemForm: React.FC<AddEditItemFormProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <form onSubmit={onSubmit} className="space-y-4">
+        <form
+          aria-label={editingItem ? "Edit shopping item" : "Add shopping item"}
+          onSubmit={onSubmit}
+          className="space-y-4"
+        >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <Input

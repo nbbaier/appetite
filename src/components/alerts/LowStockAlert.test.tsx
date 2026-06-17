@@ -3,6 +3,12 @@ import "@testing-library/jest-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LowStockAlert } from "./LowStockAlert";
 
+vi.mock("../../contexts/SettingsContext", () => ({
+  useSettings: () => ({
+    settings: { inventory_threshold: 1 },
+  }),
+}));
+
 const makeIngredient = (overrides = {}) => ({
   id: Math.random().toString(),
   user_id: "user1",

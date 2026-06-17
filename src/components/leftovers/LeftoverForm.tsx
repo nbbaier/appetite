@@ -110,7 +110,11 @@ export function LeftoverForm({
   );
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      aria-label={leftover ? "Edit leftover" : "Add leftover"}
+      onSubmit={handleSubmit}
+      className="space-y-4"
+    >
       <div className="grid grid-cols-1 gap-4">
         {/* Recipe Selection */}
         <div>

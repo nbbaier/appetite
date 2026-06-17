@@ -130,6 +130,7 @@ export function SmartCategorySelectorRaw({
           onClick={analyzeCategory}
           disabled={!ingredientName.trim() || isAnalyzing || disabled}
           className="flex items-center px-3 h-10 text-sm border shadow-none border-secondary-300"
+          aria-label="Smart Suggest"
           title="Suggest category based on ingredient name"
         >
           {isAnalyzing ? (
