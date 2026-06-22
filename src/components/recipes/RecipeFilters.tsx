@@ -75,7 +75,7 @@ export const RecipeFilters: React.FC<RecipeFiltersProps> = ({
           </select>
         </div>
         <Button
-          variant={showCanCookOnly ? "default" : "outline-solid"}
+          variant={showCanCookOnly ? "default" : "outline"}
           onClick={onToggleCanCook}
           className="flex justify-center items-center space-x-2 text-sm sm:text-base"
         >
