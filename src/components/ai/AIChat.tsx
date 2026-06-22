@@ -500,7 +500,7 @@ export function AIChat() {
             <div key={conv.id} className="flex relative items-center group">
               <Button
                 variant={
-                  conv.id === activeConversationId ? "default" : "outline-solid"
+                  conv.id === activeConversationId ? "default" : "outline"
                 }
                 className={`shrink-0 ${conv.id === activeConversationId ? "font-bold" : ""}`}
                 onClick={() =>
