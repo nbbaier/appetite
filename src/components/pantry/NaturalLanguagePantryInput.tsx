@@ -35,12 +35,12 @@ const UNITS = [
   "bottles",
 ];
 
-export type IngredientLike = {
+export interface IngredientLike {
+  category: string;
   name: string;
   quantity: number;
   unit: string;
-  category: string;
-};
+}
 
 interface NaturalLanguagePantryInputProps {
   disabled?: boolean;

@@ -57,7 +57,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     (window as unknown as { notify?: typeof notify }).notify = notify;
     return () => {
-      delete (window as unknown as { notify?: typeof notify }).notify;
+      (window as unknown as { notify?: typeof notify }).notify = undefined;
     };
   }, [notify]);
 

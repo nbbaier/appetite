@@ -61,11 +61,11 @@ export function Sidebar({ onClose }: SidebarProps) {
         return;
       }
       const first = focusable[0];
-      const last = focusable[focusable.length - 1];
+      const last = focusable.at(-1);
       if (e.shiftKey) {
         if (document.activeElement === first) {
           e.preventDefault();
-          last.focus();
+          last?.focus();
         }
       } else if (document.activeElement === last) {
         e.preventDefault();

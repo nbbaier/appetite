@@ -45,12 +45,12 @@ import {
 } from "./validation";
 
 // Type for Supabase function result
-export type RecipeMatchResult = {
-  recipe_id: string;
-  recipe_title: string;
+export interface RecipeMatchResult {
   match_percentage: number;
   missing_ingredients: string[];
-};
+  recipe_id: string;
+  recipe_title: string;
+}
 
 // In-memory cache utility
 const _cache: Record<string, unknown> = {};

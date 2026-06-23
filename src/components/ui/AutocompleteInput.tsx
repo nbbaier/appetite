@@ -173,6 +173,8 @@ export function AutocompleteInput({
         setIsOpen(false);
         setSelectedIndex(-1);
         break;
+      default:
+        break;
     }
   };
 

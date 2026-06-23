@@ -3,7 +3,8 @@
   "extends": ["ultracite/biome/core", "ultracite/biome/react"],
   "files": {
     "ignoreUnknown": false,
-    "includes": ["!dist", "!public/**/*.svg"]
+    // *.example.* are illustrative doc files (comment-only), not real source.
+    "includes": ["!dist", "!public/**/*.svg", "!**/*.example.*"]
   },
   "javascript": {
     "formatter": {
@@ -21,6 +22,10 @@
         // Existing files use PascalCase components / camelCase modules.
         // Disabled for now rather than renaming the whole tree.
         "useFilenamingConvention": "off"
+      },
+      "performance": {
+        // Barrel files (e.g. lib/validation) are a deliberate module API surface.
+        "noBarrelFile": "off"
       }
     }
   },

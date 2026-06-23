@@ -854,4 +854,4 @@ export default function AIChatWithProvider() {
   );
 }
 
-export type { Recipe };
+export type { Recipe } from "../../types";
