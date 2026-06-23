@@ -38,9 +38,9 @@ describe("AddEditItemForm", () => {
     render(
       <AddEditItemForm
         {...defaultProps}
-        setFormData={setFormData}
         onSubmit={onSubmit}
-      />,
+        setFormData={setFormData}
+      />
     );
     fireEvent.change(screen.getByLabelText("Item Name"), {
       target: { value: "Bread" },

@@ -9,15 +9,15 @@ interface ParseRequest {
 }
 
 interface ParsedIngredient {
+  category: string;
   name: string;
   quantity: number;
   unit: string;
-  category: string;
 }
 
 interface ParseResponse {
-  ingredients: ParsedIngredient[];
   error?: string;
+  ingredients: ParsedIngredient[];
 }
 
 // @ts-expect-error
@@ -47,7 +47,7 @@ Deno.serve(async (req: Request) => {
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
+        }
       );
     }
 
@@ -114,7 +114,7 @@ Respond ONLY with the JSON object, no explanations or extra text.`;
           max_tokens: 1000,
           response_format: { type: "json_object" },
         }),
-      },
+      }
     );
 
     if (!openaiResponse.ok) {
@@ -125,7 +125,7 @@ Respond ONLY with the JSON object, no explanations or extra text.`;
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
+        }
       );
     }
 
@@ -152,14 +152,13 @@ Respond ONLY with the JSON object, no explanations or extra text.`;
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
+        }
       );
     }
 
     // Validate the response structure
     if (
-      !parsedResponse.ingredients ||
-      !Array.isArray(parsedResponse.ingredients)
+      !(parsedResponse.ingredients && Array.isArray(parsedResponse.ingredients))
     ) {
       return new Response(
         JSON.stringify({
@@ -168,7 +167,7 @@ Respond ONLY with the JSON object, no explanations or extra text.`;
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
+        }
       );
     }
 
@@ -180,7 +179,7 @@ Respond ONLY with the JSON object, no explanations or extra text.`;
           typeof ingredient.name === "string" &&
           typeof ingredient.quantity === "number" &&
           typeof ingredient.unit === "string" &&
-          typeof ingredient.category === "string",
+          typeof ingredient.category === "string"
       )
       .map((ingredient) => ({
         name: ingredient.name.trim(),
@@ -198,7 +197,7 @@ Respond ONLY with the JSON object, no explanations or extra text.`;
       {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      },
+      }
     );
   } catch (error) {
     console.error("Parse ingredients function error:", error);

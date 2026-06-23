@@ -25,11 +25,11 @@ describe("ShoppingListItems", () => {
     render(
       <ShoppingListItems
         items={items}
-        onToggle={onToggle}
-        onEdit={vi.fn()}
         onDelete={vi.fn()}
+        onEdit={vi.fn()}
+        onToggle={onToggle}
         onTogglePurchased={onToggle}
-      />,
+      />
     );
     // The first button in the row is the toggle button
     const btn = screen.getAllByRole("button")[0];

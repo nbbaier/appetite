@@ -6,11 +6,11 @@ import { Button } from "../ui/button";
 import { Card, CardContent } from "../ui/card";
 
 interface ListHeaderWithStatsProps {
-  selectedList: ShoppingList;
-  totalCount: number;
-  purchasedCount: number;
   onAddFromRecipe: () => void;
   onAddItem: () => void;
+  purchasedCount: number;
+  selectedList: ShoppingList;
+  totalCount: number;
 }
 
 export const ListHeaderWithStats: React.FC<ListHeaderWithStatsProps> = ({
@@ -25,22 +25,22 @@ export const ListHeaderWithStats: React.FC<ListHeaderWithStatsProps> = ({
       <CardContent className="p-4 sm:p-6">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-lg font-semibold sm:text-xl text-secondary-900">
+            <h2 className="font-semibold text-lg text-secondary-900 sm:text-xl">
               {selectedList.name}
             </h2>
             {selectedList.description && (
-              <p className="text-sm text-secondary-600">
+              <p className="text-secondary-600 text-sm">
                 {selectedList.description}
               </p>
             )}
           </div>
           <div className="flex items-center space-x-4 text-sm">
             <div className="flex items-center space-x-1">
-              <Package className="w-4 h-4 text-secondary-600" />
+              <Package className="h-4 w-4 text-secondary-600" />
               <span>{totalCount} items</span>
             </div>
             <div className="flex items-center space-x-1">
-              <Check className="w-4 h-4 text-green-600" />
+              <Check className="h-4 w-4 text-green-600" />
               <span>{purchasedCount} purchased</span>
             </div>
             {totalCount > 0 && (
@@ -51,21 +51,21 @@ export const ListHeaderWithStats: React.FC<ListHeaderWithStatsProps> = ({
           </div>
         </div>
         {/* Quick Actions */}
-        <div className="flex flex-col gap-2 mt-4 sm:flex-row">
+        <div className="mt-4 flex flex-col gap-2 sm:flex-row">
           <Button
+            className="flex items-center justify-center space-x-2 text-sm"
             onClick={onAddFromRecipe}
             variant="outline"
-            className="flex justify-center items-center space-x-2 text-sm"
           >
-            <ChefHat className="w-4 h-4" />
+            <ChefHat className="h-4 w-4" />
             <span>Add from Recipe</span>
           </Button>
           <Button
+            className="flex items-center justify-center space-x-2 text-sm"
             onClick={onAddItem}
             variant="outline"
-            className="flex justify-center items-center space-x-2 text-sm"
           >
-            <Plus className="w-4 h-4" />
+            <Plus className="h-4 w-4" />
             <span>Add Item</span>
           </Button>
         </div>

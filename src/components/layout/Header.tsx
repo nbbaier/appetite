@@ -12,17 +12,17 @@ export function HeaderRaw({ onMenuClick }: HeaderProps) {
   const { user, signOut } = useAuth();
 
   return (
-    <header className="border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-14 sm:h-16">
+    <header className="border-border border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-14 items-center justify-between sm:h-16">
           <div className="flex items-center space-x-3">
             {/* Mobile menu button */}
             <Button
-              variant="ghost"
-              size="icon"
+              aria-label="Open menu"
               className="lg:hidden"
               onClick={onMenuClick}
-              aria-label="Open menu"
+              size="icon"
+              variant="ghost"
             >
               <Menu className="size-5" />
             </Button>
@@ -30,20 +30,20 @@ export function HeaderRaw({ onMenuClick }: HeaderProps) {
             {/* Enhanced Brand Logo */}
             <div className="flex items-center space-x-2 sm:space-x-3">
               <div className="relative">
-                <div className="flex justify-center items-center size-8 bg-emerald-600 rounded-xl shadow-lg sm:size-10">
+                <div className="flex size-8 items-center justify-center rounded-xl bg-emerald-600 shadow-lg sm:size-10">
                   <ChefHat className="size-4 text-white sm:size-5" />
                 </div>
               </div>
               <div className="flex flex-col">
                 <div className="flex items-center space-x-1">
-                  <h1 className="text-lg font-bold text-emerald-700 sm:text-xl text-balance">
+                  <h1 className="text-balance font-bold text-emerald-700 text-lg sm:text-xl">
                     Appetite
                   </h1>
-                  <span className="hidden sm:inline-block px-2 py-0.5 text-xs font-medium bg-emerald-100 text-emerald-700 rounded-full">
+                  <span className="hidden rounded-full bg-emerald-100 px-2 py-0.5 font-medium text-emerald-700 text-xs sm:inline-block">
                     Beta
                   </span>
                 </div>
-                <p className="hidden text-xs sm:block text-muted-foreground">
+                <p className="hidden text-muted-foreground text-xs sm:block">
                   AI-Powered Cooking Assistant
                 </p>
               </div>
@@ -51,8 +51,8 @@ export function HeaderRaw({ onMenuClick }: HeaderProps) {
           </div>
 
           <div className="flex items-center space-x-2 sm:space-x-4">
-            <div className="hidden sm:flex items-center space-x-2 text-sm text-muted-foreground bg-muted/50 rounded-lg px-3 py-1.5">
-              <div className="flex justify-center items-center size-6 text-xs font-bold text-white bg-emerald-500 rounded-full">
+            <div className="hidden items-center space-x-2 rounded-lg bg-muted/50 px-3 py-1.5 text-muted-foreground text-sm sm:flex">
+              <div className="flex size-6 items-center justify-center rounded-full bg-emerald-500 font-bold text-white text-xs">
                 {user?.user_metadata?.full_name
                   ? user.user_metadata.full_name
                       .split(" ")
@@ -63,19 +63,19 @@ export function HeaderRaw({ onMenuClick }: HeaderProps) {
                   : user?.email?.charAt(0).toUpperCase() || "U"}
               </div>
               <Link
-                to="/settings"
-                className="underline truncate rounded transition-colors max-w-32 sm:max-w-none text-primary hover:text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary"
+                className="max-w-32 truncate rounded text-primary underline transition-colors hover:text-primary-700 focus:outline-none focus:ring-2 focus:ring-primary sm:max-w-none"
                 style={{ textDecoration: "underline" }}
+                to="/settings"
               >
                 {user?.user_metadata?.full_name || user?.email}
               </Link>
             </div>
             <Button
-              variant="ghost"
-              size="icon"
-              onClick={signOut}
-              className="transition-colors hover:bg-red-50 hover:text-red-600"
               aria-label="Sign out"
+              className="transition-colors hover:bg-red-50 hover:text-red-600"
+              onClick={signOut}
+              size="icon"
+              variant="ghost"
             >
               <LogOut className="size-4" />
             </Button>

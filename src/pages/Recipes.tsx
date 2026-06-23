@@ -53,7 +53,7 @@ export function Recipes() {
   } = useRecipe();
   const [userIngredients, setUserIngredients] = useState<Ingredient[]>([]);
   const [userShoppingLists, setUserShoppingLists] = useState<ShoppingList[]>(
-    [],
+    []
   );
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedDifficulty, setSelectedDifficulty] = useState<string>("All");
@@ -103,16 +103,18 @@ export function Recipes() {
   const [error, _setError] = useState<string | null>(null);
 
   const debouncedSetSearchTerm = useRef(
-    debounce((value: string) => setSearchTerm(value), 300),
+    debounce((value: string) => setSearchTerm(value), 300)
   ).current;
 
   const loadData = useCallback(
     throttle(async () => {
-      if (!user) return;
+      if (!user) {
+        return;
+      }
       try {
         // Caching for ingredients
         let ingredientsData = getFromCache<Ingredient[]>(
-          `ingredients_${user.id}`,
+          `ingredients_${user.id}`
         );
         if (!ingredientsData) {
           ingredientsData = await ingredientService.getAll(user.id);
@@ -121,7 +123,7 @@ export function Recipes() {
         setUserIngredients(ingredientsData);
         // Caching for shopping lists
         let shoppingListsData = getFromCache<ShoppingList[]>(
-          `shoppingLists_${user.id}`,
+          `shoppingLists_${user.id}`
         );
         if (!shoppingListsData) {
           shoppingListsData = await shoppingListService.getAllLists(user.id);
@@ -146,26 +148,27 @@ export function Recipes() {
         console.error("Error loading data:", error);
       }
     }, 1000),
-    [],
+    []
   );
 
   useEffect(() => {
     loadData();
   }, [loadData]);
 
-  const checkIngredientAvailability = (ingredientName: string) => {
-    return userIngredients.some(
+  const checkIngredientAvailability = (ingredientName: string) =>
+    userIngredients.some(
       (userIng) =>
         userIng.name.toLowerCase().includes(ingredientName.toLowerCase()) ||
-        ingredientName.toLowerCase().includes(userIng.name.toLowerCase()),
+        ingredientName.toLowerCase().includes(userIng.name.toLowerCase())
     );
-  };
 
   const getMissingIngredients = () => {
-    if (!recipeIngredients.length) return [];
+    if (!recipeIngredients.length) {
+      return [];
+    }
 
     return recipeIngredients.filter(
-      (recipeIng) => !checkIngredientAvailability(recipeIng.ingredient_name),
+      (recipeIng) => !checkIngredientAvailability(recipeIng.ingredient_name)
     );
   };
 
@@ -189,7 +192,7 @@ export function Recipes() {
     (
       e: React.ChangeEvent<
         HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-      >,
+      >
     ) => {
       const { name, value } = e.target;
       setFormState((prev) => ({
@@ -200,7 +203,7 @@ export function Recipes() {
             : value,
       }));
     },
-    [],
+    []
   );
 
   const handleRecipeFormSubmit = useCallback(
@@ -219,7 +222,7 @@ export function Recipes() {
       }
       clearCache(`recipes_${user?.id}`);
       clearCache(
-        `canCookMatches_${user?.id}_${minMatch}_${maxMissing}_${itemsToShow}`,
+        `canCookMatches_${user?.id}_${minMatch}_${maxMissing}_${itemsToShow}`
       );
       setShowRecipeForm(false);
       setEditingRecipe(null);
@@ -233,27 +236,29 @@ export function Recipes() {
       minMatch,
       maxMissing,
       itemsToShow,
-    ],
+    ]
   );
 
   const addMissingToShoppingList = useCallback(async () => {
-    if (!selectedRecipe || !selectedShoppingListId) return;
+    if (!(selectedRecipe && selectedShoppingListId)) {
+      return;
+    }
     try {
       setAddingToShopping(true);
       await shoppingListService.createFromRecipe(
         selectedShoppingListId,
         selectedRecipe.id,
-        userIngredients,
+        userIngredients
       );
       setShowAddToShoppingModal(false);
       setSelectedShoppingListId("");
       toast.success(
-        `Added missing ingredients from "${selectedRecipe.title}" to your shopping list!`,
+        `Added missing ingredients from "${selectedRecipe.title}" to your shopping list!`
       );
     } catch (error) {
       console.error("Error adding to shopping list:", error);
       toast.error(
-        "Failed to add ingredients to shopping list. Please try again.",
+        "Failed to add ingredients to shopping list. Please try again."
       );
     } finally {
       setAddingToShopping(false);
@@ -261,7 +266,9 @@ export function Recipes() {
   }, [selectedRecipe, selectedShoppingListId, userIngredients]);
 
   const createLeftoverFromRecipe = useCallback(async () => {
-    if (!selectedRecipe || !user) return;
+    if (!(selectedRecipe && user)) {
+      return;
+    }
     try {
       setCreatingLeftover(true);
       await leftoverService.createFromRecipe(
@@ -270,7 +277,7 @@ export function Recipes() {
         selectedRecipe.title,
         2, // Default 2 portions
         "portions",
-        "Created from recipe",
+        "Created from recipe"
       );
       setShowCreateLeftoverModal(false);
       toast.success(`Created leftover entry for "${selectedRecipe.title}"!`);
@@ -291,17 +298,16 @@ export function Recipes() {
           .includes(searchTerm.toLowerCase());
         return matchesSearch;
       });
-    } else {
-      return recipes.filter((recipe) => {
-        const matchesSearch =
-          recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          recipe.description.toLowerCase().includes(searchTerm.toLowerCase());
-        const matchesDifficulty =
-          selectedDifficulty === "All" ||
-          recipe.difficulty === selectedDifficulty;
-        return matchesSearch && matchesDifficulty;
-      });
     }
+    return recipes.filter((recipe) => {
+      const matchesSearch =
+        recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        recipe.description.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesDifficulty =
+        selectedDifficulty === "All" ||
+        recipe.difficulty === selectedDifficulty;
+      return matchesSearch && matchesDifficulty;
+    });
   }, [
     showCanCookOnly,
     canCookMatches,
@@ -310,64 +316,66 @@ export function Recipes() {
     selectedDifficulty,
   ]);
 
-  const sortedRecipes = useMemo(() => {
-    return [...filteredRecipes].sort((a, b) => {
-      if (showCanCookOnly) {
-        const aMatch = a as RecipeMatchResult;
-        const bMatch = b as RecipeMatchResult;
-        switch (canCookSortKey) {
-          case "match":
-            return bMatch.match_percentage - aMatch.match_percentage;
-          case "missing":
+  const sortedRecipes = useMemo(
+    () =>
+      [...filteredRecipes].sort((a, b) => {
+        if (showCanCookOnly) {
+          const aMatch = a as RecipeMatchResult;
+          const bMatch = b as RecipeMatchResult;
+          switch (canCookSortKey) {
+            case "match":
+              return bMatch.match_percentage - aMatch.match_percentage;
+            case "missing":
+              return (
+                (aMatch.missing_ingredients?.length ?? 0) -
+                (bMatch.missing_ingredients?.length ?? 0)
+              );
+            default:
+              return 0;
+          }
+        }
+        const aRecipe = a as Recipe;
+        const bRecipe = b as Recipe;
+        switch (sortKey) {
+          case "cook_time_asc":
             return (
-              (aMatch.missing_ingredients?.length ?? 0) -
-              (bMatch.missing_ingredients?.length ?? 0)
+              aRecipe.prep_time +
+              aRecipe.cook_time -
+              (bRecipe.prep_time + bRecipe.cook_time)
             );
+          case "cook_time_desc":
+            return (
+              bRecipe.prep_time +
+              bRecipe.cook_time -
+              (aRecipe.prep_time + aRecipe.cook_time)
+            );
+          case "difficulty_asc": {
+            const diffOrder = { Easy: 1, Medium: 2, Hard: 3 };
+            return (
+              (diffOrder[aRecipe.difficulty as keyof typeof diffOrder] || 0) -
+              (diffOrder[bRecipe.difficulty as keyof typeof diffOrder] || 0)
+            );
+          }
+          case "difficulty_desc": {
+            const diffOrder = { Easy: 1, Medium: 2, Hard: 3 };
+            return (
+              (diffOrder[bRecipe.difficulty as keyof typeof diffOrder] || 0) -
+              (diffOrder[aRecipe.difficulty as keyof typeof diffOrder] || 0)
+            );
+          }
           default:
-            return 0;
+            return (
+              new Date(bRecipe.created_at).getTime() -
+              new Date(aRecipe.created_at).getTime()
+            );
         }
-      }
-      const aRecipe = a as Recipe;
-      const bRecipe = b as Recipe;
-      switch (sortKey) {
-        case "cook_time_asc":
-          return (
-            aRecipe.prep_time +
-            aRecipe.cook_time -
-            (bRecipe.prep_time + bRecipe.cook_time)
-          );
-        case "cook_time_desc":
-          return (
-            bRecipe.prep_time +
-            bRecipe.cook_time -
-            (aRecipe.prep_time + aRecipe.cook_time)
-          );
-        case "difficulty_asc": {
-          const diffOrder = { Easy: 1, Medium: 2, Hard: 3 };
-          return (
-            (diffOrder[aRecipe.difficulty as keyof typeof diffOrder] || 0) -
-            (diffOrder[bRecipe.difficulty as keyof typeof diffOrder] || 0)
-          );
-        }
-        case "difficulty_desc": {
-          const diffOrder = { Easy: 1, Medium: 2, Hard: 3 };
-          return (
-            (diffOrder[bRecipe.difficulty as keyof typeof diffOrder] || 0) -
-            (diffOrder[aRecipe.difficulty as keyof typeof diffOrder] || 0)
-          );
-        }
-        default:
-          return (
-            new Date(bRecipe.created_at).getTime() -
-            new Date(aRecipe.created_at).getTime()
-          );
-      }
-    });
-  }, [filteredRecipes, showCanCookOnly, canCookSortKey, sortKey]);
+      }),
+    [filteredRecipes, showCanCookOnly, canCookSortKey, sortKey]
+  );
 
   const visibleRecipes = useMemo(
     () => sortedRecipes.slice(0, itemsToShow),
-    [sortedRecipes, itemsToShow],
+    [sortedRecipes, itemsToShow]
   );
 
   useEffect(() => {
@@ -377,7 +385,7 @@ export function Recipes() {
       let usedIdleCallback = false;
       if (window.requestIdleCallback) {
         handle = window.requestIdleCallback(() =>
-          setItemsToShow(itemsToShow + 12),
+          setItemsToShow(itemsToShow + 12)
         );
         usedIdleCallback = true;
       } else {
@@ -395,13 +403,16 @@ export function Recipes() {
 
   // Add delete handler
   const handleDeleteRecipe = useCallback(async () => {
-    if (!selectedRecipe) return;
+    if (!selectedRecipe) {
+      return;
+    }
     if (
       !window.confirm(
-        "Are you sure you want to delete this recipe? This cannot be undone.",
+        "Are you sure you want to delete this recipe? This cannot be undone."
       )
-    )
+    ) {
       return;
+    }
     try {
       await deleteRecipe(selectedRecipe.id);
       toast.success("Recipe deleted successfully.");
@@ -413,8 +424,8 @@ export function Recipes() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <div className="w-8 h-8 rounded-full border-b-2 animate-spin border-primary"></div>
+      <div className="flex items-center justify-center py-12">
+        <div className="h-8 w-8 animate-spin rounded-full border-primary border-b-2" />
       </div>
     );
   }
@@ -423,87 +434,87 @@ export function Recipes() {
     <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-center sm:text-left">
-          <h1 className="text-xl font-bold text-gray-900 sm:text-2xl lg:text-3xl">
+          <h1 className="font-bold text-gray-900 text-xl sm:text-2xl lg:text-3xl">
             Recipe Discovery
           </h1>
-          <p className="text-sm text-gray-600 sm:text-base">
+          <p className="text-gray-600 text-sm sm:text-base">
             Find delicious recipes to cook
           </p>
         </div>
-        <div className="flex justify-center items-center space-x-2 sm:justify-start">
-          <span className="text-sm text-gray-600">Can cook:</span>
-          <Badge variant="secondary" className="text-green-800 bg-green-100">
+        <div className="flex items-center justify-center space-x-2 sm:justify-start">
+          <span className="text-gray-600 text-sm">Can cook:</span>
+          <Badge className="bg-green-100 text-green-800" variant="secondary">
             {canCookMatches.length} recipes
           </Badge>
-          <Button onClick={openAddRecipe} className="ml-4" variant="default">
-            <Plus className="mr-1 w-4 h-4" /> Add Recipe
+          <Button className="ml-4" onClick={openAddRecipe} variant="default">
+            <Plus className="mr-1 h-4 w-4" /> Add Recipe
           </Button>
         </div>
       </div>
 
       {/* Search and Filter */}
       <RecipeFilters
-        searchTerm={searchTerm}
-        onSearchChange={debouncedSetSearchTerm}
-        selectedDifficulty={selectedDifficulty}
         onDifficultyChange={setSelectedDifficulty}
-        showCanCookOnly={showCanCookOnly}
-        onToggleCanCook={() => setShowCanCookOnly((v) => !v)}
-        sortKey={sortKey}
+        onSearchChange={debouncedSetSearchTerm}
         onSortKeyChange={setSortKey}
+        onToggleCanCook={() => setShowCanCookOnly((v) => !v)}
+        searchTerm={searchTerm}
+        selectedDifficulty={selectedDifficulty}
+        showCanCookOnly={showCanCookOnly}
+        sortKey={sortKey}
       />
 
       {/* Advanced Filters for Can Cook */}
       {showCanCookOnly && (
-        <div className="flex flex-col p-3 mb-2 bg-gray-50 rounded-lg border border-gray-200 sm:flex-row sm:items-center sm:space-x-6">
-          <div className="flex items-center mb-2 space-x-2 sm:mb-0">
+        <div className="mb-2 flex flex-col rounded-lg border border-gray-200 bg-gray-50 p-3 sm:flex-row sm:items-center sm:space-x-6">
+          <div className="mb-2 flex items-center space-x-2 sm:mb-0">
             <label
+              className="font-medium text-gray-700 text-sm"
               htmlFor="min-match"
-              className="text-sm font-medium text-gray-700"
             >
               Min Match %:
             </label>
             <input
+              className="w-16 rounded border px-2 py-1 text-sm"
               id="min-match"
-              type="number"
-              min={0}
               max={100}
-              value={minMatch}
+              min={0}
               onChange={(e) => setMinMatch(Number(e.target.value))}
-              className="px-2 py-1 w-16 text-sm rounded border"
+              type="number"
+              value={minMatch}
             />
           </div>
-          <div className="flex items-center mb-2 space-x-2 sm:mb-0">
+          <div className="mb-2 flex items-center space-x-2 sm:mb-0">
             <label
+              className="font-medium text-gray-700 text-sm"
               htmlFor="max-missing"
-              className="text-sm font-medium text-gray-700"
             >
               Max Missing:
             </label>
             <input
+              className="w-16 rounded border px-2 py-1 text-sm"
               id="max-missing"
-              type="number"
-              min={0}
               max={20}
-              value={maxMissing}
+              min={0}
               onChange={(e) => setMaxMissing(Number(e.target.value))}
-              className="px-2 py-1 w-16 text-sm rounded border"
+              type="number"
+              value={maxMissing}
             />
           </div>
           <div className="flex items-center space-x-2">
             <label
+              className="font-medium text-gray-700 text-sm"
               htmlFor="can-cook-sort"
-              className="text-sm font-medium text-gray-700"
             >
               Sort by:
             </label>
             <select
+              className="rounded border px-2 py-1 text-sm"
               id="can-cook-sort"
-              value={canCookSortKey}
               onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                 setCanCookSortKey(e.target.value as typeof canCookSortKey)
               }
-              className="px-2 py-1 text-sm rounded border"
+              value={canCookSortKey}
             >
               <option value="match">Match % (high → low)</option>
               <option value="missing">Fewest Missing</option>
@@ -515,26 +526,26 @@ export function Recipes() {
 
       {/* Can Cook Banner */}
       {canCookMatches.length > 0 && !showCanCookOnly && (
-        <Card className="bg-linear-to-r from-green-50 to-emerald-50 border-green-200">
+        <Card className="border-green-200 bg-linear-to-r from-green-50 to-emerald-50">
           <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center space-x-3">
-                <div className="shrink-0 p-2 bg-green-600 rounded-lg">
-                  <Sparkles className="w-4 h-4 text-white sm:h-5 sm:w-5" />
+                <div className="shrink-0 rounded-lg bg-green-600 p-2">
+                  <Sparkles className="h-4 w-4 text-white sm:h-5 sm:w-5" />
                 </div>
                 <div className="min-w-0">
-                  <h3 className="text-sm font-semibold text-green-900 sm:text-base">
+                  <h3 className="font-semibold text-green-900 text-sm sm:text-base">
                     You can cook {canCookMatches.length} recipes with your
                     current ingredients!
                   </h3>
-                  <p className="text-xs text-green-700 sm:text-sm">
+                  <p className="text-green-700 text-xs sm:text-sm">
                     Make the most of what you have in your pantry
                   </p>
                 </div>
               </div>
               <Button
-                onClick={() => setShowCanCookOnly(true)}
                 className="text-sm sm:text-base"
+                onClick={() => setShowCanCookOnly(true)}
               >
                 View Recipes
               </Button>
@@ -547,11 +558,11 @@ export function Recipes() {
       {filteredRecipes.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center sm:py-12">
-            <BookOpen className="mx-auto mb-4 w-10 h-10 text-gray-400 sm:h-12 sm:w-12" />
-            <h3 className="mb-2 text-base font-medium text-gray-900 sm:text-lg">
+            <BookOpen className="mx-auto mb-4 h-10 w-10 text-gray-400 sm:h-12 sm:w-12" />
+            <h3 className="mb-2 font-medium text-base text-gray-900 sm:text-lg">
               No recipes found
             </h3>
-            <p className="px-4 text-sm text-gray-600 sm:text-base">
+            <p className="px-4 text-gray-600 text-sm sm:text-base">
               {showCanCookOnly
                 ? "Add more ingredients to your pantry to unlock more recipes"
                 : "Try adjusting your search or filter criteria"}
@@ -560,21 +571,21 @@ export function Recipes() {
         </Card>
       ) : (
         <RecipeList
-          recipes={visibleRecipes}
           bookmarkedRecipes={bookmarkedRecipes}
-          onBookmark={toggleBookmark}
-          onSelectRecipe={loadRecipeDetails}
           canCookMatches={
             showCanCookOnly ? (visibleRecipes as RecipeMatchResult[]) : []
           }
+          onBookmark={toggleBookmark}
+          onSelectRecipe={loadRecipeDetails}
+          recipes={visibleRecipes}
         />
       )}
 
       {itemsToShow < sortedRecipes.length && (
-        <div className="flex justify-center mt-6">
+        <div className="mt-6 flex justify-center">
           <Button
-            onClick={throttle(() => setItemsToShow(itemsToShow + 12), 500)}
             disabled={loading}
+            onClick={throttle(() => setItemsToShow(itemsToShow + 12), 500)}
           >
             Load More
           </Button>
@@ -584,67 +595,67 @@ export function Recipes() {
       {/* Recipe Detail Modal */}
       {selectedRecipe && (
         <RecipeDetailModal
-          open={!!selectedRecipe}
-          recipe={selectedRecipe}
+          addingToShopping={addingToShopping}
+          addMissingToShoppingList={addMissingToShoppingList}
+          canCook={
+            selectedRecipe && showCanCookOnly
+              ? canCookMatches.some(
+                  (r) =>
+                    r.recipe_id === selectedRecipe.id &&
+                    r.match_percentage >= minMatch
+                )
+              : false
+          }
+          createLeftoverFromRecipe={createLeftoverFromRecipe}
+          creatingLeftover={creatingLeftover}
+          currentUserId={user?.id}
+          getMissingIngredients={getMissingIngredients}
           ingredients={recipeIngredients}
           instructions={recipeInstructions}
+          isBookmarked={
+            selectedRecipe
+              ? bookmarkedRecipes.includes(selectedRecipe.id)
+              : false
+          }
           loading={loading}
+          onBookmark={toggleBookmark}
           onClose={() => {
             setSelectedRecipe(null);
             setShowAddToShoppingModal(false);
             setShowCreateLeftoverModal(false);
             setSelectedShoppingListId("");
           }}
-          isBookmarked={
-            selectedRecipe
-              ? bookmarkedRecipes.includes(selectedRecipe.id)
-              : false
-          }
-          onBookmark={toggleBookmark}
-          canCook={
-            selectedRecipe && showCanCookOnly
-              ? canCookMatches.some(
-                  (r) =>
-                    r.recipe_id === selectedRecipe.id &&
-                    r.match_percentage >= minMatch,
-                )
-              : false
-          }
-          userShoppingLists={userShoppingLists}
-          showAddToShoppingModal={showAddToShoppingModal}
-          setShowAddToShoppingModal={setShowAddToShoppingModal}
+          onDelete={handleDeleteRecipe}
+          open={!!selectedRecipe}
+          recipe={selectedRecipe}
           selectedShoppingListId={selectedShoppingListId}
           setSelectedShoppingListId={setSelectedShoppingListId}
-          addMissingToShoppingList={addMissingToShoppingList}
-          addingToShopping={addingToShopping}
-          showCreateLeftoverModal={showCreateLeftoverModal}
+          setShowAddToShoppingModal={setShowAddToShoppingModal}
           setShowCreateLeftoverModal={setShowCreateLeftoverModal}
-          createLeftoverFromRecipe={createLeftoverFromRecipe}
-          creatingLeftover={creatingLeftover}
-          getMissingIngredients={getMissingIngredients}
-          currentUserId={user?.id}
-          onDelete={handleDeleteRecipe}
+          showAddToShoppingModal={showAddToShoppingModal}
+          showCreateLeftoverModal={showCreateLeftoverModal}
+          userShoppingLists={userShoppingLists}
         />
       )}
 
       {/* Add to Shopping List Modal */}
       {showAddToShoppingModal && selectedRecipe && (
-        <div className="flex fixed inset-0 z-50 justify-center items-center p-4 bg-black/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <Card className="w-full max-w-md">
             <CardHeader className="pb-3 sm:pb-6">
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <CardTitle className="text-lg sm:text-xl">
                   Add to Shopping List
                 </CardTitle>
                 <Button
-                  variant="ghost"
-                  size="icon"
                   onClick={() => {
                     setShowAddToShoppingModal(false);
                     setSelectedShoppingListId("");
                   }}
+                  size="icon"
+                  variant="ghost"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
               <CardDescription>
@@ -654,8 +665,8 @@ export function Recipes() {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Missing Ingredients Preview */}
-              <div className="p-3 bg-orange-50 rounded-lg border border-orange-200">
-                <h4 className="mb-2 text-sm font-medium text-orange-900">
+              <div className="rounded-lg border border-orange-200 bg-orange-50 p-3">
+                <h4 className="mb-2 font-medium text-orange-900 text-sm">
                   Missing Ingredients ({getMissingIngredients().length}
                   ):
                 </h4>
@@ -664,15 +675,15 @@ export function Recipes() {
                     .slice(0, 5)
                     .map((ingredient) => (
                       <div
+                        className="text-orange-800 text-xs"
                         key={`${ingredient.ingredient_name}-${ingredient.quantity}-${ingredient.unit}`}
-                        className="text-xs text-orange-800"
                       >
                         • {ingredient.ingredient_name} ({ingredient.quantity}{" "}
                         {ingredient.unit})
                       </div>
                     ))}
                   {getMissingIngredients().length > 5 && (
-                    <div className="text-xs italic text-orange-600">
+                    <div className="text-orange-600 text-xs italic">
                       ...and {getMissingIngredients().length - 5} more
                     </div>
                   )}
@@ -682,16 +693,16 @@ export function Recipes() {
               {/* Shopping List Selection */}
               <div>
                 <label
+                  className="mb-2 block font-medium text-gray-700 text-sm"
                   htmlFor="add-to-shopping-list-select"
-                  className="block mb-2 text-sm font-medium text-gray-700"
                 >
                   Select Shopping List:
                 </label>
                 <select
+                  className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-primary focus:outline-hidden focus:ring-2 focus:ring-primary/20"
                   id="add-to-shopping-list-select"
-                  value={selectedShoppingListId}
                   onChange={(e) => setSelectedShoppingListId(e.target.value)}
-                  className="px-3 py-2 w-full text-sm rounded-lg border border-gray-300 focus:border-primary focus:outline-hidden focus:ring-2 focus:ring-primary/20"
+                  value={selectedShoppingListId}
                 >
                   <option value="">Choose a list...</option>
                   {userShoppingLists.map((list) => (
@@ -703,22 +714,22 @@ export function Recipes() {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+              <div className="flex flex-col space-y-2 sm:flex-row sm:space-x-2 sm:space-y-0">
                 <Button
-                  onClick={addMissingToShoppingList}
+                  className="flex items-center justify-center space-x-2"
                   disabled={!selectedShoppingListId || addingToShopping}
-                  className="flex justify-center items-center space-x-2"
+                  onClick={addMissingToShoppingList}
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="h-4 w-4" />
                   <span>{addingToShopping ? "Adding..." : "Add to List"}</span>
                 </Button>
                 <Button
-                  variant="outline"
+                  disabled={addingToShopping}
                   onClick={() => {
                     setShowAddToShoppingModal(false);
                     setSelectedShoppingListId("");
                   }}
-                  disabled={addingToShopping}
+                  variant="outline"
                 >
                   Cancel
                 </Button>
@@ -730,21 +741,21 @@ export function Recipes() {
 
       {/* Create Leftover Modal */}
       {showCreateLeftoverModal && selectedRecipe && (
-        <div className="flex fixed inset-0 z-50 justify-center items-center p-4 bg-black/50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <Card className="w-full max-w-md">
             <CardHeader className="pb-3 sm:pb-6">
-              <div className="flex justify-between items-center">
+              <div className="flex items-center justify-between">
                 <CardTitle className="text-lg sm:text-xl">
                   Create Leftover
                 </CardTitle>
                 <Button
-                  variant="ghost"
-                  size="icon"
                   onClick={() => {
                     setShowCreateLeftoverModal(false);
                   }}
+                  size="icon"
+                  variant="ghost"
                 >
-                  <X className="w-4 h-4" />
+                  <X className="h-4 w-4" />
                 </Button>
               </div>
               <CardDescription>
@@ -753,21 +764,21 @@ export function Recipes() {
             </CardHeader>
             <CardContent className="space-y-4">
               {/* Recipe Preview */}
-              <div className="p-3 bg-gray-50 rounded-lg border border-gray-200">
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
                 <div className="flex items-center space-x-3">
                   <img
+                    alt={selectedRecipe.title}
+                    className="h-12 w-12 rounded-lg object-cover"
                     src={
                       selectedRecipe.image_url ||
                       "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
                     }
-                    alt={selectedRecipe.title}
-                    className="object-cover w-12 h-12 rounded-lg"
                   />
-                  <div className="flex-1 min-w-0">
-                    <h4 className="font-medium text-gray-900 truncate">
+                  <div className="min-w-0 flex-1">
+                    <h4 className="truncate font-medium text-gray-900">
                       {selectedRecipe.title}
                     </h4>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-gray-600 text-sm">
                       Serves {selectedRecipe.servings} •{" "}
                       {selectedRecipe.difficulty}
                     </p>
@@ -775,40 +786,40 @@ export function Recipes() {
                 </div>
               </div>
 
-              <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                <h4 className="mb-2 text-sm font-medium text-blue-900">
+              <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
+                <h4 className="mb-2 font-medium text-blue-900 text-sm">
                   Default Leftover Details:
                 </h4>
-                <div className="space-y-1 text-sm text-blue-800">
+                <div className="space-y-1 text-blue-800 text-sm">
                   <div>• Name: {selectedRecipe.title} (Leftovers)</div>
                   <div>• Quantity: 2 portions</div>
                   <div>• Expires: 3 days from now</div>
                   <div>• Linked to this recipe</div>
                 </div>
-                <p className="mt-2 text-xs text-blue-600">
+                <p className="mt-2 text-blue-600 text-xs">
                   You can edit these details after creation in the Leftovers
                   page.
                 </p>
               </div>
 
               {/* Action Buttons */}
-              <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+              <div className="flex flex-col space-y-2 sm:flex-row sm:space-x-2 sm:space-y-0">
                 <Button
-                  onClick={createLeftoverFromRecipe}
+                  className="flex items-center justify-center space-x-2"
                   disabled={creatingLeftover}
-                  className="flex justify-center items-center space-x-2"
+                  onClick={createLeftoverFromRecipe}
                 >
-                  <Utensils className="w-4 h-4" />
+                  <Utensils className="h-4 w-4" />
                   <span>
                     {creatingLeftover ? "Creating..." : "Create Leftover"}
                   </span>
                 </Button>
                 <Button
-                  variant="outline"
+                  disabled={creatingLeftover}
                   onClick={() => {
                     setShowCreateLeftoverModal(false);
                   }}
-                  disabled={creatingLeftover}
+                  variant="outline"
                 >
                   Cancel
                 </Button>
@@ -820,19 +831,19 @@ export function Recipes() {
 
       {/* Recipe Add/Edit Modal */}
       {showRecipeForm && (
-        <div className="flex fixed inset-0 z-50 justify-center items-center">
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
           <RecipeFormModal
+            editingRecipe={editingRecipe}
             formState={formState}
             handleFormChange={handleFormChange}
             handleRecipeFormSubmit={handleRecipeFormSubmit}
-            editingRecipe={editingRecipe}
             setShowRecipeForm={setShowRecipeForm}
           />
         </div>
       )}
 
       {error && (
-        <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+        <div className="mb-4 rounded-lg bg-red-100 p-3 text-red-700 text-sm">
           {error}
         </div>
       )}
@@ -878,118 +889,118 @@ function RecipeFormModal({
   }, [setShowRecipeForm]);
   return (
     <form
-      className="p-6 space-y-2 w-full max-w-md bg-white rounded-lg shadow-lg"
+      className="w-full max-w-md space-y-2 rounded-lg bg-white p-6 shadow-lg"
       onSubmit={handleRecipeFormSubmit}
     >
-      <h2 className="mb-2 text-lg font-bold">
+      <h2 className="mb-2 font-bold text-lg">
         {editingRecipe ? "Edit Recipe" : "Add Recipe"}
       </h2>
       {/* Title */}
       <div className="flex flex-col">
-        <label className="text-sm font-medium" htmlFor="recipe-title">
+        <label className="font-medium text-sm" htmlFor="recipe-title">
           Title
         </label>
         <input
+          className="mt-1 w-full rounded border p-2"
           id="recipe-title"
           name="title"
-          value={formState.title}
           onChange={handleFormChange}
           placeholder="Title"
-          className="p-2 mt-1 w-full rounded border"
           required
+          value={formState.title}
         />
       </div>
       {/* Description */}
       <div className="flex flex-col">
-        <label className="text-sm font-medium" htmlFor="recipe-description">
+        <label className="font-medium text-sm" htmlFor="recipe-description">
           Description
         </label>
         <textarea
+          className="mt-1 w-full rounded border p-2"
           id="recipe-description"
           name="description"
-          value={formState.description}
           onChange={handleFormChange}
           placeholder="Description"
-          className="p-2 mt-1 w-full rounded border"
           required
+          value={formState.description}
         />
       </div>
       {/* Image URL */}
       <div className="flex flex-col">
-        <label className="text-sm font-medium" htmlFor="recipe-image-url">
+        <label className="font-medium text-sm" htmlFor="recipe-image-url">
           Image URL
         </label>
         <input
+          className="mt-1 w-full rounded border p-2"
           id="recipe-image-url"
           name="image_url"
-          value={formState.image_url}
           onChange={handleFormChange}
           placeholder="Image URL"
-          className="p-2 mt-1 w-full rounded border"
+          value={formState.image_url}
         />
       </div>
       {/* Prep Time, Cook Time, Servings */}
       <div className="flex space-x-2">
-        <div className="flex flex-col w-1/3">
-          <label className="text-sm font-medium" htmlFor="prep-time">
+        <div className="flex w-1/3 flex-col">
+          <label className="font-medium text-sm" htmlFor="prep-time">
             Prep Time (min)
           </label>
           <input
+            className="mt-1 rounded border p-2"
             id="prep-time"
+            min={0}
             name="prep_time"
-            type="number"
-            value={formState.prep_time}
             onChange={handleFormChange}
             placeholder="Prep Time (min)"
-            className="p-2 mt-1 rounded border"
-            min={0}
             required
+            type="number"
+            value={formState.prep_time}
           />
         </div>
-        <div className="flex flex-col w-1/3">
-          <label className="text-sm font-medium" htmlFor="cook-time">
+        <div className="flex w-1/3 flex-col">
+          <label className="font-medium text-sm" htmlFor="cook-time">
             Cook Time (min)
           </label>
           <input
+            className="mt-1 rounded border p-2"
             id="cook-time"
+            min={0}
             name="cook_time"
-            type="number"
-            value={formState.cook_time}
             onChange={handleFormChange}
             placeholder="Cook Time (min)"
-            className="p-2 mt-1 rounded border"
-            min={0}
             required
+            type="number"
+            value={formState.cook_time}
           />
         </div>
-        <div className="flex flex-col w-1/3">
-          <label className="text-sm font-medium" htmlFor="servings">
+        <div className="flex w-1/3 flex-col">
+          <label className="font-medium text-sm" htmlFor="servings">
             Servings
           </label>
           <input
+            className="mt-1 rounded border p-2"
             id="servings"
+            min={1}
             name="servings"
-            type="number"
-            value={formState.servings}
             onChange={handleFormChange}
             placeholder="Servings"
-            className="p-2 mt-1 rounded border"
-            min={1}
             required
+            type="number"
+            value={formState.servings}
           />
         </div>
       </div>
       {/* Difficulty */}
       <div className="flex flex-col">
-        <label className="text-sm font-medium" htmlFor="difficulty">
+        <label className="font-medium text-sm" htmlFor="difficulty">
           Difficulty
         </label>
         <select
+          className="mt-1 w-full rounded border p-2"
           id="difficulty"
           name="difficulty"
-          value={formState.difficulty}
           onChange={handleFormChange}
-          className="p-2 mt-1 w-full rounded border"
+          value={formState.difficulty}
         >
           <option value="Easy">Easy</option>
           <option value="Medium">Medium</option>
@@ -998,23 +1009,23 @@ function RecipeFormModal({
       </div>
       {/* Cuisine Type */}
       <div className="flex flex-col">
-        <label className="text-sm font-medium" htmlFor="cuisine-type">
+        <label className="font-medium text-sm" htmlFor="cuisine-type">
           Cuisine Type
         </label>
         <input
+          className="mt-1 w-full rounded border p-2"
           id="cuisine-type"
           name="cuisine_type"
-          value={formState.cuisine_type}
           onChange={handleFormChange}
           placeholder="Cuisine Type"
-          className="p-2 mt-1 w-full rounded border"
+          value={formState.cuisine_type}
         />
       </div>
-      <div className="flex justify-end mt-4 space-x-2">
+      <div className="mt-4 flex justify-end space-x-2">
         <Button
+          onClick={() => setShowRecipeForm(false)}
           type="button"
           variant="ghost"
-          onClick={() => setShowRecipeForm(false)}
         >
           Cancel
         </Button>

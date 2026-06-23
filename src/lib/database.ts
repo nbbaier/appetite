@@ -79,14 +79,16 @@ export const ingredientService = {
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate all returned ingredients
     return validateArrayOrThrow(ingredientSchema, data || []);
   },
 
   async create(
-    ingredient: Omit<Ingredient, "id" | "created_at" | "updated_at">,
+    ingredient: Omit<Ingredient, "id" | "created_at" | "updated_at">
   ): Promise<Ingredient> {
     // Validate input data
     const validatedInput = validateOrThrow(ingredientInsertSchema, ingredient);
@@ -97,7 +99,9 @@ export const ingredientService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(ingredientSchema, data);
@@ -114,7 +118,9 @@ export const ingredientService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(ingredientSchema, data);
@@ -123,13 +129,12 @@ export const ingredientService = {
   async delete(id: string): Promise<void> {
     const { error } = await supabase.from("ingredients").delete().eq("id", id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   },
 
-  async getExpiringSoon(
-    userId: string,
-    days: number = 7,
-  ): Promise<Ingredient[]> {
+  async getExpiringSoon(userId: string, days = 7): Promise<Ingredient[]> {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + days);
 
@@ -141,7 +146,9 @@ export const ingredientService = {
       .lte("expiration_date", futureDate.toISOString().split("T")[0])
       .order("expiration_date", { ascending: true });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate all returned ingredients
     return validateArrayOrThrow(ingredientSchema, data || []);
@@ -152,7 +159,7 @@ export const ingredientService = {
     itemName: string,
     quantity: number,
     unit: string,
-    category: string = "Other",
+    category = "Other"
   ): Promise<Ingredient> {
     // First, check if an ingredient with similar name already exists
     const { data: existingIngredients, error: searchError } = await supabase
@@ -161,14 +168,16 @@ export const ingredientService = {
       .eq("user_id", userId)
       .ilike("name", `%${itemName}%`);
 
-    if (searchError) throw searchError;
+    if (searchError) {
+      throw searchError;
+    }
 
     // Find exact or close match
     const existingIngredient = existingIngredients?.find(
       (ingredient: Ingredient) =>
         ingredient.name.toLowerCase() === itemName.toLowerCase() ||
         ingredient.name.toLowerCase().includes(itemName.toLowerCase()) ||
-        itemName.toLowerCase().includes(ingredient.name.toLowerCase()),
+        itemName.toLowerCase().includes(ingredient.name.toLowerCase())
     );
 
     if (existingIngredient) {
@@ -179,17 +188,16 @@ export const ingredientService = {
         quantity: newQuantity,
         unit: unit || existingIngredient.unit, // Keep existing unit if new one is empty
       });
-    } else {
-      // Create new ingredient
-      return await this.create({
-        user_id: userId,
-        name: itemName,
-        quantity: quantity,
-        unit: unit,
-        category: category,
-        notes: "Added from shopping list",
-      });
     }
+    // Create new ingredient
+    return await this.create({
+      user_id: userId,
+      name: itemName,
+      quantity,
+      unit,
+      category,
+      notes: "Added from shopping list",
+    });
   },
 
   async getLowStockItems(userId: string): Promise<Ingredient[]> {
@@ -197,7 +205,9 @@ export const ingredientService = {
       user_uuid: userId,
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate all returned ingredients
     return validateArrayOrThrow(ingredientSchema, data || []);
@@ -205,7 +215,7 @@ export const ingredientService = {
 
   async updateStockThreshold(
     id: string,
-    threshold: number,
+    threshold: number
   ): Promise<Ingredient> {
     // Validate input using schema
     validateOrThrow(ingredientUpdateSchema, { low_stock_threshold: threshold });
@@ -217,7 +227,9 @@ export const ingredientService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(ingredientSchema, data);
@@ -232,7 +244,9 @@ export const recipeService = {
       .select("*")
       .order("created_at", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate all returned recipes
     return validateArrayOrThrow(recipeSchema, data || []) as Recipe[];
@@ -246,7 +260,9 @@ export const recipeService = {
         .eq("id", id)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
 
       // Validate output data
       return data ? (validateOrThrow(recipeSchema, data) as Recipe) : null;
@@ -265,7 +281,7 @@ export const recipeService = {
         "message" in error &&
         typeof (error as { message?: string }).message === "string" &&
         (error as { message?: string }).message?.includes(
-          "multiple (or no) rows returned",
+          "multiple (or no) rows returned"
         )
       ) {
         return null; // Not found
@@ -282,7 +298,9 @@ export const recipeService = {
       .eq("recipe_id", recipeId)
       .order("ingredient_name");
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate all returned recipe ingredients
     return validateArrayOrThrow(recipeIngredientSchema, data || []);
@@ -295,14 +313,18 @@ export const recipeService = {
       .eq("recipe_id", recipeId)
       .order("step_number");
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate all returned recipe instructions
     return validateArrayOrThrow(recipeInstructionSchema, data || []);
   },
 
   async getCanCook(userIngredients: string[]): Promise<Recipe[]> {
-    if (userIngredients.length === 0) return [];
+    if (userIngredients.length === 0) {
+      return [];
+    }
 
     // Get all recipes with their ingredients
     const { data: recipesWithIngredients, error } = await supabase
@@ -316,7 +338,9 @@ export const recipeService = {
         )
       `);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Filter recipes that can be made with available ingredients
     const canCookRecipes =
@@ -324,24 +348,24 @@ export const recipeService = {
         (recipe: { recipe_ingredients?: { ingredient_name: string }[] }) => {
           const requiredIngredients =
             recipe.recipe_ingredients?.map((ri: { ingredient_name: string }) =>
-              ri.ingredient_name.toLowerCase(),
+              ri.ingredient_name.toLowerCase()
             ) || [];
 
           return requiredIngredients.every((required: string) =>
             userIngredients.some(
               (available: string) =>
                 available.toLowerCase().includes(required) ||
-                required.includes(available.toLowerCase()),
-            ),
+                required.includes(available.toLowerCase())
+            )
           );
-        },
+        }
       ) || [];
 
     return canCookRecipes;
   },
 
   async create(
-    recipe: Omit<Recipe, "id" | "created_at" | "updated_at">,
+    recipe: Omit<Recipe, "id" | "created_at" | "updated_at">
   ): Promise<Recipe> {
     // Validate input data
     const validatedInput = validateOrThrow(recipeInsertSchema, recipe);
@@ -352,7 +376,9 @@ export const recipeService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(recipeSchema, data) as Recipe;
@@ -369,7 +395,9 @@ export const recipeService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(recipeSchema, data) as Recipe;
@@ -378,7 +406,9 @@ export const recipeService = {
   async delete(id: string): Promise<void> {
     const { error } = await supabase.from("recipes").delete().eq("id", id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   },
 
   async getRecipeMatchesForPantry(
@@ -388,7 +418,7 @@ export const recipeService = {
       maxMissingIngredients?: number;
       limit?: number;
       offset?: number;
-    },
+    }
   ): Promise<RecipeMatchResult[]> {
     const {
       minMatchPercentage = 0,
@@ -403,7 +433,9 @@ export const recipeService = {
       limit_count: limit,
       offset_count: offset,
     });
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return (data || []).map((row: RecipeMatchResult) => ({
       recipe_id: row.recipe_id,
       recipe_title: row.recipe_title,
@@ -423,7 +455,9 @@ export const bookmarkService = {
       .select("recipe_id")
       .eq("user_id", userId);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
     return data?.map((b: { recipe_id: string }) => b.recipe_id) || [];
   },
 
@@ -449,7 +483,9 @@ export const bookmarkService = {
       .eq("user_id", userId)
       .eq("recipe_id", recipeId);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   },
 };
 
@@ -462,17 +498,19 @@ export const shoppingListService = {
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate all returned shopping lists
     return validateArrayOrThrow(
       shoppingListSchema,
-      data || [],
+      data || []
     ) as ShoppingList[];
   },
 
   async createList(
-    list: Omit<ShoppingList, "id" | "created_at" | "updated_at">,
+    list: Omit<ShoppingList, "id" | "created_at" | "updated_at">
   ): Promise<ShoppingList> {
     // Validate input data
     const validatedInput = validateOrThrow(shoppingListInsertSchema, list);
@@ -483,7 +521,9 @@ export const shoppingListService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(shoppingListSchema, data) as ShoppingList;
@@ -491,7 +531,7 @@ export const shoppingListService = {
 
   async updateList(
     id: string,
-    updates: Partial<ShoppingList>,
+    updates: Partial<ShoppingList>
   ): Promise<ShoppingList> {
     // Validate input data
     const validatedUpdates = validateOrThrow(shoppingListUpdateSchema, updates);
@@ -503,7 +543,9 @@ export const shoppingListService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(shoppingListSchema, data) as ShoppingList;
@@ -515,7 +557,9 @@ export const shoppingListService = {
       .delete()
       .eq("id", id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   },
 
   async getListItems(listId: string): Promise<ShoppingListItem[]> {
@@ -525,17 +569,19 @@ export const shoppingListService = {
       .eq("shopping_list_id", listId)
       .order("created_at", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate all returned shopping list items
     return validateArrayOrThrow(
       shoppingListItemSchema,
-      data || [],
+      data || []
     ) as ShoppingListItem[];
   },
 
   async createItem(
-    item: Omit<ShoppingListItem, "id" | "created_at" | "updated_at">,
+    item: Omit<ShoppingListItem, "id" | "created_at" | "updated_at">
   ): Promise<ShoppingListItem> {
     // Validate input data
     const validatedInput = validateOrThrow(shoppingListItemInsertSchema, item);
@@ -546,7 +592,9 @@ export const shoppingListService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(shoppingListItemSchema, data) as ShoppingListItem;
@@ -554,12 +602,12 @@ export const shoppingListService = {
 
   async updateItem(
     id: string,
-    updates: Partial<ShoppingListItem>,
+    updates: Partial<ShoppingListItem>
   ): Promise<ShoppingListItem> {
     // Validate input data
     const validatedUpdates = validateOrThrow(
       shoppingListItemUpdateSchema,
-      updates,
+      updates
     );
 
     const { data, error } = await supabase
@@ -569,7 +617,9 @@ export const shoppingListService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(shoppingListItemSchema, data) as ShoppingListItem;
@@ -581,12 +631,14 @@ export const shoppingListService = {
       .delete()
       .eq("id", id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   },
 
   async togglePurchased(
     id: string,
-    isPurchased: boolean,
+    isPurchased: boolean
   ): Promise<ShoppingListItem> {
     const { data, error } = await supabase
       .from("shopping_list_items")
@@ -595,7 +647,9 @@ export const shoppingListService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(shoppingListItemSchema, data) as ShoppingListItem;
@@ -604,23 +658,24 @@ export const shoppingListService = {
   async createFromRecipe(
     listId: string,
     recipeId: string,
-    userIngredients: Ingredient[],
+    userIngredients: Ingredient[]
   ): Promise<ShoppingListItem[]> {
     // Get recipe ingredients
     const recipeIngredients = await recipeService.getIngredients(recipeId);
 
     // Filter out ingredients the user already has
-    const neededIngredients = recipeIngredients.filter((recipeIng) => {
-      return !userIngredients.some(
-        (userIng) =>
-          userIng.name
-            .toLowerCase()
-            .includes(recipeIng.ingredient_name.toLowerCase()) ||
-          recipeIng.ingredient_name
-            .toLowerCase()
-            .includes(userIng.name.toLowerCase()),
-      );
-    });
+    const neededIngredients = recipeIngredients.filter(
+      (recipeIng) =>
+        !userIngredients.some(
+          (userIng) =>
+            userIng.name
+              .toLowerCase()
+              .includes(recipeIng.ingredient_name.toLowerCase()) ||
+            recipeIng.ingredient_name
+              .toLowerCase()
+              .includes(userIng.name.toLowerCase())
+        )
+    );
 
     // Create shopping list items
     const items = neededIngredients.map((ingredient) => ({
@@ -641,7 +696,7 @@ export const shoppingListService = {
     // Validate items before inserting
     const validatedItems = validateArrayOrThrow(
       shoppingListItemInsertSchema,
-      items,
+      items
     );
 
     const { data, error } = await supabase
@@ -656,7 +711,7 @@ export const shoppingListService = {
     // Validate returned data
     return validateArrayOrThrow(
       shoppingListItemSchema,
-      data || [],
+      data || []
     ) as ShoppingListItem[];
   },
   async addToPantryFromShopping(
@@ -664,14 +719,14 @@ export const shoppingListService = {
     itemName: string,
     quantity: number,
     unit: string,
-    category: string = "Other",
+    category = "Other"
   ): Promise<void> {
     await ingredientService.addOrUpdateFromShopping(
       userId,
       itemName,
       quantity,
       unit,
-      category,
+      category
     );
   },
 };
@@ -685,14 +740,16 @@ export const leftoverService = {
       .eq("user_id", userId)
       .order("created_at", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate all returned leftovers
     return validateArrayOrThrow(leftoverSchema, data || []) as Leftover[];
   },
 
   async create(
-    leftover: Omit<Leftover, "id" | "created_at" | "updated_at">,
+    leftover: Omit<Leftover, "id" | "created_at" | "updated_at">
   ): Promise<Leftover> {
     // Validate input data
     const validatedInput = validateOrThrow(leftoverInsertSchema, leftover);
@@ -703,7 +760,9 @@ export const leftoverService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(leftoverSchema, data) as Leftover;
@@ -720,7 +779,9 @@ export const leftoverService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(leftoverSchema, data) as Leftover;
@@ -729,10 +790,12 @@ export const leftoverService = {
   async delete(id: string): Promise<void> {
     const { error } = await supabase.from("leftovers").delete().eq("id", id);
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   },
 
-  async getExpiringSoon(userId: string, days: number = 3): Promise<Leftover[]> {
+  async getExpiringSoon(userId: string, days = 3): Promise<Leftover[]> {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + days);
 
@@ -744,7 +807,9 @@ export const leftoverService = {
       .lte("expiration_date", futureDate.toISOString().split("T")[0])
       .order("expiration_date", { ascending: true });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate all returned leftovers
     return validateArrayOrThrow(leftoverSchema, data || []) as Leftover[];
@@ -754,9 +819,9 @@ export const leftoverService = {
     userId: string,
     recipeId: string,
     recipeName: string,
-    quantity: number = 1,
-    unit: string = "portions",
-    notes?: string,
+    quantity = 1,
+    unit = "portions",
+    notes?: string
   ): Promise<Leftover> {
     const expirationDate = new Date();
     expirationDate.setDate(expirationDate.getDate() + 3); // Default 3 days for leftovers
@@ -780,7 +845,9 @@ export const leftoverService = {
       .eq("source_recipe_id", recipeId)
       .order("created_at", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate all returned leftovers
     return validateArrayOrThrow(leftoverSchema, data || []);
@@ -797,8 +864,12 @@ export const userProfileService = {
         .eq("user_id", userId)
         .maybeSingle();
 
-      if (error) throw error;
-      if (!data) return null;
+      if (error) {
+        throw error;
+      }
+      if (!data) {
+        return null;
+      }
       return validateOrThrow(userProfileSchema, data) as UserProfile;
     } catch (error: unknown) {
       if (
@@ -815,7 +886,7 @@ export const userProfileService = {
         "message" in error &&
         typeof (error as { message?: string }).message === "string" &&
         (error as { message?: string }).message?.includes(
-          "multiple (or no) rows returned",
+          "multiple (or no) rows returned"
         )
       ) {
         return null; // Not found
@@ -827,7 +898,7 @@ export const userProfileService = {
 
   async updateProfile(
     userId: string,
-    updates: Partial<UserProfile>,
+    updates: Partial<UserProfile>
   ): Promise<UserProfile> {
     // Validate input data
     const validatedUpdates = validateOrThrow(userProfileUpdateSchema, updates);
@@ -839,7 +910,9 @@ export const userProfileService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(userProfileSchema, data) as UserProfile;
@@ -856,7 +929,9 @@ export const userPreferencesService = {
         .eq("user_id", userId)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        throw error;
+      }
       return validateOrThrow(userPreferencesSchema, data) as UserPreferences;
     } catch (error: unknown) {
       if (
@@ -873,7 +948,7 @@ export const userPreferencesService = {
         "message" in error &&
         typeof (error as { message?: string }).message === "string" &&
         (error as { message?: string }).message?.includes(
-          "multiple (or no) rows returned",
+          "multiple (or no) rows returned"
         )
       ) {
         return null; // Not found
@@ -885,12 +960,12 @@ export const userPreferencesService = {
 
   async updatePreferences(
     userId: string,
-    updates: Partial<UserPreferences>,
+    updates: Partial<UserPreferences>
   ): Promise<UserPreferences> {
     // Validate input data
     const validatedUpdates = validateOrThrow(
       userPreferencesUpdateSchema,
-      updates,
+      updates
     );
 
     // Use upsert to either update existing record or create new one
@@ -905,7 +980,9 @@ export const userPreferencesService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(userPreferencesSchema, data) as UserPreferences;
@@ -921,18 +998,20 @@ export const conversationService = {
       .eq("user_id", userId)
       .order("updated_at", { ascending: false });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate all returned conversations
     return validateArrayOrThrow(
       conversationSchema,
-      data || [],
+      data || []
     ) as Conversation[];
   },
 
   async create(
     userId: string,
-    title: string | null = null,
+    title: string | null = null
   ): Promise<Conversation> {
     // Validate input data
     const conversationInput = validateOrThrow(conversationInsertSchema, {
@@ -946,7 +1025,9 @@ export const conversationService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(conversationSchema, data) as Conversation;
@@ -963,7 +1044,9 @@ export const conversationService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(conversationSchema, data) as Conversation;
@@ -974,7 +1057,9 @@ export const conversationService = {
       .from("conversations")
       .delete()
       .eq("id", id);
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   },
 };
 
@@ -987,7 +1072,9 @@ export const chatMessageService = {
       .eq("conversation_id", conversationId)
       .order("timestamp", { ascending: true });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate all returned chat messages
     return validateArrayOrThrow(chatMessageSchema, data || []) as ChatMessage[];
@@ -998,19 +1085,19 @@ export const chatMessageService = {
     sender: "user" | "ai",
     content: string,
     suggestions?: string[] | null,
-    recipes?: Recipe[] | null,
+    recipes?: Recipe[] | null
   ): Promise<ChatMessage> {
     const messageInput = {
       conversation_id: conversationId,
       sender,
       content,
-      ...(suggestions !== undefined ? { suggestions } : {}),
-      ...(recipes !== undefined ? { recipes } : {}),
+      ...(suggestions === undefined ? {} : { suggestions }),
+      ...(recipes === undefined ? {} : { recipes }),
     };
 
     const validatedInput = validateOrThrow(
       chatMessageInsertSchema,
-      messageInput,
+      messageInput
     );
 
     const { data, error } = await supabase
@@ -1019,7 +1106,9 @@ export const chatMessageService = {
       .select()
       .single();
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     // Validate output data
     return validateOrThrow(chatMessageSchema, data) as ChatMessage;
@@ -1027,6 +1116,8 @@ export const chatMessageService = {
 
   async delete(id: string): Promise<void> {
     const { error } = await supabase.from("messages").delete().eq("id", id);
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
   },
 };

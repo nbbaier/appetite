@@ -21,7 +21,7 @@ const createEnvSchema = (mode: string | undefined) => {
       : z
           .string()
           .url(
-            "Invalid Supabase URL. Please set VITE_SUPABASE_URL in your .env file.",
+            "Invalid Supabase URL. Please set VITE_SUPABASE_URL in your .env file."
           ),
     VITE_SUPABASE_ANON_KEY: isTestMode
       ? z.string().optional()
@@ -29,7 +29,7 @@ const createEnvSchema = (mode: string | undefined) => {
           .string()
           .min(
             1,
-            "Supabase anon key is required. Please set VITE_SUPABASE_ANON_KEY in your .env file.",
+            "Supabase anon key is required. Please set VITE_SUPABASE_ANON_KEY in your .env file."
           ),
     MODE: z.enum(["development", "production", "test"]).optional(),
   });
@@ -73,8 +73,8 @@ if (mode === "test") {
       onAuthStateChange: (
         callback: (
           event: AuthChangeEvent,
-          session: Session | null,
-        ) => void | Promise<void>,
+          session: Session | null
+        ) => void | Promise<void>
       ) => {
         // Call callback immediately with no session
         callback("SIGNED_OUT", null);
@@ -101,17 +101,17 @@ if (mode === "test") {
       signOut: () => Promise.resolve({ error: null }),
     },
   } as unknown as SupabaseClient;
-} else if (!supabaseUrl || !supabaseAnonKey) {
+} else if (supabaseUrl && supabaseAnonKey) {
+  // Create real Supabase client (env vars are validated above)
+  supabase = createClient(supabaseUrl, supabaseAnonKey);
+} else {
   // Provide helpful error message if env vars are missing in development
   throw new Error(
     "Supabase configuration missing. Please create a .env file with:\n" +
       "VITE_SUPABASE_URL=your_supabase_url\n" +
       "VITE_SUPABASE_ANON_KEY=your_supabase_anon_key\n\n" +
-      "See the README for setup instructions.",
+      "See the README for setup instructions."
   );
-} else {
-  // Create real Supabase client (env vars are validated above)
-  supabase = createClient(supabaseUrl, supabaseAnonKey);
 }
 
 export { supabase };

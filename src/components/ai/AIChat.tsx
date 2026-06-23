@@ -40,27 +40,27 @@ import { Button } from "../ui/button";
 import { ScrollArea } from "../ui/scroll-area";
 
 export interface Message {
-  id: string;
-  type: "user" | "ai";
   content: string;
-  timestamp: Date;
-  suggestions?: string[];
+  id: string;
   recipes?: Recipe[];
+  suggestions?: string[];
+  timestamp: Date;
+  type: "user" | "ai";
 }
 
 interface APIError {
   code: string;
+  details?: unknown;
   message: string;
   requestId?: string;
-  details?: unknown;
 }
 
 // API response types
 export interface ChatAPIResponse {
-  message: string;
-  usage?: unknown;
-  requestId?: string;
   error?: APIError;
+  message: string;
+  requestId?: string;
+  usage?: unknown;
 }
 
 const QUICK_PROMPTS = [
@@ -133,7 +133,9 @@ export function AIChat() {
   const { notify } = useNotification();
 
   const loadUserData = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     try {
       const [ingredients, recipes, preferences] = await Promise.all([
@@ -151,7 +153,9 @@ export function AIChat() {
   }, [user, notify]);
 
   const loadConversations = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     setLoadingConversations(true);
     try {
       const convs = await conversationService.getAll(user.id);
@@ -209,7 +213,7 @@ export function AIChat() {
         setLoadingMessages(false);
       }
     },
-    [dispatch, notify],
+    [dispatch, notify]
   );
 
   useEffect(() => {
@@ -251,7 +255,7 @@ export function AIChat() {
     // Scroll to bottom when new messages are added
     if (scrollAreaRef.current) {
       const scrollElement = scrollAreaRef.current.querySelector(
-        "[data-radix-scroll-area-viewport]",
+        "[data-radix-scroll-area-viewport]"
       );
       if (scrollElement) {
         scrollElement.scrollTop = scrollElement.scrollHeight;
@@ -296,7 +300,7 @@ export function AIChat() {
             messages: conversationMessages,
             ...userContext,
           }),
-        },
+        }
       );
       if (!response.ok) {
         let data: ChatAPIResponse;
@@ -391,7 +395,7 @@ export function AIChat() {
             "ai",
             aiContent,
             suggestions,
-            recipes,
+            recipes
           );
         } catch (err) {
           setError({
@@ -415,7 +419,9 @@ export function AIChat() {
 
   const handleSendMessage = async (messageText?: string) => {
     const text = messageText || inputValue.trim();
-    if (!text) return;
+    if (!text) {
+      return;
+    }
     const userMsg: Message = {
       id: Date.now().toString(),
       type: "user",
@@ -463,22 +469,22 @@ export function AIChat() {
     // Allow Shift+Enter for new lines (default textarea behavior)
   };
 
-  const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], {
+  const formatTime = (date: Date) =>
+    date.toLocaleTimeString([], {
       hour: "2-digit",
       minute: "2-digit",
     });
-  };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-200px)] max-w-4xl mx-auto">
+    <div className="mx-auto flex h-[calc(100vh-200px)] max-w-4xl flex-col">
       {/* Conversation Selector Header */}
-      <div className="flex overflow-x-auto gap-2 items-center px-4 py-2 bg-white border-b border-border">
+      <div className="flex items-center gap-2 overflow-x-auto border-border border-b bg-white px-4 py-2">
         <Button
-          variant="outline"
           className="shrink-0"
           onClick={async () => {
-            if (!user) return;
+            if (!user) {
+              return;
+            }
             try {
               const newConv = await conversationService.create(user.id, null);
               setConversations((prev) => [newConv, ...prev]);
@@ -492,46 +498,45 @@ export function AIChat() {
               notify(handleApiError(err), { type: "error" });
             }
           }}
+          variant="outline"
         >
           + New Conversation
         </Button>
-        <div className="flex overflow-x-auto gap-2">
+        <div className="flex gap-2 overflow-x-auto">
           {_conversations.map((conv: Conversation, idx: number) => (
-            <div key={conv.id} className="flex relative items-center group">
+            <div className="group relative flex items-center" key={conv.id}>
               <Button
-                variant={
-                  conv.id === activeConversationId ? "default" : "outline"
-                }
                 className={`shrink-0 ${conv.id === activeConversationId ? "font-bold" : ""}`}
                 onClick={() =>
                   dispatch({ type: "SET_CONVERSATION", payload: conv.id })
                 }
+                variant={
+                  conv.id === activeConversationId ? "default" : "outline"
+                }
               >
                 {conv.title || "Untitled"}
-                <span className="ml-2 text-xs text-gray-400">
+                <span className="ml-2 text-gray-400 text-xs">
                   {new Date(conv.updated_at).toLocaleDateString()}
                 </span>
               </Button>
               <button
-                type="button"
-                className="absolute right-10 top-1/2 p-1 opacity-0 transition-opacity -translate-y-1/2 group-hover:opacity-100"
-                tabIndex={0}
+                className="absolute top-1/2 right-10 -translate-y-1/2 p-1 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={async (e) => {
                   e.stopPropagation();
                   const newTitle = window.prompt(
                     "Rename conversation",
-                    conv.title || "Untitled",
+                    conv.title || "Untitled"
                   );
                   if (newTitle !== null && newTitle.trim() !== "") {
                     try {
                       await conversationService.updateTitle(
                         conv.id,
-                        newTitle.trim(),
+                        newTitle.trim()
                       );
                       setConversations((prev) =>
                         prev.map((c, i) =>
-                          i === idx ? { ...c, title: newTitle.trim() } : c,
-                        ),
+                          i === idx ? { ...c, title: newTitle.trim() } : c
+                        )
                       );
                     } catch (err) {
                       setError({
@@ -542,24 +547,24 @@ export function AIChat() {
                     }
                   }
                 }}
+                tabIndex={0}
+                type="button"
               >
-                <Pencil className="w-4 h-4 text-gray-400 hover:text-blue-500" />
+                <Pencil className="h-4 w-4 text-gray-400 hover:text-blue-500" />
               </button>
               <button
-                type="button"
-                className="absolute right-2 top-1/2 p-1 opacity-0 transition-opacity -translate-y-1/2 group-hover:opacity-100"
-                tabIndex={0}
+                className="absolute top-1/2 right-2 -translate-y-1/2 p-1 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={async (e) => {
                   e.stopPropagation();
                   if (window.confirm("Delete this conversation?")) {
                     try {
                       await conversationService.delete(conv.id);
                       setConversations((prev) =>
-                        prev.filter((c) => c.id !== conv.id),
+                        prev.filter((c) => c.id !== conv.id)
                       );
                       if (activeConversationId === conv.id) {
                         const next = _conversations.find(
-                          (c) => c.id !== conv.id,
+                          (c) => c.id !== conv.id
                         );
                         if (next) {
                           dispatch({
@@ -570,7 +575,7 @@ export function AIChat() {
                           try {
                             const newConv = await conversationService.create(
                               user.id,
-                              null,
+                              null
                             );
                             setConversations([newConv]);
                             dispatch({
@@ -596,8 +601,10 @@ export function AIChat() {
                     }
                   }
                 }}
+                tabIndex={0}
+                type="button"
               >
-                <Trash className="w-4 h-4 text-gray-400 hover:text-red-500" />
+                <Trash className="h-4 w-4 text-gray-400 hover:text-red-500" />
               </button>
             </div>
           ))}
@@ -606,17 +613,17 @@ export function AIChat() {
 
       {/* Quick Prompts - Show when no messages or just welcome */}
       {messages.length <= 1 && (
-        <div className="p-4 bg-gray-50 rounded-t-lg border-b border-border">
-          <p className="mb-3 text-sm text-gray-600">Try asking me about:</p>
+        <div className="rounded-t-lg border-border border-b bg-gray-50 p-4">
+          <p className="mb-3 text-gray-600 text-sm">Try asking me about:</p>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
             {QUICK_PROMPTS.map((prompt) => (
               <button
-                type="button"
+                className="flex items-center space-x-2 rounded-lg border border-gray-200 bg-white p-2 text-left text-sm transition-colors hover:border-emerald-300 hover:bg-emerald-50"
                 key={prompt.text}
                 onClick={() => handleSendMessage(prompt.text)}
-                className="flex items-center p-2 space-x-2 text-sm text-left bg-white rounded-lg border border-gray-200 transition-colors hover:border-emerald-300 hover:bg-emerald-50"
+                type="button"
               >
-                <prompt.icon className="shrink-0 w-4 h-4 text-emerald-600" />
+                <prompt.icon className="h-4 w-4 shrink-0 text-emerald-600" />
                 <span className="truncate">{prompt.text}</span>
               </button>
             ))}
@@ -625,12 +632,12 @@ export function AIChat() {
       )}
 
       {/* Messages Area */}
-      <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
+      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
         <div className="space-y-4">
           {messages.map((message: Message) => (
             <div
-              key={message.id}
               className={`flex ${message.type === "user" ? "justify-end" : "justify-start"}`}
+              key={message.id}
             >
               <div
                 className={`flex max-w-[80%] ${
@@ -639,16 +646,16 @@ export function AIChat() {
               >
                 {/* Avatar */}
                 <div
-                  className={`flex h-8 w-8 items-center justify-center rounded-full shrink-0 ${
+                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
                     message.type === "user"
-                      ? "bg-blue-500 text-white ml-2"
-                      : "bg-emerald-500 text-white mr-2"
+                      ? "ml-2 bg-blue-500 text-white"
+                      : "mr-2 bg-emerald-500 text-white"
                   }`}
                 >
                   {message.type === "user" ? (
-                    <User className="w-4 h-4" />
+                    <User className="h-4 w-4" />
                   ) : (
-                    <Bot className="w-4 h-4" />
+                    <Bot className="h-4 w-4" />
                   )}
                 </div>
 
@@ -657,15 +664,15 @@ export function AIChat() {
                   className={`rounded-lg px-4 py-2 ${
                     message.type === "user"
                       ? "bg-blue-500 text-white"
-                      : "bg-white border border-gray-200 text-gray-900"
+                      : "border border-gray-200 bg-white text-gray-900"
                   }`}
                 >
                   {message.type === "ai" ? (
-                    <ReactMarkdown className="text-sm leading-relaxed whitespace-pre-wrap">
+                    <ReactMarkdown className="whitespace-pre-wrap text-sm leading-relaxed">
                       {message.content}
                     </ReactMarkdown>
                   ) : (
-                    <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                    <p className="whitespace-pre-wrap text-sm leading-relaxed">
                       {message.content}
                     </p>
                   )}
@@ -675,31 +682,31 @@ export function AIChat() {
                     <div className="mt-3 space-y-2">
                       {message.recipes.map((recipe: Recipe) => (
                         <div
+                          className="rounded-lg border border-gray-200 bg-gray-50 p-3"
                           key={recipe.id}
-                          className="p-3 bg-gray-50 rounded-lg border border-gray-200"
                         >
                           <div className="flex items-center space-x-3">
                             <img
+                              alt={recipe.title}
+                              className="h-12 w-12 shrink-0 rounded-lg object-cover"
                               src={
                                 recipe.image_url ||
                                 "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
                               }
-                              alt={recipe.title}
-                              className="object-cover shrink-0 w-12 h-12 rounded-lg"
                             />
-                            <div className="flex-1 min-w-0">
-                              <h4 className="text-sm font-medium text-gray-900 truncate">
+                            <div className="min-w-0 flex-1">
+                              <h4 className="truncate font-medium text-gray-900 text-sm">
                                 {recipe.title}
                               </h4>
-                              <p className="text-xs text-gray-600 line-clamp-2">
+                              <p className="line-clamp-2 text-gray-600 text-xs">
                                 {recipe.description}
                               </p>
-                              <div className="flex items-center mt-1 space-x-2">
-                                <Clock className="w-3 h-3 text-gray-400" />
-                                <span className="text-xs text-gray-500">
+                              <div className="mt-1 flex items-center space-x-2">
+                                <Clock className="h-3 w-3 text-gray-400" />
+                                <span className="text-gray-500 text-xs">
                                   {recipe.prep_time + recipe.cook_time} min
                                 </span>
-                                <Badge variant="outline" className="text-xs">
+                                <Badge className="text-xs" variant="outline">
                                   {recipe.difficulty}
                                 </Badge>
                               </div>
@@ -712,13 +719,13 @@ export function AIChat() {
 
                   {/* Suggestions */}
                   {message.suggestions && message.suggestions.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mt-3">
+                    <div className="mt-3 flex flex-wrap gap-1">
                       {message.suggestions.map((suggestion: string) => (
                         <button
-                          type="button"
+                          className="rounded-full bg-gray-100 px-2 py-1 text-gray-700 text-xs transition-colors hover:bg-gray-200"
                           key={suggestion}
                           onClick={() => handleSendMessage(suggestion)}
-                          className="px-2 py-1 text-xs text-gray-700 bg-gray-100 rounded-full transition-colors hover:bg-gray-200"
+                          type="button"
                         >
                           {suggestion}
                         </button>
@@ -738,20 +745,20 @@ export function AIChat() {
           {isTyping && (
             <div className="flex justify-start">
               <div className="flex items-start space-x-2">
-                <div className="flex justify-center items-center w-8 h-8 text-white bg-emerald-500 rounded-full">
-                  <Bot className="w-4 h-4" />
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-white">
+                  <Bot className="h-4 w-4" />
                 </div>
-                <div className="px-4 py-2 bg-white rounded-lg border border-gray-200">
+                <div className="rounded-lg border border-gray-200 bg-white px-4 py-2">
                   <div className="flex space-x-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                    <div className="h-2 w-2 animate-bounce rounded-full bg-gray-400" />
                     <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      className="h-2 w-2 animate-bounce rounded-full bg-gray-400"
                       style={{ animationDelay: "0.1s" }}
-                    ></div>
+                    />
                     <div
-                      className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                      className="h-2 w-2 animate-bounce rounded-full bg-gray-400"
                       style={{ animationDelay: "0.2s" }}
-                    ></div>
+                    />
                   </div>
                 </div>
               </div>
@@ -761,29 +768,29 @@ export function AIChat() {
       </ScrollArea>
 
       {/* Input Area */}
-      <div className="p-4 bg-white rounded-b-lg border-t border-border">
+      <div className="rounded-b-lg border-border border-t bg-white p-4">
         <div className="flex space-x-2">
           <textarea
-            ref={textareaRef}
-            value={inputValue}
+            className="max-h-[120px] min-h-[40px] flex-1 resize-none overflow-hidden rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            disabled={isTyping}
             onChange={(e) =>
               dispatch({ type: "SET_INPUT", payload: e.target.value })
             }
             onKeyDown={handleKeyPress}
             placeholder="Ask me about recipes, ingredients, or cooking tips..."
-            className="flex-1 min-h-[40px] max-h-[120px] resize-none overflow-hidden rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+            ref={textareaRef}
             rows={1}
-            disabled={isTyping}
+            value={inputValue}
           />
           <Button
-            onClick={() => handleSendMessage()}
-            disabled={!inputValue.trim() || isTyping}
             className="px-4"
+            disabled={!inputValue.trim() || isTyping}
+            onClick={() => handleSendMessage()}
           >
-            <Send className="w-4 h-4" />
+            <Send className="h-4 w-4" />
           </Button>
         </div>
-        <p className="mt-2 text-xs text-center text-gray-500">
+        <p className="mt-2 text-center text-gray-500 text-xs">
           Powered by OpenAI GPT-4.1. Press Enter to send, Shift+Enter for new
           line.
         </p>
@@ -791,7 +798,7 @@ export function AIChat() {
 
       {/* Error Message */}
       {error && (
-        <div className="flex flex-col gap-1 p-2 mb-2 text-red-700 bg-red-100 rounded ai-chat-error">
+        <div className="ai-chat-error mb-2 flex flex-col gap-1 rounded bg-red-100 p-2 text-red-700">
           <div>
             <strong>Error:</strong>{" "}
             {ERROR_MESSAGES[error.code] || error.message}
@@ -806,7 +813,7 @@ export function AIChat() {
           </div>
           <div>
             <span>What can you do?</span>
-            <ul className="ml-5 text-sm list-disc">
+            <ul className="ml-5 list-disc text-sm">
               <li>Check your internet connection.</li>
               <li>Try rephrasing your message or sending it again.</li>
               <li>
@@ -817,7 +824,6 @@ export function AIChat() {
           </div>
           {lastUserMessage && (
             <Button
-              variant="outline"
               className="mt-1 w-fit"
               onClick={() => {
                 setError(null);
@@ -825,6 +831,7 @@ export function AIChat() {
                 // Optionally, auto-resend the message:
                 // handleSendMessage(lastUserMessage);
               }}
+              variant="outline"
             >
               Retry
             </Button>

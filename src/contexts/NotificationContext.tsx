@@ -18,12 +18,12 @@ interface NotificationContextValue {
       description?: string;
       duration?: number;
       icon?: React.ReactNode;
-    },
+    }
   ) => void;
 }
 
 const NotificationContext = createContext<NotificationContextValue | undefined>(
-  undefined,
+  undefined
 );
 
 export const NotificationProvider = ({ children }: { children: ReactNode }) => {
@@ -35,7 +35,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
         description?: string;
         duration?: number;
         icon?: React.ReactNode;
-      },
+      }
     ) => {
       toast(message, {
         description: options?.description,
@@ -51,7 +51,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
         icon: options?.icon,
       });
     },
-    [],
+    []
   );
 
   useEffect(() => {
@@ -70,9 +70,10 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
 
 export function useNotification() {
   const ctx = useContext(NotificationContext);
-  if (!ctx)
+  if (!ctx) {
     throw new Error(
-      "useNotification must be used within a NotificationProvider",
+      "useNotification must be used within a NotificationProvider"
     );
+  }
   return ctx;
 }

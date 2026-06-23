@@ -33,9 +33,13 @@ export function Sidebar({ onClose }: SidebarProps) {
   const sidebarRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    if (!onClose) return;
+    if (!onClose) {
+      return;
+    }
     const sidebar = sidebarRef.current;
-    if (!sidebar) return;
+    if (!sidebar) {
+      return;
+    }
 
     const focusableSelectors = [
       "a[href]",
@@ -49,9 +53,13 @@ export function Sidebar({ onClose }: SidebarProps) {
       sidebar.querySelectorAll<HTMLElement>(focusableSelectors.join(", "));
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key !== "Tab") return;
+      if (e.key !== "Tab") {
+        return;
+      }
       const focusable = Array.from(getFocusable());
-      if (focusable.length === 0) return;
+      if (focusable.length === 0) {
+        return;
+      }
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
       if (e.shiftKey) {
@@ -59,11 +67,9 @@ export function Sidebar({ onClose }: SidebarProps) {
           e.preventDefault();
           last.focus();
         }
-      } else {
-        if (document.activeElement === last) {
-          e.preventDefault();
-          first.focus();
-        }
+      } else if (document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
       }
     };
 
@@ -71,7 +77,9 @@ export function Sidebar({ onClose }: SidebarProps) {
     // Focus the first focusable element when opened
     setTimeout(() => {
       const focusable = getFocusable();
-      if (focusable.length) focusable[0].focus();
+      if (focusable.length) {
+        focusable[0].focus();
+      }
     }, 0);
     return () => {
       sidebar.removeEventListener("keydown", handleKeyDown);
@@ -80,28 +88,28 @@ export function Sidebar({ onClose }: SidebarProps) {
 
   return (
     <nav
-      ref={sidebarRef}
-      className="flex flex-col w-64 h-full border-r bg-background border-border"
       aria-label="Sidebar navigation"
+      className="flex h-full w-64 flex-col border-border border-r bg-background"
+      ref={sidebarRef}
     >
       {/* Sidebar Header with Branding */}
-      <div className="flex justify-between items-center p-4 h-14 bg-emerald-50 border-b border-border sm:h-16">
+      <div className="flex h-14 items-center justify-between border-border border-b bg-emerald-50 p-4 sm:h-16">
         <div className="flex items-center space-x-2 sm:space-x-3">
-          <div className="flex justify-center items-center size-8 bg-emerald-600 rounded-xl shadow-lg sm:size-10">
+          <div className="flex size-8 items-center justify-center rounded-xl bg-emerald-600 shadow-lg sm:size-10">
             <ChefHat className="size-4 text-white sm:size-5" />
           </div>
-          <h2 className="text-lg font-bold text-emerald-700 sm:text-xl text-balance">
+          <h2 className="text-balance font-bold text-emerald-700 text-lg sm:text-xl">
             Appetite
           </h2>
         </div>
         {/* Mobile close button */}
         {onClose && (
           <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="lg:hidden"
             aria-label="Close menu"
+            className="lg:hidden"
+            onClick={onClose}
+            size="icon"
+            variant="ghost"
           >
             <X className="size-5" />
           </Button>
@@ -109,44 +117,44 @@ export function Sidebar({ onClose }: SidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 p-4 space-y-1" aria-label="Main navigation">
+      <nav aria-label="Main navigation" className="flex-1 space-y-1 p-4">
         {navigation.map((item) => (
           <NavLink
-            key={item.name}
-            to={item.href}
-            onClick={onClose} // Close sidebar on mobile when clicking nav item
             className={({ isActive }) =>
               cn(
-                "group flex items-center rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-200",
+                "group flex items-center rounded-lg px-3 py-2.5 font-medium text-sm transition-colors duration-200",
                 isActive
-                  ? "bg-emerald-100 text-emerald-700 border border-emerald-200 shadow-sm"
-                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
+                  ? "border border-emerald-200 bg-emerald-100 text-emerald-700 shadow-sm"
+                  : "text-muted-foreground hover:bg-accent hover:text-accent-foreground"
               )
             }
+            key={item.name}
+            onClick={onClose} // Close sidebar on mobile when clicking nav item
+            to={item.href}
           >
-            <item.icon className="flex-shrink-0 mr-3 size-5" />
+            <item.icon className="mr-3 size-5 flex-shrink-0" />
             {item.name}
           </NavLink>
         ))}
       </nav>
 
       {/* Footer Branding */}
-      <div className="p-4 border-t border-border bg-muted/30">
+      <div className="border-border border-t bg-muted/30 p-4">
         <div className="text-center">
-          <p className="mb-1 text-xs text-muted-foreground">
+          <p className="mb-1 text-muted-foreground text-xs">
             Powered by AI • Made with ❤️
           </p>
-          <div className="flex justify-center items-center space-x-1 text-xs text-muted-foreground">
+          <div className="flex items-center justify-center space-x-1 text-muted-foreground text-xs">
             <span>Version 1.0</span>
             <span>•</span>
-            <span className="px-1.5 py-0.5 bg-emerald-100 text-emerald-700 rounded-full font-medium">
+            <span className="rounded-full bg-emerald-100 px-1.5 py-0.5 font-medium text-emerald-700">
               Beta
             </span>
           </div>
           <img
-            src="/bolt-badge/black_circle_360x360/black_circle_360x360.svg"
             alt="Bolt Badge"
             className="mx-auto mt-3 h-7"
+            src="/bolt-badge/black_circle_360x360/black_circle_360x360.svg"
           />
         </div>
       </div>

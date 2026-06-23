@@ -11,14 +11,14 @@ import type { UserPreferences } from "../types";
 import { useAuth } from "./AuthContext";
 
 interface SettingsContextType {
-  settings: UserPreferences | null;
   loading: boolean;
-  updateSettings: (updates: Partial<UserPreferences>) => Promise<void>;
   refreshSettings: () => Promise<void>;
+  settings: UserPreferences | null;
+  updateSettings: (updates: Partial<UserPreferences>) => Promise<void>;
 }
 
 const SettingsContext = createContext<SettingsContextType | undefined>(
-  undefined,
+  undefined
 );
 
 export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
@@ -29,7 +29,9 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
 
   const fetchSettings = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     setLoading(true);
     try {
       const prefs = await userPreferencesService.getPreferences(user.id);
@@ -40,24 +42,28 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [user]);
 
   useEffect(() => {
-    if (user) fetchSettings();
+    if (user) {
+      fetchSettings();
+    }
   }, [user, fetchSettings]);
 
   const updateSettings = useCallback(
     async (updates: Partial<UserPreferences>) => {
-      if (!user) return;
+      if (!user) {
+        return;
+      }
       setLoading(true);
       try {
         const updated = await userPreferencesService.updatePreferences(
           user.id,
-          updates,
+          updates
         );
         setSettings(updated);
       } finally {
         setLoading(false);
       }
     },
-    [user],
+    [user]
   );
 
   const refreshSettings = useCallback(async () => {
@@ -75,7 +81,8 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export function useSettings() {
   const ctx = useContext(SettingsContext);
-  if (!ctx)
+  if (!ctx) {
     throw new Error("useSettings must be used within a SettingsProvider");
+  }
   return ctx;
 }

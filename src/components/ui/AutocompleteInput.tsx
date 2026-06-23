@@ -4,22 +4,22 @@ import { useEffect, useRef, useState } from "react";
 import { cn } from "../../lib/utils";
 
 interface Suggestion {
+  category?: string;
+  frequency?: number;
   id: string;
   name: string;
   type: "history" | "common" | "brand";
-  category?: string;
-  frequency?: number;
 }
 
 interface AutocompleteInputProps {
+  className?: string;
+  disabled?: boolean;
   id?: string;
-  value: string;
   onChange: (value: string) => void;
   onSelect?: (suggestion: Suggestion) => void;
   placeholder?: string;
   userHistory?: string[];
-  className?: string;
-  disabled?: boolean;
+  value: string;
 }
 
 // Common ingredients database
@@ -103,7 +103,7 @@ export function AutocompleteInput({
 
     // Add common ingredient suggestions
     const commonSuggestions = COMMON_INGREDIENTS.filter((item) =>
-      item.name.toLowerCase().includes(query),
+      item.name.toLowerCase().includes(query)
     )
       .slice(0, 5)
       .map((item, index) => ({
@@ -115,7 +115,7 @@ export function AutocompleteInput({
 
     // Add brand product suggestions
     const brandSuggestions = BRAND_PRODUCTS.filter((item) =>
-      item.name.toLowerCase().includes(query),
+      item.name.toLowerCase().includes(query)
     )
       .slice(0, 3)
       .map((item, index) => ({
@@ -135,8 +135,8 @@ export function AutocompleteInput({
       .filter(
         (suggestion, index, self) =>
           self.findIndex(
-            (s) => s.name.toLowerCase() === suggestion.name.toLowerCase(),
-          ) === index,
+            (s) => s.name.toLowerCase() === suggestion.name.toLowerCase()
+          ) === index
       )
       .slice(0, 8);
 
@@ -146,19 +146,21 @@ export function AutocompleteInput({
   }, [value, userHistory]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (!isOpen || suggestions.length === 0) return;
+    if (!isOpen || suggestions.length === 0) {
+      return;
+    }
 
     switch (e.key) {
       case "ArrowDown":
         e.preventDefault();
         setSelectedIndex((prev) =>
-          prev < suggestions.length - 1 ? prev + 1 : 0,
+          prev < suggestions.length - 1 ? prev + 1 : 0
         );
         break;
       case "ArrowUp":
         e.preventDefault();
         setSelectedIndex((prev) =>
-          prev > 0 ? prev - 1 : suggestions.length - 1,
+          prev > 0 ? prev - 1 : suggestions.length - 1
         );
         break;
       case "Enter":
@@ -210,57 +212,57 @@ export function AutocompleteInput({
   return (
     <div className="relative">
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
         <input
+          className={cn(
+            "w-full rounded-lg border border-gray-300 py-2 pr-4 pl-10 text-sm focus:border-primary focus:outline-hidden focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:opacity-50",
+            className
+          )}
+          disabled={disabled}
           id={id}
-          ref={inputRef}
-          type="text"
-          value={value}
+          onBlur={() => setTimeout(() => setIsOpen(false), 200)}
           onChange={(e) => onChange(e.target.value)}
-          onKeyDown={handleKeyDown}
           onFocus={() =>
             value.trim() &&
             setSuggestions((suggestions) =>
-              suggestions.length > 0 ? suggestions : [],
+              suggestions.length > 0 ? suggestions : []
             )
           }
-          onBlur={() => setTimeout(() => setIsOpen(false), 200)}
+          onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          disabled={disabled}
-          className={cn(
-            "w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:border-primary focus:outline-hidden focus:ring-2 focus:ring-primary/20 disabled:opacity-50 disabled:cursor-not-allowed",
-            className,
-          )}
+          ref={inputRef}
+          type="text"
+          value={value}
         />
       </div>
 
       {/* Suggestions Dropdown */}
       {isOpen && suggestions.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-64 overflow-y-auto">
-          <ul ref={listRef} className="py-1">
+        <div className="absolute z-50 mt-1 max-h-64 w-full overflow-y-auto rounded-lg border border-gray-200 bg-white shadow-lg">
+          <ul className="py-1" ref={listRef}>
             {suggestions.map((suggestion, index) => (
               <li key={suggestion.id}>
                 <button
-                  type="button"
-                  onClick={() => handleSelectSuggestion(suggestion)}
                   className={cn(
-                    "w-full px-3 py-2 text-left hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden transition-colors",
-                    selectedIndex === index && "bg-gray-50",
+                    "w-full px-3 py-2 text-left transition-colors hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden",
+                    selectedIndex === index && "bg-gray-50"
                   )}
+                  onClick={() => handleSelectSuggestion(suggestion)}
+                  type="button"
                 >
                   <div className="flex items-center space-x-3">
                     {getSuggestionIcon(suggestion.type)}
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="flex items-center space-x-2">
-                        <span className="font-medium text-gray-900 truncate">
+                        <span className="truncate font-medium text-gray-900">
                           {suggestion.name}
                         </span>
-                        <span className="text-xs text-gray-500 bg-gray-100 px-1.5 py-0.5 rounded-full">
+                        <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-gray-500 text-xs">
                           {getSuggestionLabel(suggestion.type)}
                         </span>
                       </div>
                       {suggestion.category && (
-                        <div className="text-xs text-gray-500 mt-0.5">
+                        <div className="mt-0.5 text-gray-500 text-xs">
                           {suggestion.category}
                           {suggestion.frequency && suggestion.frequency > 1 && (
                             <span className="ml-2">

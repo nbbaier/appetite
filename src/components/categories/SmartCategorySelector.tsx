@@ -7,11 +7,11 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 
 interface SmartCategorySelectorProps {
-  ingredientName: string;
   currentCategory: string;
+  disabled?: boolean;
+  ingredientName: string;
   onCategoryChange: (category: string) => void;
   userHistory?: Array<{ name: string; category: string }>;
-  disabled?: boolean;
 }
 
 const CATEGORIES = [
@@ -41,7 +41,9 @@ export function SmartCategorySelectorRaw({
   const [showSuggestion, setShowSuggestion] = useState(false);
 
   const analyzeCategory = useCallback(async () => {
-    if (!ingredientName.trim() || isAnalyzing) return;
+    if (!ingredientName.trim() || isAnalyzing) {
+      return;
+    }
 
     setIsAnalyzing(true);
 
@@ -58,7 +60,7 @@ export function SmartCategorySelectorRaw({
             ingredientName: ingredientName.trim(),
             userHistory: userHistory.slice(-20), // Send recent history for context
           }),
-        },
+        }
       );
 
       if (!response.ok) {
@@ -102,20 +104,20 @@ export function SmartCategorySelectorRaw({
   };
 
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex w-full flex-col">
       <label
+        className="mb-1 block font-medium text-secondary-700 text-sm"
         htmlFor="smart-category-select"
-        className="block mb-1 text-sm font-medium text-secondary-700"
       >
         Category
       </label>
-      <div className="flex flex-row gap-2 w-full">
+      <div className="flex w-full flex-row gap-2">
         <select
-          id="smart-category-select"
-          value={currentCategory}
-          onChange={(e) => onCategoryChange(e.target.value)}
+          className="h-10 flex-1 rounded-lg border border-secondary-300 px-3 text-sm focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20 disabled:cursor-not-allowed disabled:opacity-50"
           disabled={disabled}
-          className="flex-1 px-3 h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
+          id="smart-category-select"
+          onChange={(e) => onCategoryChange(e.target.value)}
+          value={currentCategory}
         >
           {CATEGORIES.map((category) => (
             <option key={category} value={category}>
@@ -124,32 +126,32 @@ export function SmartCategorySelectorRaw({
           ))}
         </select>
         <Button
+          aria-label="Smart Suggest"
+          className="flex h-10 items-center border border-secondary-300 px-3 text-sm shadow-none"
+          disabled={!ingredientName.trim() || isAnalyzing || disabled}
+          onClick={analyzeCategory}
+          size={undefined}
+          title="Suggest category based on ingredient name"
           type="button"
           variant="outline"
-          size={undefined}
-          onClick={analyzeCategory}
-          disabled={!ingredientName.trim() || isAnalyzing || disabled}
-          className="flex items-center px-3 h-10 text-sm border shadow-none border-secondary-300"
-          aria-label="Smart Suggest"
-          title="Suggest category based on ingredient name"
         >
           {isAnalyzing ? (
             <svg
               aria-hidden="true"
-              className="w-4 h-4 animate-spin"
+              className="h-4 w-4 animate-spin"
               viewBox="0 0 24 24"
             >
               <circle
                 cx="12"
                 cy="12"
+                fill="none"
                 r="10"
                 stroke="currentColor"
                 strokeWidth="4"
-                fill="none"
               />
             </svg>
           ) : (
-            <Wand2 className="w-4 h-4" />
+            <Wand2 className="h-4 w-4" />
           )}
         </Button>
       </div>
@@ -158,40 +160,40 @@ export function SmartCategorySelectorRaw({
       {showSuggestion &&
         suggestion &&
         suggestion.category !== currentCategory && (
-          <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
+          <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
             <div className="flex items-start space-x-2">
-              <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5 shrink-0" />
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center mb-1 space-x-2">
-                  <span className="text-sm font-medium text-blue-900">
+              <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
+              <div className="min-w-0 flex-1">
+                <div className="mb-1 flex items-center space-x-2">
+                  <span className="font-medium text-blue-900 text-sm">
                     Smart suggestion:
                   </span>
                   <Badge
+                    className="border-blue-300 bg-blue-100 text-blue-800"
                     variant="outline"
-                    className="text-blue-800 bg-blue-100 border-blue-300"
                   >
                     {suggestion.category}
                   </Badge>
-                  <span className="text-xs text-blue-600">
+                  <span className="text-blue-600 text-xs">
                     {Math.round(suggestion.confidence * 100)}% confident
                   </span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <Button
-                    type="button"
-                    size="sm"
-                    onClick={applySuggestion}
                     className="h-6 text-xs"
+                    onClick={applySuggestion}
+                    size="sm"
+                    type="button"
                   >
-                    <Check className="mr-1 w-3 h-3" />
+                    <Check className="mr-1 h-3 w-3" />
                     Apply
                   </Button>
                   <Button
+                    className="h-6 text-xs"
+                    onClick={dismissSuggestion}
+                    size="sm"
                     type="button"
                     variant="ghost"
-                    size="sm"
-                    onClick={dismissSuggestion}
-                    className="h-6 text-xs"
                   >
                     Dismiss
                   </Button>

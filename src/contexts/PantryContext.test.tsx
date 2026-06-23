@@ -40,11 +40,10 @@ function TestComponent() {
       <span data-testid="ingredients">
         {JSON.stringify(pantry.ingredients)}
       </span>
-      <button type="button" onClick={() => pantry.loadIngredients()}>
+      <button onClick={() => pantry.loadIngredients()} type="button">
         Reload
       </button>
       <button
-        type="button"
         onClick={() =>
           pantry.addIngredient({
             name: "Sugar",
@@ -54,11 +53,11 @@ function TestComponent() {
             category: "",
           })
         }
+        type="button"
       >
         Add
       </button>
       <button
-        type="button"
         onClick={() =>
           pantry.addIngredients([
             {
@@ -77,16 +76,17 @@ function TestComponent() {
             },
           ])
         }
+        type="button"
       >
         Add Batch
       </button>
       <button
-        type="button"
         onClick={() => pantry.updateIngredient("i1", { name: "Salt" })}
+        type="button"
       >
         Update
       </button>
-      <button type="button" onClick={() => pantry.deleteIngredient("i1")}>
+      <button onClick={() => pantry.deleteIngredient("i1")} type="button">
         Delete
       </button>
     </>
@@ -108,7 +108,7 @@ describe("PantryContext", () => {
       return null;
     }
     expect(() => render(<OutsideProvider />)).toThrow(
-      "usePantry must be used within a PantryProvider",
+      "usePantry must be used within a PantryProvider"
     );
     spy.mockRestore();
   });
@@ -117,7 +117,7 @@ describe("PantryContext", () => {
     render(
       <PantryProvider>
         <TestComponent />
-      </PantryProvider>,
+      </PantryProvider>
     );
     await waitFor(() => {
       expect(screen.getByTestId("loading").textContent).toBe("false");
@@ -130,7 +130,7 @@ describe("PantryContext", () => {
     render(
       <PantryProvider>
         <TestComponent />
-      </PantryProvider>,
+      </PantryProvider>
     );
     // Add
     screen.getByText("Add").click();

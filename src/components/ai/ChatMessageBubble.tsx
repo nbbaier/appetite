@@ -20,19 +20,19 @@ export const ChatMessageBubble: React.FC<ChatMessageBubbleProps> = ({
     >
       {/* Avatar */}
       <div
-        className={`flex h-8 w-8 items-center justify-center rounded-full shrink-0 ${message.type === "user" ? "bg-blue-500 text-white ml-2" : "bg-emerald-500 text-white mr-2"}`}
+        className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${message.type === "user" ? "ml-2 bg-blue-500 text-white" : "mr-2 bg-emerald-500 text-white"}`}
       >
         {message.type === "user" ? (
-          <User className="w-4 h-4" />
+          <User className="h-4 w-4" />
         ) : (
-          <Bot className="w-4 h-4" />
+          <Bot className="h-4 w-4" />
         )}
       </div>
       {/* Message Content */}
       <div
-        className={`rounded-lg px-4 py-2 ${message.type === "user" ? "bg-blue-500 text-white" : "bg-white border border-gray-200 text-gray-900"}`}
+        className={`rounded-lg px-4 py-2 ${message.type === "user" ? "bg-blue-500 text-white" : "border border-gray-200 bg-white text-gray-900"}`}
       >
-        <p className="text-sm leading-relaxed whitespace-pre-wrap">
+        <p className="whitespace-pre-wrap text-sm leading-relaxed">
           {message.content}
         </p>
         {/* Recipe Cards */}
@@ -40,31 +40,31 @@ export const ChatMessageBubble: React.FC<ChatMessageBubbleProps> = ({
           <div className="mt-3 space-y-2">
             {message.recipes.map((recipe: Recipe) => (
               <div
+                className="rounded-lg border border-gray-200 bg-gray-50 p-3"
                 key={recipe.id}
-                className="p-3 bg-gray-50 rounded-lg border border-gray-200"
               >
                 <div className="flex items-center space-x-3">
                   <img
+                    alt={recipe.title}
+                    className="h-12 w-12 shrink-0 rounded-lg object-cover"
                     src={
                       recipe.image_url ||
                       "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
                     }
-                    alt={recipe.title}
-                    className="object-cover shrink-0 w-12 h-12 rounded-lg"
                   />
-                  <div className="flex-1 min-w-0">
-                    <h4 className="text-sm font-medium text-gray-900 truncate">
+                  <div className="min-w-0 flex-1">
+                    <h4 className="truncate font-medium text-gray-900 text-sm">
                       {recipe.title}
                     </h4>
-                    <p className="text-xs text-gray-600 line-clamp-2">
+                    <p className="line-clamp-2 text-gray-600 text-xs">
                       {recipe.description}
                     </p>
-                    <div className="flex items-center mt-1 space-x-2">
-                      <Clock className="w-3 h-3 text-gray-400" />
-                      <span className="text-xs text-gray-500">
+                    <div className="mt-1 flex items-center space-x-2">
+                      <Clock className="h-3 w-3 text-gray-400" />
+                      <span className="text-gray-500 text-xs">
                         {recipe.prep_time + recipe.cook_time} min
                       </span>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge className="text-xs" variant="outline">
                         {recipe.difficulty}
                       </Badge>
                     </div>
@@ -76,13 +76,13 @@ export const ChatMessageBubble: React.FC<ChatMessageBubbleProps> = ({
         )}
         {/* Suggestions */}
         {message.suggestions && message.suggestions.length > 0 && (
-          <div className="flex flex-wrap gap-1 mt-3">
+          <div className="mt-3 flex flex-wrap gap-1">
             {message.suggestions.map((suggestion: string) => (
               <button
-                type="button"
+                className="rounded-full bg-gray-100 px-2 py-1 text-gray-700 text-xs transition-colors hover:bg-gray-200"
                 key={suggestion}
                 onClick={() => onSuggestionClick(suggestion)}
-                className="px-2 py-1 text-xs text-gray-700 bg-gray-100 rounded-full transition-colors hover:bg-gray-200"
+                type="button"
               >
                 {suggestion}
               </button>

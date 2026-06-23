@@ -42,10 +42,10 @@ describe("AutocompleteInput", () => {
     render(
       <AutocompleteInput
         {...defaultProps}
-        value="ban"
         onChange={onChange}
         onSelect={onSelect}
-      />,
+        value="ban"
+      />
     );
     const input = screen.getByRole("textbox");
     fireEvent.focus(input);
@@ -55,7 +55,7 @@ describe("AutocompleteInput", () => {
     fireEvent.click(screen.getByText("Banana"));
     expect(onChange).toHaveBeenCalledWith("Banana");
     expect(onSelect).toHaveBeenCalledWith(
-      expect.objectContaining({ name: "Banana" }),
+      expect.objectContaining({ name: "Banana" })
     );
   });
 
@@ -65,10 +65,10 @@ describe("AutocompleteInput", () => {
     render(
       <AutocompleteInput
         {...defaultProps}
-        value="che"
         onChange={onChange}
         onSelect={onSelect}
-      />,
+        value="che"
+      />
     );
     const input = screen.getByRole("textbox");
     fireEvent.focus(input);
@@ -79,7 +79,7 @@ describe("AutocompleteInput", () => {
     fireEvent.keyDown(input, { key: "Enter" });
     expect(onChange).toHaveBeenCalledWith("Cheese");
     expect(onSelect).toHaveBeenCalledWith(
-      expect.objectContaining({ name: "Cheese" }),
+      expect.objectContaining({ name: "Cheese" })
     );
   });
 
@@ -103,9 +103,9 @@ describe("AutocompleteInput", () => {
     render(
       <AutocompleteInput
         {...defaultProps}
-        value="apple"
         userHistory={["Apple", "Apple"]}
-      />,
+        value="apple"
+      />
     );
     const input = screen.getByRole("textbox");
     fireEvent.focus(input);

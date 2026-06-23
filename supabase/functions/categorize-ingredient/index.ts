@@ -12,8 +12,8 @@ interface CategorizeRequest {
 interface CategorizeResponse {
   category: string;
   confidence: number;
-  suggestions?: string[];
   error?: string;
+  suggestions?: string[];
 }
 // @ts-expect-error
 Deno.serve(async (req: Request) => {
@@ -48,7 +48,7 @@ Deno.serve(async (req: Request) => {
             ...categorizeCorsHeaders,
             "Content-Type": "application/json",
           },
-        },
+        }
       );
     }
 
@@ -64,7 +64,7 @@ Deno.serve(async (req: Request) => {
             ...categorizeCorsHeaders,
             "Content-Type": "application/json",
           },
-        },
+        }
       );
     }
 
@@ -124,7 +124,7 @@ Example response:
           max_tokens: 200,
           response_format: { type: "json_object" },
         }),
-      },
+      }
     );
 
     if (!openaiResponse.ok) {
@@ -138,7 +138,7 @@ Example response:
             ...categorizeCorsHeaders,
             "Content-Type": "application/json",
           },
-        },
+        }
       );
     }
 
@@ -171,7 +171,7 @@ Example response:
             ...categorizeCorsHeaders,
             "Content-Type": "application/json",
           },
-        },
+        }
       );
     }
 
@@ -205,7 +205,7 @@ Example response:
           ...categorizeCorsHeaders,
           "Content-Type": "application/json",
         },
-      },
+      }
     );
   } catch (error) {
     console.error("Categorize ingredient function error:", error);

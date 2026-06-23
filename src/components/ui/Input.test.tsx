@@ -7,12 +7,12 @@ describe("Input", () => {
   it("renders with placeholder and value", () => {
     render(
       <Input
-        placeholder="Type here"
-        value="abc"
         onChange={() => {
           // do nothing
         }}
-      />,
+        placeholder="Type here"
+        value="abc"
+      />
     );
     const input = screen.getByPlaceholderText("Type here");
     expect(input).toBeInTheDocument();
@@ -21,7 +21,7 @@ describe("Input", () => {
 
   it("calls onChange when typing", () => {
     const onChange = vi.fn();
-    render(<Input value="" onChange={onChange} />);
+    render(<Input onChange={onChange} value="" />);
     const input = screen.getByRole("textbox");
     fireEvent.change(input, { target: { value: "x" } });
     expect(onChange).toHaveBeenCalled();
@@ -30,12 +30,12 @@ describe("Input", () => {
   it("can be disabled", () => {
     render(
       <Input
-        value=""
+        disabled
         onChange={() => {
           // do nothing
         }}
-        disabled
-      />,
+        value=""
+      />
     );
     const input = screen.getByRole("textbox");
     expect(input).toBeDisabled();

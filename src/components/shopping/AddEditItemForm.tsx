@@ -6,9 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Input } from "../ui/input";
 
 interface AddEditItemFormProps {
-  visible: boolean;
-  onSubmit: (e: React.FormEvent) => void;
-  onCancel: () => void;
+  categories: string[];
+  editingItem: ShoppingListItem | null;
   formData: {
     name: string;
     quantity: string;
@@ -16,6 +15,8 @@ interface AddEditItemFormProps {
     category: string;
     notes: string;
   };
+  onCancel: () => void;
+  onSubmit: (e: React.FormEvent) => void;
   setFormData: (data: {
     name: string;
     quantity: string;
@@ -23,9 +24,8 @@ interface AddEditItemFormProps {
     category: string;
     notes: string;
   }) => void;
-  editingItem: ShoppingListItem | null;
-  categories: string[];
   units: string[];
+  visible: boolean;
 }
 
 export const AddEditItemForm: React.FC<AddEditItemFormProps> = ({
@@ -40,7 +40,9 @@ export const AddEditItemForm: React.FC<AddEditItemFormProps> = ({
 }) => {
   const unitSelectId = useId();
   const categorySelectId = useId();
-  if (!visible) return null;
+  if (!visible) {
+    return null;
+  }
   return (
     <Card>
       <CardHeader className="pb-3 sm:pb-6">
@@ -51,49 +53,49 @@ export const AddEditItemForm: React.FC<AddEditItemFormProps> = ({
       <CardContent>
         <form
           aria-label={editingItem ? "Edit shopping item" : "Add shopping item"}
-          onSubmit={onSubmit}
           className="space-y-4"
+          onSubmit={onSubmit}
         >
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <Input
                 label="Item Name"
-                value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
                 required
+                value={formData.name}
               />
             </div>
             <div className="flex space-x-2">
               <div className="flex-1">
                 <Input
                   label="Quantity"
-                  type="number"
-                  step="0.1"
-                  value={formData.quantity}
                   onChange={(e) =>
                     setFormData({
                       ...formData,
                       quantity: e.target.value,
                     })
                   }
+                  step="0.1"
+                  type="number"
+                  value={formData.quantity}
                 />
               </div>
               <div className="w-20 sm:w-24">
                 <label
+                  className="mb-1 block font-medium text-secondary-700 text-sm"
                   htmlFor={unitSelectId}
-                  className="block mb-1 text-sm font-medium text-secondary-700"
                 >
                   Unit
                 </label>
                 <select
+                  className="h-10 w-full rounded-lg border border-secondary-300 px-2 text-sm focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
                   id={unitSelectId}
-                  value={formData.unit}
                   onChange={(e) =>
                     setFormData({ ...formData, unit: e.target.value })
                   }
-                  className="px-2 w-full h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
+                  value={formData.unit}
                 >
                   {units.map((unit) => (
                     <option key={unit} value={unit}>
@@ -105,21 +107,21 @@ export const AddEditItemForm: React.FC<AddEditItemFormProps> = ({
             </div>
             <div>
               <label
+                className="mb-1 block font-medium text-secondary-700 text-sm"
                 htmlFor={categorySelectId}
-                className="block mb-1 text-sm font-medium text-secondary-700"
               >
                 Category
               </label>
               <select
+                className="h-10 w-full rounded-lg border border-secondary-300 px-3 text-sm focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
                 id={categorySelectId}
-                value={formData.category}
                 onChange={(e) =>
                   setFormData({
                     ...formData,
                     category: e.target.value,
                   })
                 }
-                className="px-3 w-full h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
+                value={formData.category}
               >
                 {categories.map((category) => (
                   <option key={category} value={category}>
@@ -131,21 +133,21 @@ export const AddEditItemForm: React.FC<AddEditItemFormProps> = ({
           </div>
           <Input
             label="Notes (Optional)"
-            value={formData.notes}
             onChange={(e) =>
               setFormData({ ...formData, notes: e.target.value })
             }
             placeholder="Any additional notes..."
+            value={formData.notes}
           />
-          <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
-            <Button type="submit" className="text-sm sm:text-base">
+          <div className="flex flex-col space-y-2 sm:flex-row sm:space-x-2 sm:space-y-0">
+            <Button className="text-sm sm:text-base" type="submit">
               {editingItem ? "Update Item" : "Add Item"}
             </Button>
             <Button
+              className="text-sm sm:text-base"
+              onClick={onCancel}
               type="button"
               variant="outline"
-              onClick={onCancel}
-              className="text-sm sm:text-base"
             >
               Cancel
             </Button>

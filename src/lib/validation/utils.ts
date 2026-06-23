@@ -29,8 +29,12 @@ export function formatZodErrors(error: z.ZodError): ValidationError[] {
  * Formats validation errors into a single error message string
  */
 export function formatErrorMessage(errors: ValidationError[]): string {
-  if (errors.length === 0) return "Validation failed";
-  if (errors.length === 1) return errors[0].message;
+  if (errors.length === 0) {
+    return "Validation failed";
+  }
+  if (errors.length === 1) {
+    return errors[0].message;
+  }
 
   return `Validation failed:\n${errors.map((e) => `- ${e.field}: ${e.message}`).join("\n")}`;
 }
@@ -40,7 +44,7 @@ export function formatErrorMessage(errors: ValidationError[]): string {
  */
 export function validate<T>(
   schema: z.ZodSchema<T>,
-  data: unknown,
+  data: unknown
 ): ValidationResult<T> {
   const result = schema.safeParse(data);
 
@@ -69,7 +73,7 @@ export function validateOrThrow<T>(schema: z.ZodSchema<T>, data: unknown): T {
  */
 export function createValidatedFunction<TInput, TOutput>(
   schema: z.ZodSchema<TInput>,
-  fn: (input: TInput) => Promise<TOutput>,
+  fn: (input: TInput) => Promise<TOutput>
 ): (input: unknown) => Promise<TOutput> {
   return async (input: unknown) => {
     const validatedInput = validateOrThrow(schema, input);
@@ -117,7 +121,7 @@ export function sanitizeObject<T extends Record<string, unknown>>(obj: T): T {
  */
 export function validateEnv<T>(
   schema: z.ZodSchema<T>,
-  env: Record<string, string | undefined>,
+  env: Record<string, string | undefined>
 ): T {
   const result = schema.safeParse(env);
 
@@ -138,7 +142,7 @@ export function validateEnv<T>(
  */
 export function validatePartial<T extends z.ZodRawShape>(
   schema: z.ZodObject<T>,
-  data: unknown,
+  data: unknown
 ): ValidationResult<Partial<z.infer<z.ZodObject<T>>>> {
   const partialSchema = schema.partial() as z.ZodType<
     Partial<z.infer<z.ZodObject<T>>>
@@ -151,7 +155,7 @@ export function validatePartial<T extends z.ZodRawShape>(
  */
 export function validateArray<T>(
   itemSchema: z.ZodSchema<T>,
-  data: unknown[],
+  data: unknown[]
 ): ValidationResult<T[]> {
   const arraySchema = z.array(itemSchema);
   return validate(arraySchema, data);
@@ -164,7 +168,7 @@ export function validateArray<T>(
  */
 export function validateArrayOrThrow<T>(
   itemSchema: z.ZodSchema<T>,
-  data: unknown,
+  data: unknown
 ): T[] {
   const arraySchema = z.array(itemSchema);
   return validateOrThrow(arraySchema, data);
@@ -175,7 +179,7 @@ export function validateArrayOrThrow<T>(
  */
 export function createQueryValidator<TInput, TOutput>(
   inputSchema: z.ZodSchema<TInput>,
-  outputSchema: z.ZodSchema<TOutput>,
+  outputSchema: z.ZodSchema<TOutput>
 ) {
   return {
     validateInput: (data: unknown) => validateOrThrow(inputSchema, data),
@@ -188,7 +192,7 @@ export function createQueryValidator<TInput, TOutput>(
  */
 export function parseJSON<T>(
   schema: z.ZodSchema<T>,
-  json: string,
+  json: string
 ): ValidationResult<T> {
   try {
     const parsed = JSON.parse(json);
@@ -209,7 +213,7 @@ export function parseJSON<T>(
  * Converts validation errors to a format suitable for react-hook-form
  */
 export function toFormErrors(
-  errors: ValidationError[],
+  errors: ValidationError[]
 ): Record<string, { message: string }> {
   const formErrors: Record<string, { message: string }> = {};
 
@@ -238,12 +242,12 @@ export function toFormErrors(
  */
 export function createDebouncedValidator<T>(
   schema: z.ZodSchema<T>,
-  delay: number = 300,
+  delay = 300
 ) {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  const validator = (data: unknown): Promise<ValidationResult<T>> => {
-    return new Promise((resolve) => {
+  const validator = (data: unknown): Promise<ValidationResult<T>> =>
+    new Promise((resolve) => {
       if (timeoutId) {
         clearTimeout(timeoutId);
       }
@@ -253,7 +257,6 @@ export function createDebouncedValidator<T>(
         timeoutId = null;
       }, delay);
     });
-  };
 
   const cleanup = () => {
     if (timeoutId) {
@@ -302,10 +305,10 @@ export function collectValidationErrors<T>(
   let lastSuccessData: T | undefined;
 
   for (const result of results) {
-    if (!result.success) {
-      errors.push(...result.errors);
-    } else {
+    if (result.success) {
       lastSuccessData = result.data;
+    } else {
+      errors.push(...result.errors);
     }
   }
 

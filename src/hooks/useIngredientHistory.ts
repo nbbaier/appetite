@@ -3,10 +3,10 @@ import { useAuth } from "../contexts/AuthContext";
 import { ingredientService } from "../lib/database";
 
 interface IngredientHistory {
-  name: string;
+  category: string;
   frequency: number;
   lastUsed: Date;
-  category: string;
+  name: string;
 }
 
 export function useIngredientHistory() {
@@ -15,7 +15,9 @@ export function useIngredientHistory() {
   const [loading, setLoading] = useState(true);
 
   const loadHistory = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     try {
       setLoading(true);
@@ -67,23 +69,19 @@ export function useIngredientHistory() {
     }
   }, [user, loadHistory]);
 
-  const getFrequentIngredients = (limit: number = 10) => {
-    return history
+  const getFrequentIngredients = (limit = 10) =>
+    history
       .filter((item) => item.frequency > 1)
       .slice(0, limit)
       .map((item) => item.name);
-  };
 
-  const getRecentIngredients = (limit: number = 10) => {
-    return history
+  const getRecentIngredients = (limit = 10) =>
+    history
       .sort((a, b) => b.lastUsed.getTime() - a.lastUsed.getTime())
       .slice(0, limit)
       .map((item) => item.name);
-  };
 
-  const getAllIngredientNames = () => {
-    return history.map((item) => item.name);
-  };
+  const getAllIngredientNames = () => history.map((item) => item.name);
 
   return {
     history,
