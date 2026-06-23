@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, ChefHat } from "lucide-react";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
+import { type Resolver, useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { useAuth } from "../../contexts/AuthContext";
@@ -40,8 +40,14 @@ function AuthFormRaw({ initialMode }: AuthFormProps) {
   const { signIn, signUp, isSupabaseConnected } = useAuth();
   const navigate = useNavigate();
 
+  // The form covers both sign-in and sign-up; sign-in uses a subset of the
+  // fields, so the resolver is typed to the wider SignUpFormData shape.
+  const resolver = zodResolver(
+    isSignUp ? signUpSchema : signInSchema
+  ) as unknown as Resolver<SignUpFormData>;
+
   const { register, handleSubmit, reset } = useForm<SignUpFormData>({
-    resolver: zodResolver(isSignUp ? signUpSchema : signInSchema),
+    resolver,
   });
 
   const onSubmit = async (data: SignUpFormData) => {

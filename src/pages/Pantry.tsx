@@ -89,7 +89,10 @@ const ingredientSchema = z.object({
     z.number().min(0, "Threshold must be positive").optional()
   ),
 });
-type IngredientFormData = z.infer<typeof ingredientSchema>;
+// The schema uses z.preprocess, so its input type (raw form values) differs
+// from its output type (parsed values handed to onSubmit).
+type IngredientFormInput = z.input<typeof ingredientSchema>;
+type IngredientFormData = z.output<typeof ingredientSchema>;
 
 const SORT_OPTIONS = [
   { value: "name", label: "Name" },
@@ -169,7 +172,7 @@ export function Pantry() {
     null
   );
   const { register, handleSubmit, reset, setValue, control, getValues } =
-    useForm<IngredientFormData>({
+    useForm<IngredientFormInput, unknown, IngredientFormData>({
       resolver: zodResolver(ingredientSchema),
       defaultValues: {
         name: "",
