@@ -50,7 +50,7 @@ function ExpirationMonitorRaw({
       warning: [],
       upcoming: [],
     };
-    ingredients.filter(hasExpirationDate).forEach((ingredient) => {
+    for (const ingredient of ingredients.filter(hasExpirationDate)) {
       const expDate = new Date(ingredient.expiration_date);
       expDate.setHours(0, 0, 0, 0);
       const diffTime = expDate.getTime() - today.getTime();
@@ -64,14 +64,14 @@ function ExpirationMonitorRaw({
       } else if (diffDays <= 14) {
         newGroups.upcoming.push(ingredient);
       }
-    });
-    Object.values(newGroups).forEach((group) => {
+    }
+    for (const group of Object.values(newGroups)) {
       group.sort(
         (a: Ingredient, b: Ingredient) =>
           new Date(a.expiration_date ?? "").getTime() -
           new Date(b.expiration_date ?? "").getTime()
       );
-    });
+    }
     setGroups(newGroups);
   }, [ingredients, criticalDays, warningDays]);
 

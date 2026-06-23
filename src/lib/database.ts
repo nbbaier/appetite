@@ -64,9 +64,9 @@ export function clearCache(key?: string): void {
   if (key) {
     delete _cache[key];
   } else {
-    Object.keys(_cache).forEach((k) => {
+    for (const k of Object.keys(_cache)) {
       delete _cache[k];
-    });
+    }
   }
 }
 

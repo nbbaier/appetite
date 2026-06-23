@@ -84,10 +84,10 @@ export function checkExpiringItems({
     items: (Ingredient | Leftover)[],
     type: "ingredient" | "leftover"
   ) {
-    items.forEach((item) => {
+    for (const item of items) {
       const expirationDate = item.expiration_date;
       if (!expirationDate) {
-        return;
+        continue;
       }
 
       const expDate = new Date(expirationDate);
@@ -123,7 +123,7 @@ export function checkExpiringItems({
           onNotify(notification);
         }
       }
-    });
+    }
   }
 
   processItems(ingredients, "ingredient");

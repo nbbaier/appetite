@@ -26,7 +26,7 @@ export function useIngredientHistory() {
       // Process ingredients to create history with frequency
       const historyMap = new Map<string, IngredientHistory>();
 
-      ingredients.forEach((ingredient) => {
+      for (const ingredient of ingredients) {
         const name = ingredient.name.toLowerCase();
         const existing = historyMap.get(name);
 
@@ -43,7 +43,7 @@ export function useIngredientHistory() {
             category: ingredient.category,
           });
         }
-      });
+      }
 
       // Convert to array and sort by frequency and recency
       const historyArray = Array.from(historyMap.values()).sort((a, b) => {
