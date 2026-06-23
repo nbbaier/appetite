@@ -23,5 +23,14 @@
         "useFilenamingConvention": "off"
       }
     }
-  }
+  },
+  "overrides": [
+    {
+      // Supabase edge functions run on Deno, not the browser.
+      "includes": ["supabase/functions/**"],
+      "javascript": {
+        "globals": ["Deno"]
+      }
+    }
+  ]
 }
