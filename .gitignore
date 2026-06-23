@@ -15,7 +15,6 @@ dist
 dist-ssr
 lerna-debug.log*
 logs
-mcp.json
 node_modules
 node_modules/
 npm-debug.log*
