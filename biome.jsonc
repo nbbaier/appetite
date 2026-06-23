@@ -33,15 +33,28 @@
       }
     },
     {
+      // Vendored shadcn/ui primitives follow Radix's `import * as X` convention.
+      "includes": ["src/components/ui/**"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noNamespaceImport": "off"
+          }
+        }
+      }
+    },
+    {
       // Test-only relaxations:
       // - useTopLevelRegex: inline regex assertions (toMatch(/.../)) are throwaway.
       // - useAwait: `act(async () => {})` requires an async callback with
       //   nothing to await directly (idiomatic React Testing Library).
+      // - noNamespaceImport: `import * as Mod` is needed for vi.spyOn(Mod, ...).
       "includes": ["**/*.test.{ts,tsx}"],
       "linter": {
         "rules": {
           "performance": {
-            "useTopLevelRegex": "off"
+            "useTopLevelRegex": "off",
+            "noNamespaceImport": "off"
           },
           "suspicious": {
             "useAwait": "off"
