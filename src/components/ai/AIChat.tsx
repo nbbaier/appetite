@@ -672,9 +672,9 @@ export function AIChat() {
                   }`}
                 >
                   {message.type === "ai" ? (
-                    <ReactMarkdown className="whitespace-pre-wrap text-sm leading-relaxed">
-                      {message.content}
-                    </ReactMarkdown>
+                    <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                      <ReactMarkdown>{message.content}</ReactMarkdown>
+                    </div>
                   ) : (
                     <p className="whitespace-pre-wrap text-sm leading-relaxed">
                       {message.content}
