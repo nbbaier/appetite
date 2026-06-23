@@ -49,7 +49,6 @@ export const ingredientUpdateSchema = ingredientInsertSchema.partial().omit({
   user_id: true,
 });
 
-
 /**
  * Recipe Schema
  */
@@ -86,7 +85,6 @@ export const recipeUpdateSchema = recipeInsertSchema.partial().omit({
   user_id: true,
 });
 
-
 /**
  * Recipe Ingredient Schema
  */
@@ -107,7 +105,6 @@ export const recipeIngredientSchema = z.object({
   notes: z.string().max(500, "Notes too long").optional(),
 });
 
-
 /**
  * Recipe Instruction Schema
  */
@@ -121,7 +118,6 @@ export const recipeInstructionSchema = z.object({
     .max(2000, "Instruction too long")
     .trim(),
 });
-
 
 /**
  * Shopping List Schema
@@ -150,7 +146,6 @@ export const shoppingListUpdateSchema = shoppingListInsertSchema
   .omit({
     user_id: true,
   });
-
 
 /**
  * Shopping List Item Schema
@@ -193,7 +188,6 @@ export const shoppingListItemUpdateSchema = shoppingListItemInsertSchema
     shopping_list_id: true,
   });
 
-
 /**
  * User Profile Schema
  */
@@ -224,7 +218,6 @@ const userProfileInsertSchema = userProfileSchema.omit({
 export const userProfileUpdateSchema = userProfileInsertSchema.partial().omit({
   user_id: true,
 });
-
 
 /**
  * User Preferences Schema
@@ -265,7 +258,6 @@ export const userPreferencesUpdateSchema = userPreferencesInsertSchema
     user_id: true,
   });
 
-
 /**
  * Leftover Schema
  */
@@ -300,7 +292,6 @@ export const leftoverUpdateSchema = leftoverInsertSchema.partial().omit({
   user_id: true,
 });
 
-
 /**
  * Conversation Schema
  */
@@ -321,7 +312,6 @@ export const conversationInsertSchema = conversationSchema.omit({
 export const conversationUpdateSchema = z.object({
   title: z.string().max(255, "Title too long").nullable(),
 });
-
 
 /**
  * Chat Message Schema

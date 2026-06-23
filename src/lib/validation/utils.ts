@@ -68,7 +68,6 @@ export function validateOrThrow<T>(schema: z.ZodSchema<T>, data: unknown): T {
   return result.data;
 }
 
-
 /**
  * Validates environment variables
  */
@@ -90,7 +89,6 @@ export function validateEnv<T>(
   return result.data;
 }
 
-
 /**
  * Validates an array of items and throws an error if validation fails.
  * This is more efficient than mapping over individual items as it validates
@@ -103,7 +101,6 @@ export function validateArrayOrThrow<T>(
   const arraySchema = z.array(itemSchema);
   return validateOrThrow(arraySchema, data);
 }
-
 
 /**
  * Collects validation errors from multiple validation results.
