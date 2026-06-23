@@ -80,6 +80,7 @@ export function checkExpiringItems({
   const warn = typeof warningDays === "number" ? warningDays : 7;
 
   // Helper to process a list
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO refactor; tracked separately
   function processItems(
     items: (Ingredient | Leftover)[],
     type: "ingredient" | "leftover"

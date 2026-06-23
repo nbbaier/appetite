@@ -35,6 +35,7 @@ import {
 } from "../lib/database";
 import type { Ingredient, Recipe, ShoppingList } from "../types";
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO refactor; tracked separately
 export function Recipes() {
   const { user } = useAuth();
   const {

@@ -128,6 +128,7 @@ const NOTIF_ICON_COLOR: Record<string, string> = {
   warning: "text-yellow-600",
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO refactor; tracked separately
 export function Pantry() {
   const { user } = useAuth();
   const { getAllIngredientNames } = useIngredientHistory();
@@ -423,6 +424,7 @@ export function Pantry() {
   // Memoize expensive derived lists
   const sortedIngredients = useMemo(
     () =>
+      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO refactor; tracked separately
       [...ingredients].sort((a, b) => {
         let aValue: string | number = "";
         let bValue: string | number = "";

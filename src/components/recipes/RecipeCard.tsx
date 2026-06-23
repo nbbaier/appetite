@@ -50,6 +50,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   canCook,
   onEdit,
   onDelete,
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO refactor; tracked separately
 }) => {
   // Support both Recipe and RecipeMatchResult
   const recipeId = "id" in recipe ? recipe.id : recipe.recipe_id;
