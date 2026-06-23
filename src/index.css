@@ -31,6 +31,13 @@
 
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  --z-index-dropdown: 10;
+  --z-index-sticky: 20;
+  --z-index-overlay: 40;
+  --z-index-modal: 50;
+  --z-index-popover: 60;
+  --z-index-toast: 70;
 }
 
 @keyframes accordion-down {
