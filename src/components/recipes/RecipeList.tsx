@@ -40,7 +40,7 @@ function getRecipeMatchInfo(
   return;
 }
 
-const RecipeGridCell: React.FC<CellComponentProps<RecipeGridCellData>> = ({
+const RecipeGridCell = ({
   ariaAttributes,
   columnIndex,
   rowIndex,
@@ -53,7 +53,7 @@ const RecipeGridCell: React.FC<CellComponentProps<RecipeGridCellData>> = ({
   onEdit,
   onDelete,
   columnCount,
-}) => {
+}: CellComponentProps<RecipeGridCellData>) => {
   const index = rowIndex * columnCount + columnIndex;
 
   if (index >= recipes.length) {
