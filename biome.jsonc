@@ -33,13 +33,18 @@
       }
     },
     {
-      // Inline regex assertions (e.g. toMatch(/.../)) are throwaway in
-      // tests; the top-level-regex perf rule doesn't apply there.
+      // Test-only relaxations:
+      // - useTopLevelRegex: inline regex assertions (toMatch(/.../)) are throwaway.
+      // - useAwait: `act(async () => {})` requires an async callback with
+      //   nothing to await directly (idiomatic React Testing Library).
       "includes": ["**/*.test.{ts,tsx}"],
       "linter": {
         "rules": {
           "performance": {
             "useTopLevelRegex": "off"
+          },
+          "suspicious": {
+            "useAwait": "off"
           }
         }
       }

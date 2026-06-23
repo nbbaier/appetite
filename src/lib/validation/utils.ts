@@ -77,7 +77,7 @@ export function createValidatedFunction<TInput, TOutput>(
 ): (input: unknown) => Promise<TOutput> {
   return async (input: unknown) => {
     const validatedInput = validateOrThrow(schema, input);
-    return fn(validatedInput);
+    return await fn(validatedInput);
   };
 }
 
