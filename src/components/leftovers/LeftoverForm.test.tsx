@@ -1,14 +1,26 @@
+import type { User } from "@supabase/supabase-js";
 import { fireEvent, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
+import type React from "react";
 import { describe, expect, it, vi } from "vitest";
 import * as AuthContext from "../../contexts/AuthContext";
 import { AuthProvider } from "../../contexts/AuthContext";
 import { LeftoverForm } from "./LeftoverForm";
 
-// Mock useAuth to always return a user
-vi.spyOn(AuthContext, "useAuth").mockReturnValue({ user: { id: "test-user" } });
+const mockUser: User = {
+  id: "test-user",
+  app_metadata: {},
+  user_metadata: {},
+  aud: "authenticated",
+  created_at: "2024-01-01",
+};
 
-function Wrapper({ children }) {
+// Mock useAuth to always return a user
+vi.spyOn(AuthContext, "useAuth").mockReturnValue({
+  user: mockUser,
+} as ReturnType<typeof AuthContext.useAuth>);
+
+function Wrapper({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider isSupabaseConnectedOverride={true}>{children}</AuthProvider>
   );
@@ -16,7 +28,9 @@ function Wrapper({ children }) {
 
 describe("LeftoverForm", () => {
   it("renders all input fields", () => {
-    render(<LeftoverForm onSubmit={vi.fn()} />, { wrapper: Wrapper });
+    render(<LeftoverForm onCancel={vi.fn()} onSubmit={vi.fn()} />, {
+      wrapper: Wrapper,
+    });
     expect(screen.getByLabelText("Leftover Name")).toBeInTheDocument();
     expect(screen.getByLabelText("Quantity")).toBeInTheDocument();
     expect(screen.getByLabelText("Unit")).toBeInTheDocument();
@@ -24,7 +38,9 @@ describe("LeftoverForm", () => {
 
   it("calls onSubmit with form data", () => {
     const onSubmit = vi.fn();
-    render(<LeftoverForm onSubmit={onSubmit} />, { wrapper: Wrapper });
+    render(<LeftoverForm onCancel={vi.fn()} onSubmit={onSubmit} />, {
+      wrapper: Wrapper,
+    });
     fireEvent.change(screen.getByLabelText("Leftover Name"), {
       target: { value: "Soup" },
     });
