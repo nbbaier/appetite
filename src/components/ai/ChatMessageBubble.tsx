@@ -20,7 +20,7 @@ export const ChatMessageBubble: React.FC<ChatMessageBubbleProps> = ({
     >
       {/* Avatar */}
       <div
-        className={`flex h-8 w-8 items-center justify-center rounded-full flex-shrink-0 ${message.type === "user" ? "bg-blue-500 text-white ml-2" : "bg-emerald-500 text-white mr-2"}`}
+        className={`flex h-8 w-8 items-center justify-center rounded-full shrink-0 ${message.type === "user" ? "bg-blue-500 text-white ml-2" : "bg-emerald-500 text-white mr-2"}`}
       >
         {message.type === "user" ? (
           <User className="w-4 h-4" />
@@ -50,7 +50,7 @@ export const ChatMessageBubble: React.FC<ChatMessageBubbleProps> = ({
                       "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
                     }
                     alt={recipe.title}
-                    className="object-cover flex-shrink-0 w-12 h-12 rounded-lg"
+                    className="object-cover shrink-0 w-12 h-12 rounded-lg"
                   />
                   <div className="flex-1 min-w-0">
                     <h4 className="text-sm font-medium text-gray-900 truncate">
