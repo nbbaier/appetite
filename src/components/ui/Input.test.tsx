@@ -14,7 +14,7 @@ describe("Input", () => {
         value="abc"
       />
     );
-    const input = screen.getByPlaceholderText("Type here");
+    const input = screen.getByPlaceholderText<HTMLInputElement>("Type here");
     expect(input).toBeInTheDocument();
     expect(input.value).toBe("abc");
   });

@@ -33,7 +33,7 @@ describe("SmartCategorySelector", () => {
 
   it("calls analyzeCategory when Smart Suggest is clicked and shows suggestion banner", async () => {
     // Mock fetch to return a suggestion
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
         category: "Fruits",
@@ -59,7 +59,7 @@ describe("SmartCategorySelector", () => {
 
   it("applies and dismisses a suggestion", async () => {
     const onCategoryChange = vi.fn();
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
         category: "Fruits",

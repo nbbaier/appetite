@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
+import type { Recipe } from "../../types";
 import { RecipeCard } from "./RecipeCard";
 
 const baseRecipe = {
@@ -16,7 +17,7 @@ const baseRecipe = {
   cuisine_type: "Italian",
   created_at: "2024-01-01",
   updated_at: "2024-01-01",
-};
+} satisfies Recipe;
 
 describe("RecipeCard", () => {
   beforeEach(() => {

@@ -31,9 +31,7 @@ const SHOPPING_LIST_SKELETON_KEYS = [
   "shopping-list-skeleton-8",
 ];
 
-const VirtualizedShoppingRow: React.FC<
-  RowComponentProps<VirtualizedShoppingRowData>
-> = ({
+const VirtualizedShoppingRow = ({
   ariaAttributes,
   index,
   style,
@@ -41,7 +39,7 @@ const VirtualizedShoppingRow: React.FC<
   onEdit,
   onDelete,
   onTogglePurchased,
-}) => {
+}: RowComponentProps<VirtualizedShoppingRowData>) => {
   const item = items[index];
 
   if (!item) {
