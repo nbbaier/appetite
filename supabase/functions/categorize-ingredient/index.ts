@@ -161,7 +161,7 @@ Example response:
     let parsedResponse: CategorizeResponse;
     try {
       parsedResponse = JSON.parse(assistantMessage);
-    } catch (_error) {
+    } catch {
       console.error("Failed to parse AI response as JSON:", assistantMessage);
       return new Response(
         JSON.stringify({ error: "Invalid response format from AI" }),

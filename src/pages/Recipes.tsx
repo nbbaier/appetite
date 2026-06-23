@@ -417,7 +417,7 @@ export function Recipes() {
       await deleteRecipe(selectedRecipe.id);
       toast.success("Recipe deleted successfully.");
       setSelectedRecipe(null);
-    } catch (_err) {
+    } catch {
       toast.error("Failed to delete recipe. Please try again.");
     }
   }, [selectedRecipe, deleteRecipe, setSelectedRecipe]);
