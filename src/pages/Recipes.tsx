@@ -769,10 +769,12 @@ export function Recipes() {
                   <img
                     alt={selectedRecipe.title}
                     className="h-12 w-12 rounded-lg object-cover"
+                    height={48}
                     src={
                       selectedRecipe.image_url ||
                       "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
                     }
+                    width={48}
                   />
                   <div className="min-w-0 flex-1">
                     <h4 className="truncate font-medium text-gray-900">

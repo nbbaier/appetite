@@ -86,27 +86,37 @@ export default function LandingPage() {
           <img
             alt="Bolt Badge"
             className="h-8"
+            height={360}
             src="/bolt-badge/black_circle_360x360/black_circle_360x360.svg"
+            width={360}
           />
           <img
             alt="Anthropic Logo"
             className="h-8"
+            height={65}
             src="/anthropic/logo-color.svg"
+            width={92}
           />
           <img
             alt="Entri Wordmark"
             className="h-6"
+            height={28}
             src="/entri/wordmark-color.svg"
+            width={80}
           />
           <img
             alt="Netlify Logo"
             className="h-7"
+            height={113}
             src="/netlify/logo-black.svg"
+            width={128}
           />
           <img
             alt="Supabase Logo"
             className="h-8"
+            height={113}
             src="/supabase/logo-color.svg"
+            width={109}
           />
         </div>
       </div>

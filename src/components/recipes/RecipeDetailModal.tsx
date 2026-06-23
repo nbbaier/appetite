@@ -99,10 +99,12 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
             <img
               alt={recipe.title}
               className="h-48 w-full rounded-lg object-cover sm:h-64"
+              height={256}
               src={
                 recipe.image_url ||
                 "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
               }
+              width={512}
             />
             <div className="absolute right-3 bottom-3 left-3 sm:right-4 sm:bottom-4 sm:left-4">
               <div className="rounded-lg bg-white/95 p-3 backdrop-blur-sm sm:p-4">

@@ -74,10 +74,12 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
         <img
           alt={title}
           className="h-40 w-full object-cover sm:h-48"
+          height={192}
           src={
             imageUrl ||
             "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
           }
+          width={384}
         />
         <div className="absolute top-2 right-2 z-10 flex space-x-1">
           <button

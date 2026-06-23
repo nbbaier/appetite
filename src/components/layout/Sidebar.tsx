@@ -154,7 +154,9 @@ export function Sidebar({ onClose }: SidebarProps) {
           <img
             alt="Bolt Badge"
             className="mx-auto mt-3 h-7"
+            height={360}
             src="/bolt-badge/black_circle_360x360/black_circle_360x360.svg"
+            width={360}
           />
         </div>
       </div>

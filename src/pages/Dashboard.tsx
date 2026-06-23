@@ -376,10 +376,12 @@ export function Dashboard() {
                     <img
                       alt={recipe.title}
                       className="h-10 w-10 shrink-0 rounded-lg object-cover sm:h-12 sm:w-12"
+                      height={48}
                       src={
                         recipe.image_url ||
                         "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
                       }
+                      width={48}
                     />
                     <div className="min-w-0 flex-1">
                       <h4 className="truncate font-medium text-secondary-900 text-sm sm:text-base">
