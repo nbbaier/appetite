@@ -22,14 +22,21 @@
         // Existing files use PascalCase components / camelCase modules.
         // Disabled for now rather than renaming the whole tree.
         "useFilenamingConvention": "off"
-      },
-      "performance": {
-        // Barrel files (e.g. lib/validation) are a deliberate module API surface.
-        "noBarrelFile": "off"
       }
     }
   },
   "overrides": [
+    {
+      // These existing barrels are deliberate module API surfaces.
+      "includes": ["src/lib/validation/index.ts", "src/types/index.ts"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "noBarrelFile": "off"
+          }
+        }
+      }
+    },
     {
       // Supabase edge functions run on Deno, not the browser.
       "includes": ["supabase/functions/**"],

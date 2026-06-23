@@ -9,7 +9,7 @@
     "build:analyze": "vite build --mode analyze",
     "lint": "ultracite check",
     "lint:fix": "ultracite fix",
-    "format": "ultracite fix",
+    "format": "biome format --write .",
     "check": "ultracite check",
     "check:fix": "ultracite fix",
     "fix": "ultracite fix",
