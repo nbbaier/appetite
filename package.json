@@ -7,11 +7,12 @@
     "dev": "vite",
     "build": "vite build",
     "build:analyze": "vite build --mode analyze",
-    "lint": "biome lint .",
-    "lint:fix": "biome lint --write .",
-    "format": "biome format --write .",
-    "check": "biome check .",
-    "check:fix": "biome check --write .",
+    "lint": "ultracite check",
+    "lint:fix": "ultracite fix",
+    "format": "ultracite fix",
+    "check": "ultracite check",
+    "check:fix": "ultracite fix",
+    "fix": "ultracite fix",
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest --watch",
@@ -47,7 +48,7 @@
     "zod": "^4.3.6"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.5.0",
+    "@biomejs/biome": "2.4.16",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
@@ -59,29 +60,22 @@
     "@vitejs/plugin-react": "^6.0.1",
     "@vitest/coverage-v8": "^4.1.2",
     "autoprefixer": "^10.4.27",
-    "eslint": "^10.1.0",
-    "globals": "^17.4.0",
     "jsdom": "^29.0.1",
-    "lint-staged": "^16.4.0",
+    "lint-staged": "^17.0.8",
     "postcss": "^8.5.8",
     "rollup-plugin-visualizer": "^7.0.1",
     "tailwindcss": "^4.2.2",
     "typescript": "^6.0.2",
+    "ultracite": "7.8.3",
     "vite": "^8.0.3",
     "vitest": "^4.1.2"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,json,jsonc,css,scss,md,mdx}": ["ultracite fix"]
   },
   "vitest": {
     "test": {
       "environment": "jsdom"
     }
-  },
-  "lint-staged": {
-    "*.{ts,tsx}": [
-      "biome check --write",
-      "biome lint --write"
-    ],
-    "*.{json,md}": [
-      "biome format --write"
-    ]
   }
 }
