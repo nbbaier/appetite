@@ -1,0 +1,8 @@
+{
+  "entry": ["supabase/functions/**/*.ts", "src/components/ui/**/*.tsx"],
+  "ignoreDependencies": ["@types/react-window", "@vitest/coverage-v8"],
+  "ignoreExportsUsedInFile": {
+    "interface": true,
+    "type": true
+  }
+}

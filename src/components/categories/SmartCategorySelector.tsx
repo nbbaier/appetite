@@ -25,7 +25,7 @@ const CATEGORIES = [
   "Other",
 ];
 
-export function SmartCategorySelectorRaw({
+function SmartCategorySelectorRaw({
   ingredientName,
   currentCategory,
   onCategoryChange,

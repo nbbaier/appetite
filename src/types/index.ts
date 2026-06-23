@@ -1,12 +1,3 @@
-export interface User {
-  avatar_url?: string;
-  created_at: string;
-  email: string;
-  full_name?: string;
-  id: string;
-  updated_at: string;
-}
-
 export interface Ingredient {
   category: string;
   created_at: string;

@@ -8,7 +8,7 @@ interface HeaderProps {
   onMenuClick: () => void;
 }
 
-export function HeaderRaw({ onMenuClick }: HeaderProps) {
+function HeaderRaw({ onMenuClick }: HeaderProps) {
   const { user, signOut } = useAuth();
 
   return (

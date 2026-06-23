@@ -113,7 +113,7 @@ const ERROR_MESSAGES: Record<string, string> = {
   api_error: "An error occurred with the AI service. Please try again.",
 };
 
-export function AIChat() {
+function AIChat() {
   const { user } = useAuth();
   const chatState = useChat();
   const dispatch = useChatDispatch();

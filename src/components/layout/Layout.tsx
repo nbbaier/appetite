@@ -6,7 +6,7 @@ interface LayoutProps {
   children: React.ReactNode;
 }
 
-export function LayoutRaw({ children }: LayoutProps) {
+function LayoutRaw({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   return (
