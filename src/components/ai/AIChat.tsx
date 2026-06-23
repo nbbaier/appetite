@@ -523,6 +523,7 @@ export function AIChat() {
                 className="absolute top-1/2 right-10 -translate-y-1/2 p-1 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={async (e) => {
                   e.stopPropagation();
+                  // biome-ignore lint/suspicious/noAlert: native prompt is intentional; TODO replace with an input modal
                   const newTitle = window.prompt(
                     "Rename conversation",
                     conv.title || "Untitled"
@@ -556,6 +557,7 @@ export function AIChat() {
                 className="absolute top-1/2 right-2 -translate-y-1/2 p-1 opacity-0 transition-opacity group-hover:opacity-100"
                 onClick={async (e) => {
                   e.stopPropagation();
+                  // biome-ignore lint/suspicious/noAlert: native confirm is intentional; TODO replace with a confirm dialog
                   if (window.confirm("Delete this conversation?")) {
                     try {
                       await conversationService.delete(conv.id);

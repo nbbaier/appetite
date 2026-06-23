@@ -407,6 +407,7 @@ export function Recipes() {
       return;
     }
     if (
+      // biome-ignore lint/suspicious/noAlert: native confirm is intentional; TODO replace with a confirm dialog
       !window.confirm(
         "Are you sure you want to delete this recipe? This cannot be undone."
       )
