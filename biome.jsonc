@@ -31,6 +31,18 @@
       "javascript": {
         "globals": ["Deno"]
       }
+    },
+    {
+      // Inline regex assertions (e.g. toMatch(/.../)) are throwaway in
+      // tests; the top-level-regex perf rule doesn't apply there.
+      "includes": ["**/*.test.{ts,tsx}"],
+      "linter": {
+        "rules": {
+          "performance": {
+            "useTopLevelRegex": "off"
+          }
+        }
+      }
     }
   ]
 }
