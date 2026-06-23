@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { describe, expect, it, vi } from "vitest";
+import type { Recipe } from "../../types";
 import { RecipeDetailModal } from "./RecipeDetailModal";
 
 const recipe = {
@@ -15,7 +16,7 @@ const recipe = {
   difficulty: "Easy",
   created_at: "2024-01-01",
   updated_at: "2024-01-01",
-};
+} satisfies Recipe;
 
 const baseProps = {
   open: true,
