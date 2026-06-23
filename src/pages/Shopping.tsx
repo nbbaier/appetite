@@ -162,7 +162,7 @@ export function Shopping() {
   }, [notify, user]);
 
   const throttledRefreshData = useMemo(
-    () => throttle(() => void loadData(), 1000),
+    () => throttle(() => loadData(), 1000),
     [loadData]
   );
 

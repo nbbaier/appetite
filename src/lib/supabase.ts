@@ -56,10 +56,10 @@ if (mode === "test") {
   const mockSubscription: Subscription = {
     id: "mock-subscription",
     callback: () => {
-      void 0;
+      // no-op
     },
     unsubscribe: () => {
-      void 0;
+      // no-op
     },
   };
 
