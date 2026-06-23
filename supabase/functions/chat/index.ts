@@ -1,3 +1,5 @@
+// biome-ignore-all lint/complexity/noExcessiveCognitiveComplexity: TODO refactor the request handler; tracked separately
+
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
@@ -5,19 +7,19 @@ const corsHeaders = {
 };
 
 interface ChatMessage {
-  role: "system" | "user" | "assistant";
   content: string;
+  role: "system" | "user" | "assistant";
 }
 
 interface ChatRequest {
   messages: ChatMessage[];
+  userId?: string;
   userIngredients?: string[];
   userPreferences?: {
     dietary_restrictions?: string[];
     allergies?: string[];
     cooking_skill_level?: string;
   };
-  userId?: string;
 }
 
 // Modularized prompt builder
@@ -75,8 +77,8 @@ Guidelines:
 // Utility for standardized error responses
 interface StandardizedError {
   code: string;
-  message: string;
   details?: unknown;
+  message: string;
   requestId?: string;
 }
 function errorResponse(
@@ -84,11 +86,15 @@ function errorResponse(
   message: string,
   status = 400,
   details?: unknown,
-  requestId?: string,
+  requestId?: string
 ) {
   const errorObj: StandardizedError = { code, message };
-  if (details !== undefined) errorObj.details = details;
-  if (requestId) errorObj.requestId = requestId;
+  if (details !== undefined) {
+    errorObj.details = details;
+  }
+  if (requestId) {
+    errorObj.requestId = requestId;
+  }
   return new Response(JSON.stringify({ error: errorObj }), {
     status,
     headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -110,7 +116,7 @@ Deno.serve(async (req: Request) => {
         "Method not allowed",
         405,
         undefined,
-        requestId,
+        requestId
       );
     }
     // @ts-expect-error
@@ -121,7 +127,7 @@ Deno.serve(async (req: Request) => {
         "OpenAI API key not configured",
         500,
         undefined,
-        requestId,
+        requestId
       );
     }
     // @ts-expect-error
@@ -130,13 +136,13 @@ Deno.serve(async (req: Request) => {
     const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
     let { messages, userIngredients, userPreferences, userId }: ChatRequest =
       await req.json();
-    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+    if (!(messages && Array.isArray(messages)) || messages.length === 0) {
       return errorResponse(
         "invalid_messages_format",
         "'messages' must be a non-empty array",
         400,
         undefined,
-        requestId,
+        requestId
       );
     }
     for (const msg of messages) {
@@ -152,7 +158,7 @@ Deno.serve(async (req: Request) => {
           "Each message must be an object with 'role' and 'content' as strings",
           400,
           undefined,
-          requestId,
+          requestId
         );
       }
     }
@@ -165,7 +171,7 @@ Deno.serve(async (req: Request) => {
         "'userId' must be a non-empty string if provided",
         400,
         undefined,
-        requestId,
+        requestId
       );
     }
     if (userIngredients !== undefined) {
@@ -175,7 +181,7 @@ Deno.serve(async (req: Request) => {
           "'userIngredients' must be an array of strings if provided",
           400,
           undefined,
-          requestId,
+          requestId
         );
       }
       for (const ing of userIngredients) {
@@ -185,7 +191,7 @@ Deno.serve(async (req: Request) => {
             "Each ingredient must be a non-empty string",
             400,
             undefined,
-            requestId,
+            requestId
           );
         }
       }
@@ -200,14 +206,14 @@ Deno.serve(async (req: Request) => {
           "'userPreferences' must be an object if provided",
           400,
           undefined,
-          requestId,
+          requestId
         );
       }
       if (
         userPreferences.dietary_restrictions !== undefined &&
         (!Array.isArray(userPreferences.dietary_restrictions) ||
           userPreferences.dietary_restrictions.some(
-            (d) => typeof d !== "string",
+            (d) => typeof d !== "string"
           ))
       ) {
         return errorResponse(
@@ -215,7 +221,7 @@ Deno.serve(async (req: Request) => {
           "'dietary_restrictions' must be an array of strings",
           400,
           undefined,
-          requestId,
+          requestId
         );
       }
       if (
@@ -228,7 +234,7 @@ Deno.serve(async (req: Request) => {
           "'allergies' must be an array of strings",
           400,
           undefined,
-          requestId,
+          requestId
         );
       }
       if (
@@ -240,7 +246,7 @@ Deno.serve(async (req: Request) => {
           "'cooking_skill_level' must be a string",
           400,
           undefined,
-          requestId,
+          requestId
         );
       }
     }
@@ -265,8 +271,8 @@ Deno.serve(async (req: Request) => {
           now.getUTCHours(),
           now.getUTCMinutes(),
           0,
-          0,
-        ),
+          0
+        )
       );
       const { data: rateRow, error: rateError } = await supabase
         .from("rate_limits")
@@ -280,7 +286,7 @@ Deno.serve(async (req: Request) => {
           "Failed to check rate limit",
           500,
           rateError,
-          requestId,
+          requestId
         );
       }
       if (rateRow) {
@@ -290,14 +296,13 @@ Deno.serve(async (req: Request) => {
             "Too many requests. Please wait and try again.",
             429,
             undefined,
-            requestId,
+            requestId
           );
-        } else {
-          await supabase
-            .from("rate_limits")
-            .update({ count: rateRow.count + 1 })
-            .eq("id", rateRow.id);
         }
+        await supabase
+          .from("rate_limits")
+          .update({ count: rateRow.count + 1 })
+          .eq("id", rateRow.id);
       } else {
         await supabase.from("rate_limits").insert({
           key: rateLimitKey,
@@ -323,7 +328,7 @@ Deno.serve(async (req: Request) => {
           "Failed to fetch user profile",
           500,
           profileError,
-          requestId,
+          requestId
         );
       }
       const { data: pantryItems, error: pantryError } = await supabase
@@ -336,7 +341,7 @@ Deno.serve(async (req: Request) => {
           "Failed to fetch pantry items",
           500,
           pantryError,
-          requestId,
+          requestId
         );
       }
       if (!userIngredients || userIngredients.length === 0) {
@@ -375,7 +380,7 @@ Deno.serve(async (req: Request) => {
           temperature: 0.7,
           stream: false,
         }),
-      },
+      }
     );
     if (!openaiResponse.ok) {
       const errorData = await openaiResponse.json().catch(() => null);
@@ -398,7 +403,7 @@ Deno.serve(async (req: Request) => {
         message,
         openaiResponse.status,
         errorData,
-        requestId,
+        requestId
       );
     }
     const openaiData = await openaiResponse.json();
@@ -409,7 +414,7 @@ Deno.serve(async (req: Request) => {
         "No response from AI",
         500,
         openaiData,
-        requestId,
+        requestId
       );
     }
     return new Response(
@@ -421,7 +426,7 @@ Deno.serve(async (req: Request) => {
       {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      },
+      }
     );
   } catch (error: unknown) {
     let errorMessage = "Unknown error";
@@ -441,7 +446,7 @@ Deno.serve(async (req: Request) => {
       "Internal server error",
       500,
       errorMessage,
-      requestId,
+      requestId
     );
   }
 });

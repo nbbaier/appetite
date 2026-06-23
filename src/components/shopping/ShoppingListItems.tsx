@@ -7,16 +7,16 @@ import { Card, CardContent } from "../ui/card";
 
 interface ShoppingListItemsProps {
   items: ShoppingListItem[];
-  onEdit: (item: ShoppingListItem) => void;
-  onDelete: (itemId: string) => void;
-  onTogglePurchased: (itemId: string, isPurchased: boolean) => void;
   loading?: boolean;
+  onDelete: (itemId: string) => void;
+  onEdit: (item: ShoppingListItem) => void;
+  onTogglePurchased: (itemId: string, isPurchased: boolean) => void;
 }
 
 interface VirtualizedShoppingRowData {
   items: ShoppingListItem[];
-  onEdit: (item: ShoppingListItem) => void;
   onDelete: (itemId: string) => void;
+  onEdit: (item: ShoppingListItem) => void;
   onTogglePurchased: (itemId: string, isPurchased: boolean) => void;
 }
 
@@ -54,38 +54,38 @@ const VirtualizedShoppingRow: React.FC<
         <CardContent className="p-3 sm:p-4">
           <div className="flex items-center space-x-3">
             <button
-              type="button"
+              className="h-5 w-5 flex-shrink-0 rounded-full border-2 border-secondary-300 transition-colors hover:border-primary sm:h-6 sm:w-6"
               onClick={() => onTogglePurchased(item.id, item.is_purchased)}
-              className="flex-shrink-0 w-5 h-5 rounded-full border-2 transition-colors sm:w-6 sm:h-6 border-secondary-300 hover:border-primary"
+              type="button"
             />
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-                <div className="flex-1 min-w-0">
-                  <h4 className="text-sm font-medium truncate text-secondary-900 sm:text-base">
+                <div className="min-w-0 flex-1">
+                  <h4 className="truncate font-medium text-secondary-900 text-sm sm:text-base">
                     {item.name}
                   </h4>
-                  <p className="text-xs sm:text-sm text-secondary-600">
+                  <p className="text-secondary-600 text-xs sm:text-sm">
                     {item.quantity} {item.unit}
                     {item.notes && ` • ${item.notes}`}
                   </p>
                 </div>
                 <div className="flex flex-shrink-0 items-center space-x-2">
-                  <Badge variant="outline" className="text-xs">
+                  <Badge className="text-xs" variant="outline">
                     {item.category}
                   </Badge>
                   <button
-                    type="button"
+                    className="rounded p-1.5 text-secondary-400 hover:text-secondary-600"
                     onClick={() => onEdit(item)}
-                    className="p-1.5 text-secondary-400 hover:text-secondary-600 rounded"
+                    type="button"
                   >
-                    <Edit3 className="w-3 h-3 sm:h-4 sm:w-4" />
+                    <Edit3 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </button>
                   <button
-                    type="button"
+                    className="rounded p-1.5 text-secondary-400 hover:text-red-600"
                     onClick={() => onDelete(item.id)}
-                    className="p-1.5 text-secondary-400 hover:text-red-600 rounded"
+                    type="button"
                   >
-                    <Trash2 className="w-3 h-3 sm:h-4 sm:w-4" />
+                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                   </button>
                 </div>
               </div>
@@ -109,11 +109,11 @@ const ShoppingListItemsComponent: React.FC<ShoppingListItemsProps> = ({
     return (
       <div className="space-y-3">
         {SHOPPING_LIST_SKELETON_KEYS.map((key) => (
-          <Card key={key} className="bg-gray-100 animate-pulse">
+          <Card className="animate-pulse bg-gray-100" key={key}>
             <CardContent className="p-3 sm:p-4">
-              <div className="mb-2 w-1/3 h-4 bg-gray-300 rounded" />
-              <div className="mb-2 w-2/3 h-3 bg-gray-200 rounded" />
-              <div className="w-1/4 h-3 bg-gray-200 rounded" />
+              <div className="mb-2 h-4 w-1/3 rounded bg-gray-300" />
+              <div className="mb-2 h-3 w-2/3 rounded bg-gray-200" />
+              <div className="h-3 w-1/4 rounded bg-gray-200" />
             </CardContent>
           </Card>
         ))}
@@ -143,42 +143,42 @@ const ShoppingListItemsComponent: React.FC<ShoppingListItemsProps> = ({
       {/* Unpurchased Items */}
       <div className="grid grid-cols-1 gap-2 sm:gap-3">
         {unpurchased.map((item) => (
-          <Card key={item.id} className="transition-shadow hover:shadow-md">
+          <Card className="transition-shadow hover:shadow-md" key={item.id}>
             <CardContent className="p-3 sm:p-4">
               <div className="flex items-center space-x-3">
                 <button
-                  type="button"
+                  className="h-5 w-5 flex-shrink-0 rounded-full border-2 border-secondary-300 transition-colors hover:border-primary sm:h-6 sm:w-6"
                   onClick={() => onTogglePurchased(item.id, item.is_purchased)}
-                  className="flex-shrink-0 w-5 h-5 rounded-full border-2 transition-colors sm:w-6 sm:h-6 border-secondary-300 hover:border-primary"
+                  type="button"
                 />
-                <div className="flex-1 min-w-0">
+                <div className="min-w-0 flex-1">
                   <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium truncate text-secondary-900 sm:text-base">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="truncate font-medium text-secondary-900 text-sm sm:text-base">
                         {item.name}
                       </h4>
-                      <p className="text-xs sm:text-sm text-secondary-600">
+                      <p className="text-secondary-600 text-xs sm:text-sm">
                         {item.quantity} {item.unit}
                         {item.notes && ` • ${item.notes}`}
                       </p>
                     </div>
                     <div className="flex flex-shrink-0 items-center space-x-2">
-                      <Badge variant="outline" className="text-xs">
+                      <Badge className="text-xs" variant="outline">
                         {item.category}
                       </Badge>
                       <button
-                        type="button"
+                        className="rounded p-1.5 text-secondary-400 hover:text-secondary-600"
                         onClick={() => onEdit(item)}
-                        className="p-1.5 text-secondary-400 hover:text-secondary-600 rounded"
+                        type="button"
                       >
-                        <Edit3 className="w-3 h-3 sm:h-4 sm:w-4" />
+                        <Edit3 className="h-3 w-3 sm:h-4 sm:w-4" />
                       </button>
                       <button
-                        type="button"
+                        className="rounded p-1.5 text-secondary-400 hover:text-red-600"
                         onClick={() => onDelete(item.id)}
-                        className="p-1.5 text-secondary-400 hover:text-red-600 rounded"
+                        type="button"
                       >
-                        <Trash2 className="w-3 h-3 sm:h-4 sm:w-4" />
+                        <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                       </button>
                     </div>
                   </div>
@@ -192,41 +192,41 @@ const ShoppingListItemsComponent: React.FC<ShoppingListItemsProps> = ({
       {/* Purchased Items */}
       {purchased.length > 0 && (
         <div className="mt-6">
-          <h3 className="flex items-center mb-3 text-sm font-medium text-secondary-600">
-            <Check className="mr-1 w-4 h-4" />
+          <h3 className="mb-3 flex items-center font-medium text-secondary-600 text-sm">
+            <Check className="mr-1 h-4 w-4" />
             Purchased ({purchased.length})
           </h3>
           <div className="grid grid-cols-1 gap-2 sm:gap-3">
             {purchased.map((item) => (
-              <Card key={item.id} className="opacity-60">
+              <Card className="opacity-60" key={item.id}>
                 <CardContent className="p-3 sm:p-4">
                   <div className="flex items-center space-x-3">
                     <button
-                      type="button"
+                      className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full border-2 border-green-500 bg-green-500 transition-colors hover:bg-green-600 sm:h-6 sm:w-6"
                       onClick={() =>
                         onTogglePurchased(item.id, item.is_purchased)
                       }
-                      className="flex flex-shrink-0 justify-center items-center w-5 h-5 bg-green-500 rounded-full border-2 border-green-500 transition-colors sm:w-6 sm:h-6 hover:bg-green-600"
+                      type="button"
                     >
-                      <Check className="w-3 h-3 text-white sm:h-4 sm:w-4" />
+                      <Check className="h-3 w-3 text-white sm:h-4 sm:w-4" />
                     </button>
-                    <div className="flex-1 min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-2">
-                        <div className="flex-1 min-w-0">
-                          <h4 className="text-sm font-medium line-through truncate text-secondary-900 sm:text-base">
+                        <div className="min-w-0 flex-1">
+                          <h4 className="truncate font-medium text-secondary-900 text-sm line-through sm:text-base">
                             {item.name}
                           </h4>
-                          <p className="text-xs sm:text-sm text-secondary-500">
+                          <p className="text-secondary-500 text-xs sm:text-sm">
                             {item.quantity} {item.unit}
                             {item.notes && ` • ${item.notes}`}
                           </p>
                         </div>
                         <button
-                          type="button"
+                          className="flex-shrink-0 rounded p-1.5 text-secondary-400 hover:text-red-600"
                           onClick={() => onDelete(item.id)}
-                          className="p-1.5 text-secondary-400 hover:text-red-600 rounded flex-shrink-0"
+                          type="button"
                         >
-                          <Trash2 className="w-3 h-3 sm:h-4 sm:w-4" />
+                          <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
                         </button>
                       </div>
                     </div>

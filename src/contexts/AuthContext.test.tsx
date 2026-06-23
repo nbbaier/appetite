@@ -41,7 +41,7 @@ function TestComponent() {
     "TestComponent: loading =",
     auth.loading,
     "isSupabaseConnected =",
-    auth.isSupabaseConnected,
+    auth.isSupabaseConnected
   );
   return (
     <div>
@@ -69,7 +69,7 @@ describe("AuthContext", () => {
       return null;
     }
     expect(() => render(<OutsideProvider />)).toThrow(
-      "useAuth must be used within an AuthProvider",
+      "useAuth must be used within an AuthProvider"
     );
     spy.mockRestore();
   });
@@ -83,12 +83,12 @@ describe("AuthContext", () => {
       "VITE_SUPABASE_URL:",
       import.meta.env.VITE_SUPABASE_URL,
       "VITE_SUPABASE_ANON_KEY:",
-      import.meta.env.VITE_SUPABASE_ANON_KEY,
+      import.meta.env.VITE_SUPABASE_ANON_KEY
     );
     render(
       <AuthProvider isSupabaseConnectedOverride={false}>
         <TestComponent />
-      </AuthProvider>,
+      </AuthProvider>
     );
     // Should show loading false after effect
     await waitFor(() => {
@@ -103,7 +103,7 @@ describe("AuthContext", () => {
       "VITE_SUPABASE_URL:",
       import.meta.env.VITE_SUPABASE_URL,
       "VITE_SUPABASE_ANON_KEY:",
-      import.meta.env.VITE_SUPABASE_ANON_KEY,
+      import.meta.env.VITE_SUPABASE_ANON_KEY
     );
     let result: { error: unknown } | undefined;
     function SignUpTest() {
@@ -115,7 +115,7 @@ describe("AuthContext", () => {
             "SignUpTest: result =",
             result,
             "isSupabaseConnected =",
-            auth.isSupabaseConnected,
+            auth.isSupabaseConnected
           );
         });
       }, [auth.signUp, auth.isSupabaseConnected]);
@@ -124,7 +124,7 @@ describe("AuthContext", () => {
     render(
       <AuthProvider isSupabaseConnectedOverride={false}>
         <SignUpTest />
-      </AuthProvider>,
+      </AuthProvider>
     );
     await waitFor(() => {
       expect(result?.error).toBeTruthy();
@@ -147,7 +147,7 @@ describe("AuthContext", () => {
     render(
       <AuthProvider isSupabaseConnectedOverride={true}>
         <SignUpTest />
-      </AuthProvider>,
+      </AuthProvider>
     );
     await waitFor(() => {
       expect(result?.error).toBeFalsy();
@@ -172,7 +172,7 @@ describe("AuthContext", () => {
     render(
       <AuthProvider isSupabaseConnectedOverride={true}>
         <SignUpTest />
-      </AuthProvider>,
+      </AuthProvider>
     );
     await waitFor(() => {
       console.log("signUp error test result:", result);
@@ -198,7 +198,7 @@ describe("AuthContext", () => {
     render(
       <AuthProvider isSupabaseConnectedOverride={true}>
         <SignInTest />
-      </AuthProvider>,
+      </AuthProvider>
     );
     await waitFor(() => {
       expect(result?.error).toBeFalsy();
@@ -223,7 +223,7 @@ describe("AuthContext", () => {
     render(
       <AuthProvider isSupabaseConnectedOverride={true}>
         <SignInTest />
-      </AuthProvider>,
+      </AuthProvider>
     );
     await waitFor(() => {
       console.log("signIn error test result:", result);
@@ -245,7 +245,7 @@ describe("AuthContext", () => {
     render(
       <AuthProvider isSupabaseConnectedOverride={true}>
         <SignOutTest />
-      </AuthProvider>,
+      </AuthProvider>
     );
     await waitFor(() => {
       expect(signOutMock).toHaveBeenCalled();
@@ -269,7 +269,7 @@ describe("AuthContext", () => {
     render(
       <AuthProvider isSupabaseConnectedOverride={true}>
         <SignOutTest />
-      </AuthProvider>,
+      </AuthProvider>
     );
     await waitFor(() => {
       expect(warnSpy).toHaveBeenCalledWith("Sign out error:", error);
@@ -295,7 +295,7 @@ describe("AuthContext", () => {
     render(
       <AuthProvider isSupabaseConnectedOverride={true}>
         <ResetTest />
-      </AuthProvider>,
+      </AuthProvider>
     );
     await waitFor(() => {
       expect(result?.error).toBeFalsy();
@@ -320,7 +320,7 @@ describe("AuthContext", () => {
     render(
       <AuthProvider isSupabaseConnectedOverride={true}>
         <ResetTest />
-      </AuthProvider>,
+      </AuthProvider>
     );
     await waitFor(() => {
       expect(result?.error).toBeTruthy();

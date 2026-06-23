@@ -11,7 +11,7 @@ import { handleApiError, logError, retryOperation } from "./errorUtils";
 export async function fetchWithErrorHandling(
   input: RequestInfo,
   init?: RequestInit,
-  options?: { retries?: number },
+  options?: { retries?: number }
 ): Promise<Response> {
   try {
     return await retryOperation(
@@ -21,7 +21,9 @@ export async function fetchWithErrorHandling(
           let errorMsg = `API request failed: ${response.status}`;
           try {
             const data = await response.json();
-            if (data?.error) errorMsg = data.error;
+            if (data?.error) {
+              errorMsg = data.error;
+            }
           } catch {
             // ignore JSON parse errors
           }
@@ -29,7 +31,7 @@ export async function fetchWithErrorHandling(
         }
         return response;
       },
-      { retries: options?.retries ?? 0 },
+      { retries: options?.retries ?? 0 }
     );
   } catch (error) {
     logError(error, "fetchWithErrorHandling");

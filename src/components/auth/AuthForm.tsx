@@ -53,13 +53,17 @@ function AuthFormRaw({ initialMode }: AuthFormProps) {
         const { error } = await signUp(
           data.email,
           data.password,
-          data.fullName,
+          data.fullName
         );
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         navigate("/");
       } else {
         const { error } = await signIn(data.email, data.password);
-        if (error) throw error;
+        if (error) {
+          throw error;
+        }
         navigate("/");
       }
     } catch (err: unknown) {
@@ -75,43 +79,50 @@ function AuthFormRaw({ initialMode }: AuthFormProps) {
     reset();
   };
 
+  let submitLabel = "Sign In";
+  if (loading) {
+    submitLabel = "Loading...";
+  } else if (isSignUp) {
+    submitLabel = "Create Account";
+  }
+
   return (
-    <div className="flex justify-center items-center p-4 min-h-dvh bg-emerald-50 pb-[env(safe-area-inset-bottom)]">
+    <div className="flex min-h-dvh items-center justify-center bg-emerald-50 p-4 pb-[env(safe-area-inset-bottom)]">
       <Card className="w-full max-w-md border-emerald-100 shadow-2xl">
         <CardHeader className="pb-8 text-center">
           <div className="mx-auto mb-6">
-            <div className="flex justify-center items-center size-16 bg-emerald-600 rounded-2xl shadow-xl">
+            <div className="flex size-16 items-center justify-center rounded-2xl bg-emerald-600 shadow-xl">
               <ChefHat className="size-8 text-white" />
             </div>
           </div>
           <div className="space-y-2">
-            <CardTitle className="text-2xl font-bold text-emerald-700 text-balance">
+            <CardTitle className="text-balance font-bold text-2xl text-emerald-700">
               {isSignUp ? "Join Appetite" : "Welcome Back"}
             </CardTitle>
-            <CardDescription className="text-base text-pretty">
+            <CardDescription className="text-pretty text-base">
               {isSignUp
                 ? "Start your AI-powered cooking journey today"
                 : "Your intelligent cooking companion awaits"}
             </CardDescription>
-            <div className="flex justify-center items-center pt-2 space-x-2">
-              <span className="px-2 py-1 text-xs font-medium text-emerald-700 bg-emerald-100 rounded-full">
+            <div className="flex items-center justify-center space-x-2 pt-2">
+              <span className="rounded-full bg-emerald-100 px-2 py-1 font-medium text-emerald-700 text-xs">
                 Beta
               </span>
-              <span className="text-xs text-muted-foreground">•</span>
-              <span className="text-xs text-muted-foreground">AI-Powered</span>
+              <span className="text-muted-foreground text-xs">•</span>
+              <span className="text-muted-foreground text-xs">AI-Powered</span>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           {!isSupabaseConnected && (
-            <div className="p-4 mb-6 bg-amber-50 rounded-lg border border-amber-200 dark:bg-amber-950 dark:border-amber-800">
+            <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-800 dark:bg-amber-950">
               <div className="flex items-start space-x-3">
-                <AlertCircle className="size-5 text-amber-600 mt-0.5 flex-shrink-0" />
+                <AlertCircle className="mt-0.5 size-5 flex-shrink-0 text-amber-600" />
                 <div>
-                  <h4 className="text-sm font-medium text-amber-800 dark:text-amber-200">
+                  <h4 className="font-medium text-amber-800 text-sm dark:text-amber-200">
                     Setup Required
                   </h4>
-                  <p className="mt-1 text-sm text-amber-700 dark:text-amber-300">
+                  <p className="mt-1 text-amber-700 text-sm dark:text-amber-300">
                     Click "Connect to Supabase" in the top right to set up
                     authentication and database.
                   </p>
@@ -120,67 +131,67 @@ function AuthFormRaw({ initialMode }: AuthFormProps) {
             </div>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
             {isSignUp && (
               <Input
                 disabled={loading}
                 {...register("fullName")}
-                name="fullName"
-                min={2}
                 label="Full Name"
+                min={2}
+                name="fullName"
               />
             )}
             <Input
               disabled={loading}
-              onChange={register("email").onChange}
-              onBlur={register("email").onBlur}
-              ref={register("email").ref}
-              name="email"
-              type="email"
               label="Email"
+              name="email"
+              onBlur={register("email").onBlur}
+              onChange={register("email").onChange}
+              ref={register("email").ref}
+              type="email"
             />
             <Input
               disabled={loading}
-              onChange={register("password").onChange}
-              onBlur={register("password").onBlur}
-              ref={register("password").ref}
-              name="password"
-              type="password"
               label="Password"
+              name="password"
+              onBlur={register("password").onBlur}
+              onChange={register("password").onChange}
+              ref={register("password").ref}
+              type="password"
             />
             {isSignUp && (
               <Input
                 disabled={loading}
-                onChange={register("confirmPassword").onChange}
-                onBlur={register("confirmPassword").onBlur}
-                ref={register("confirmPassword").ref}
-                name="confirmPassword"
-                type="password"
                 label="Confirm Password"
+                name="confirmPassword"
+                onBlur={register("confirmPassword").onBlur}
+                onChange={register("confirmPassword").onChange}
+                ref={register("confirmPassword").ref}
+                type="password"
               />
             )}
 
             {error && (
-              <div className="p-3 text-sm rounded-lg bg-destructive/15 text-destructive">
+              <div className="rounded-lg bg-destructive/15 p-3 text-destructive text-sm">
                 {error}
               </div>
             )}
 
             <Button
-              type="submit"
               className="w-full bg-emerald-600 hover:bg-emerald-700"
               disabled={loading || !isSupabaseConnected}
+              type="submit"
             >
-              {loading ? "Loading..." : isSignUp ? "Create Account" : "Sign In"}
+              {submitLabel}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <button
-              type="button"
-              onClick={toggleMode}
-              className="text-sm font-medium text-emerald-600 hover:text-emerald-700 disabled:opacity-50"
+              className="font-medium text-emerald-600 text-sm hover:text-emerald-700 disabled:opacity-50"
               disabled={loading}
+              onClick={toggleMode}
+              type="button"
             >
               {isSignUp
                 ? "Already have an account? Sign in"
@@ -190,7 +201,7 @@ function AuthFormRaw({ initialMode }: AuthFormProps) {
 
           {!isSupabaseConnected && (
             <div className="mt-6 text-center">
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Demo mode - Connect Supabase for full functionality
               </p>
             </div>

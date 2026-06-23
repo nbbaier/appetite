@@ -9,11 +9,11 @@ import { Input } from "../ui/input";
 
 interface LeftoverFormProps {
   leftover?: Leftover;
-  onSubmit: (
-    data: Omit<Leftover, "id" | "created_at" | "updated_at">,
-  ) => Promise<void>;
-  onCancel: () => void;
   loading?: boolean;
+  onCancel: () => void;
+  onSubmit: (
+    data: Omit<Leftover, "id" | "created_at" | "updated_at">
+  ) => Promise<void>;
 }
 
 const UNITS = [
@@ -62,7 +62,9 @@ export function LeftoverForm({
   }, [loadRecipes]);
 
   useEffect(() => {
-    if (!showRecipeSelector) return;
+    if (!showRecipeSelector) {
+      return;
+    }
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         setShowRecipeSelector(false);
@@ -76,12 +78,14 @@ export function LeftoverForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     await onSubmit({
       user_id: user.id,
       name: formData.name,
-      quantity: parseFloat(formData.quantity) || 1,
+      quantity: Number.parseFloat(formData.quantity) || 1,
       unit: formData.unit,
       expiration_date: formData.expiration_date || undefined,
       source_recipe_id: formData.source_recipe_id || undefined,
@@ -106,43 +110,50 @@ export function LeftoverForm({
   };
 
   const selectedRecipe = recipes.find(
-    (r) => r.id === formData.source_recipe_id,
+    (r) => r.id === formData.source_recipe_id
   );
+
+  let submitLabel = "Add Leftover";
+  if (loading) {
+    submitLabel = "Saving...";
+  } else if (leftover) {
+    submitLabel = "Update Leftover";
+  }
 
   return (
     <form
       aria-label={leftover ? "Edit leftover" : "Add leftover"}
-      onSubmit={handleSubmit}
       className="space-y-4"
+      onSubmit={handleSubmit}
     >
       <div className="grid grid-cols-1 gap-4">
         {/* Recipe Selection */}
         <div>
-          <p className="block mb-2 text-sm font-medium text-secondary-700">
+          <p className="mb-2 block font-medium text-secondary-700 text-sm">
             Source Recipe (Optional)
           </p>
           {selectedRecipe ? (
-            <div className="flex items-center p-3 space-x-2 bg-blue-50 rounded-lg border border-blue-200">
-              <ChefHat className="w-4 h-4 text-blue-600" />
-              <span className="flex-1 text-sm font-medium text-blue-900">
+            <div className="flex items-center space-x-2 rounded-lg border border-blue-200 bg-blue-50 p-3">
+              <ChefHat className="h-4 w-4 text-blue-600" />
+              <span className="flex-1 font-medium text-blue-900 text-sm">
                 {selectedRecipe.title}
               </span>
               <button
-                type="button"
+                className="rounded p-1 text-blue-600 hover:text-blue-800"
                 onClick={clearRecipe}
-                className="p-1 text-blue-600 rounded hover:text-blue-800"
+                type="button"
               >
-                <X className="w-4 h-4" />
+                <X className="h-4 w-4" />
               </button>
             </div>
           ) : (
             <Button
+              className="w-full justify-start"
+              onClick={() => setShowRecipeSelector(true)}
               type="button"
               variant="outline"
-              onClick={() => setShowRecipeSelector(true)}
-              className="justify-start w-full"
             >
-              <ChefHat className="mr-2 w-4 h-4" />
+              <ChefHat className="mr-2 h-4 w-4" />
               Select Recipe
             </Button>
           )}
@@ -150,41 +161,43 @@ export function LeftoverForm({
 
         {/* Recipe Selector Modal */}
         {showRecipeSelector && (
-          <div className="flex fixed inset-0 z-50 justify-center items-center p-4">
-            <div className="bg-white rounded-lg max-w-md w-full max-h-[70vh] overflow-hidden">
-              <div className="flex justify-between items-center p-4 border-b">
-                <h3 className="text-lg font-semibold">Select Recipe</h3>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="max-h-[70vh] w-full max-w-md overflow-hidden rounded-lg bg-white">
+              <div className="flex items-center justify-between border-b p-4">
+                <h3 className="font-semibold text-lg">Select Recipe</h3>
                 <button
-                  type="button"
+                  className="rounded p-1 text-gray-400 hover:text-gray-600"
                   onClick={() => setShowRecipeSelector(false)}
-                  className="p-1 text-gray-400 rounded hover:text-gray-600"
+                  type="button"
                 >
-                  <X className="w-5 h-5" />
+                  <X className="h-5 w-5" />
                 </button>
               </div>
-              <div className="overflow-y-auto max-h-[50vh] p-4">
+              <div className="max-h-[50vh] overflow-y-auto p-4">
                 <div className="space-y-2">
                   {recipes.map((recipe) => (
                     <button
-                      type="button"
+                      className="w-full rounded-lg border border-gray-200 p-3 text-left transition-colors hover:bg-gray-50"
                       key={recipe.id}
                       onClick={() => selectRecipe(recipe)}
-                      className="p-3 w-full text-left rounded-lg border border-gray-200 transition-colors hover:bg-gray-50"
+                      type="button"
                     >
                       <div className="flex items-center space-x-3">
                         <img
+                          alt={recipe.title}
+                          className="h-12 w-12 rounded-lg object-cover"
+                          height={48}
                           src={
                             recipe.image_url ||
                             "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
                           }
-                          alt={recipe.title}
-                          className="object-cover w-12 h-12 rounded-lg"
+                          width={48}
                         />
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-medium text-gray-900 truncate">
+                        <div className="min-w-0 flex-1">
+                          <h4 className="truncate font-medium text-gray-900">
                             {recipe.title}
                           </h4>
-                          <p className="text-sm text-gray-600 truncate">
+                          <p className="truncate text-gray-600 text-sm">
                             {recipe.cuisine_type} • {recipe.difficulty}
                           </p>
                         </div>
@@ -200,10 +213,10 @@ export function LeftoverForm({
         {/* Leftover Name */}
         <Input
           label="Leftover Name"
-          value={formData.name}
           onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          required
           placeholder="e.g., Spaghetti Carbonara (Leftovers)"
+          required
+          value={formData.name}
         />
 
         {/* Quantity and Unit */}
@@ -211,29 +224,29 @@ export function LeftoverForm({
           <div className="flex-1">
             <Input
               label="Quantity"
-              type="number"
-              step="0.1"
-              value={formData.quantity}
               onChange={(e) =>
                 setFormData({ ...formData, quantity: e.target.value })
               }
               required
+              step="0.1"
+              type="number"
+              value={formData.quantity}
             />
           </div>
           <div className="w-24">
             <label
+              className="mb-1 block font-medium text-secondary-700 text-sm"
               htmlFor={unitSelectId}
-              className="block mb-1 text-sm font-medium text-secondary-700"
             >
               Unit
             </label>
             <select
+              className="h-10 w-full rounded-lg border border-secondary-300 px-2 text-sm focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
               id={unitSelectId}
-              value={formData.unit}
               onChange={(e) =>
                 setFormData({ ...formData, unit: e.target.value })
               }
-              className="px-2 w-full h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
+              value={formData.unit}
             >
               {UNITS.map((unit) => (
                 <option key={unit} value={unit}>
@@ -247,53 +260,49 @@ export function LeftoverForm({
         {/* Expiration Date */}
         <Input
           label="Expiration Date (Optional)"
-          type="date"
-          value={formData.expiration_date}
+          min={new Date().toISOString().split("T")[0]}
           onChange={(e) =>
             setFormData({ ...formData, expiration_date: e.target.value })
           }
-          min={new Date().toISOString().split("T")[0]}
+          type="date"
+          value={formData.expiration_date}
         />
 
         {/* Notes */}
         <div>
           <label
+            className="mb-1 block font-medium text-secondary-700 text-sm"
             htmlFor={notesId}
-            className="block mb-1 text-sm font-medium text-secondary-700"
           >
             Notes (Optional)
           </label>
           <textarea
+            className="h-20 w-full resize-none rounded-lg border border-secondary-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
             id={notesId}
-            value={formData.notes}
             onChange={(e) =>
               setFormData({ ...formData, notes: e.target.value })
             }
             placeholder="Any additional notes about the leftovers..."
-            className="px-3 py-2 w-full h-20 text-sm rounded-lg border resize-none border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
+            value={formData.notes}
           />
         </div>
       </div>
 
       {/* Form Actions */}
-      <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+      <div className="flex flex-col space-y-2 sm:flex-row sm:space-x-2 sm:space-y-0">
         <Button
-          type="submit"
-          disabled={loading}
           className="text-sm sm:text-base"
+          disabled={loading}
+          type="submit"
         >
-          {loading
-            ? "Saving..."
-            : leftover
-              ? "Update Leftover"
-              : "Add Leftover"}
+          {submitLabel}
         </Button>
         <Button
+          className="text-sm sm:text-base"
+          disabled={loading}
+          onClick={onCancel}
           type="button"
           variant="outline"
-          onClick={onCancel}
-          disabled={loading}
-          className="text-sm sm:text-base"
         >
           Cancel
         </Button>

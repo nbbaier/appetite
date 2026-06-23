@@ -2,9 +2,9 @@ import type { FC } from "react";
 import { Input } from "../ui/input";
 
 interface ExpirationThresholdInputProps {
-  value: number;
-  onChange: (value: number) => void;
   loading?: boolean;
+  onChange: (value: number) => void;
+  value: number;
 }
 
 export const ExpirationThresholdInput: FC<ExpirationThresholdInputProps> = ({
@@ -14,20 +14,20 @@ export const ExpirationThresholdInput: FC<ExpirationThresholdInputProps> = ({
 }) => (
   <div className="flex items-center space-x-2">
     <label
+      className="font-medium text-secondary-700 text-sm"
       htmlFor="expiration-threshold-days"
-      className="text-sm font-medium text-secondary-700"
     >
       Expiration Alert Threshold (days)
     </label>
     <Input
-      id="expiration-threshold-days"
-      type="number"
-      min={1}
-      max={30}
-      value={value}
-      onChange={(e) => onChange(parseInt(e.target.value, 10) || 3)}
+      className="w-20 rounded-lg border border-secondary-300 text-sm focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
       disabled={loading}
-      className="w-20 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
+      id="expiration-threshold-days"
+      max={30}
+      min={1}
+      onChange={(e) => onChange(Number.parseInt(e.target.value, 10) || 3)}
+      type="number"
+      value={value}
     />
   </div>
 );

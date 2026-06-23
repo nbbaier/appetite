@@ -18,25 +18,25 @@ import LandingPage from "./pages/LandingPage";
 
 // Add lazy imports for pages with correct default export
 const Assistant = lazy(() =>
-  import("./pages/Assistant").then((m) => ({ default: m.Assistant })),
+  import("./pages/Assistant").then((m) => ({ default: m.Assistant }))
 );
 const Dashboard = lazy(() =>
-  import("./pages/Dashboard").then((m) => ({ default: m.Dashboard })),
+  import("./pages/Dashboard").then((m) => ({ default: m.Dashboard }))
 );
 const Leftovers = lazy(() =>
-  import("./pages/Leftovers").then((m) => ({ default: m.Leftovers })),
+  import("./pages/Leftovers").then((m) => ({ default: m.Leftovers }))
 );
 const Pantry = lazy(() =>
-  import("./pages/Pantry").then((m) => ({ default: m.Pantry })),
+  import("./pages/Pantry").then((m) => ({ default: m.Pantry }))
 );
 const Recipes = lazy(() =>
-  import("./pages/Recipes").then((m) => ({ default: m.Recipes })),
+  import("./pages/Recipes").then((m) => ({ default: m.Recipes }))
 );
 const Settings = lazy(() =>
-  import("./pages/Settings").then((m) => ({ default: m.Settings })),
+  import("./pages/Settings").then((m) => ({ default: m.Settings }))
 );
 const Shopping = lazy(() =>
-  import("./pages/Shopping").then((m) => ({ default: m.Shopping })),
+  import("./pages/Shopping").then((m) => ({ default: m.Shopping }))
 );
 const Signup = lazy(() => import("./pages/Signup"));
 const Signin = lazy(() => import("./pages/Signin"));
@@ -46,9 +46,9 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-dvh bg-background">
+      <div className="flex min-h-dvh items-center justify-center bg-background">
         <div className="text-center">
-          <div className="mx-auto size-8 rounded-full border-b-2 animate-spin border-primary"></div>
+          <div className="mx-auto size-8 animate-spin rounded-full border-primary border-b-2" />
           <p className="mt-2 text-muted-foreground">Loading...</p>
         </div>
       </div>
@@ -56,7 +56,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   }
 
   // If Supabase is not connected, show auth form with setup message
-  if (!isSupabaseConnected || !user) {
+  if (!(isSupabaseConnected && user)) {
     return <AuthForm />;
   }
 
@@ -67,9 +67,9 @@ function AppRoutes() {
   const { user, loading, isSupabaseConnected } = useAuth();
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-dvh bg-background">
+      <div className="flex min-h-dvh items-center justify-center bg-background">
         <div className="text-center">
-          <div className="mx-auto size-8 rounded-full border-b-2 animate-spin border-primary"></div>
+          <div className="mx-auto size-8 animate-spin rounded-full border-primary border-b-2" />
           <p className="mt-2 text-muted-foreground">Loading...</p>
         </div>
       </div>
@@ -78,7 +78,6 @@ function AppRoutes() {
   return (
     <Routes>
       <Route
-        path="/"
         element={
           user && isSupabaseConnected ? (
             <ProtectedRoute>
@@ -90,11 +89,11 @@ function AppRoutes() {
             <LandingPage />
           )
         }
+        path="/"
       />
-      <Route path="/signup" element={<Signup />} />
-      <Route path="/signin" element={<Signin />} />
+      <Route element={<Signup />} path="/signup" />
+      <Route element={<Signin />} path="/signin" />
       <Route
-        path="/assistant"
         element={
           <ProtectedRoute>
             <Layout>
@@ -102,9 +101,9 @@ function AppRoutes() {
             </Layout>
           </ProtectedRoute>
         }
+        path="/assistant"
       />
       <Route
-        path="/pantry"
         element={
           <ProtectedRoute>
             <Layout>
@@ -112,9 +111,9 @@ function AppRoutes() {
             </Layout>
           </ProtectedRoute>
         }
+        path="/pantry"
       />
       <Route
-        path="/recipes"
         element={
           <ProtectedRoute>
             <Layout>
@@ -122,9 +121,9 @@ function AppRoutes() {
             </Layout>
           </ProtectedRoute>
         }
+        path="/recipes"
       />
       <Route
-        path="/shopping"
         element={
           <ProtectedRoute>
             <Layout>
@@ -132,9 +131,9 @@ function AppRoutes() {
             </Layout>
           </ProtectedRoute>
         }
+        path="/shopping"
       />
       <Route
-        path="/leftovers"
         element={
           <ProtectedRoute>
             <Layout>
@@ -142,9 +141,9 @@ function AppRoutes() {
             </Layout>
           </ProtectedRoute>
         }
+        path="/leftovers"
       />
       <Route
-        path="/settings"
         element={
           <ProtectedRoute>
             <Layout>
@@ -152,8 +151,9 @@ function AppRoutes() {
             </Layout>
           </ProtectedRoute>
         }
+        path="/settings"
       />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route element={<Navigate replace to="/" />} path="*" />
     </Routes>
   );
 }
@@ -170,9 +170,9 @@ function App() {
                   <Toaster position="top-right" richColors />
                   <Suspense
                     fallback={
-                      <div className="flex justify-center items-center min-h-dvh bg-background">
+                      <div className="flex min-h-dvh items-center justify-center bg-background">
                         <div className="text-center">
-                          <div className="mx-auto size-8 rounded-full border-b-2 animate-spin border-primary"></div>
+                          <div className="mx-auto size-8 animate-spin rounded-full border-primary border-b-2" />
                           <p className="mt-2 text-muted-foreground">
                             Loading...
                           </p>
@@ -192,9 +192,9 @@ function App() {
   } catch (error) {
     console.error("App render error:", error);
     return (
-      <div className="flex justify-center items-center p-4 min-h-dvh bg-red-50">
+      <div className="flex min-h-dvh items-center justify-center bg-red-50 p-4">
         <div className="text-center">
-          <h1 className="mb-2 text-2xl font-bold text-red-600">
+          <h1 className="mb-2 font-bold text-2xl text-red-600">
             Application Error
           </h1>
           <p className="text-red-500">

@@ -1,4 +1,4 @@
-const parseIngredientsCorsHeaders = {
+const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
@@ -9,15 +9,15 @@ interface ParseRequest {
 }
 
 interface ParsedIngredient {
+  category: string;
   name: string;
   quantity: number;
   unit: string;
-  category: string;
 }
 
 interface ParseResponse {
-  ingredients: ParsedIngredient[];
   error?: string;
+  ingredients: ParsedIngredient[];
 }
 
 // @ts-expect-error
@@ -26,7 +26,7 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, {
       status: 200,
-      headers: parseIngredientsCorsHeaders,
+      headers: corsHeaders,
     });
   }
 
@@ -47,7 +47,7 @@ Deno.serve(async (req: Request) => {
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
+        }
       );
     }
 
@@ -114,7 +114,7 @@ Respond ONLY with the JSON object, no explanations or extra text.`;
           max_tokens: 1000,
           response_format: { type: "json_object" },
         }),
-      },
+      }
     );
 
     if (!openaiResponse.ok) {
@@ -125,7 +125,7 @@ Respond ONLY with the JSON object, no explanations or extra text.`;
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
+        }
       );
     }
 
@@ -145,21 +145,20 @@ Respond ONLY with the JSON object, no explanations or extra text.`;
     let parsedResponse: ParseResponse;
     try {
       parsedResponse = JSON.parse(assistantMessage);
-    } catch (_error) {
+    } catch {
       console.error("Failed to parse AI response as JSON:", assistantMessage);
       return new Response(
         JSON.stringify({ error: "Invalid response format from AI" }),
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
+        }
       );
     }
 
     // Validate the response structure
     if (
-      !parsedResponse.ingredients ||
-      !Array.isArray(parsedResponse.ingredients)
+      !(parsedResponse.ingredients && Array.isArray(parsedResponse.ingredients))
     ) {
       return new Response(
         JSON.stringify({
@@ -168,7 +167,7 @@ Respond ONLY with the JSON object, no explanations or extra text.`;
         {
           status: 500,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
-        },
+        }
       );
     }
 
@@ -180,7 +179,7 @@ Respond ONLY with the JSON object, no explanations or extra text.`;
           typeof ingredient.name === "string" &&
           typeof ingredient.quantity === "number" &&
           typeof ingredient.unit === "string" &&
-          typeof ingredient.category === "string",
+          typeof ingredient.category === "string"
       )
       .map((ingredient) => ({
         name: ingredient.name.trim(),
@@ -198,7 +197,7 @@ Respond ONLY with the JSON object, no explanations or extra text.`;
       {
         status: 200,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-      },
+      }
     );
   } catch (error) {
     console.error("Parse ingredients function error:", error);

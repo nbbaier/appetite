@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import debounce from "lodash.debounce";
+import throttle from "lodash.throttle";
 import {
   AlertTriangle,
   Calendar,
@@ -77,7 +78,7 @@ const ingredientSchema = z.object({
   name: z.string().min(1, "Name is required"),
   quantity: z.preprocess(
     (val) => Number(val),
-    z.number().min(0, "Quantity must be positive"),
+    z.number().min(0, "Quantity must be positive")
   ),
   unit: z.string().min(1, "Unit is required"),
   category: z.string().min(1, "Category is required"),
@@ -85,7 +86,7 @@ const ingredientSchema = z.object({
   notes: z.string().optional(),
   low_stock_threshold: z.preprocess(
     (val) => (val === "" ? undefined : Number(val)),
-    z.number().min(0, "Threshold must be positive").optional(),
+    z.number().min(0, "Threshold must be positive").optional()
   ),
 });
 type IngredientFormData = z.infer<typeof ingredientSchema>;
@@ -115,6 +116,19 @@ const getDefaultThreshold = (unit: string): number => {
   }
 };
 
+const NOTIF_CLASS: Record<string, string> = {
+  expired: "bg-red-50 text-red-800 border-red-200",
+  critical: "bg-orange-50 text-orange-800 border-orange-200",
+  warning: "bg-yellow-50 text-yellow-800 border-yellow-200",
+};
+
+const NOTIF_ICON_COLOR: Record<string, string> = {
+  expired: "text-red-600",
+  critical: "text-orange-600",
+  warning: "text-yellow-600",
+};
+
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO refactor; tracked separately
 export function Pantry() {
   const { user } = useAuth();
   const { getAllIngredientNames } = useIngredientHistory();
@@ -130,7 +144,7 @@ export function Pantry() {
   const [selectedCategory, setSelectedCategory] = useState<string>("All");
   const [showAddForm, setShowAddForm] = useState(false);
   const [editingIngredient, setEditingIngredient] = useState<Ingredient | null>(
-    null,
+    null
   );
   const [showNaturalLanguageInput, setShowNaturalLanguageInput] =
     useState(false);
@@ -152,7 +166,7 @@ export function Pantry() {
   const [error, _setError] = useState<string | null>(null);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [ingredientToDelete, setIngredientToDelete] = useState<string | null>(
-    null,
+    null
   );
   const { register, handleSubmit, reset, setValue, control, getValues } =
     useForm<IngredientFormData>({
@@ -170,13 +184,15 @@ export function Pantry() {
   const { settings } = useSettings();
   const defaultInventoryThreshold = settings?.inventory_threshold ?? 1;
   const debouncedSetSearchTerm = useRef(
-    debounce((value: string) => setSearchTerm(value), 300),
+    debounce((value: string) => setSearchTerm(value), 300)
   ).current;
   const { notify } = useNotification();
 
   // Notification integration
   useEffect(() => {
-    if (!user || loading || !ingredients.length || !settings) return;
+    if (!user || loading || !ingredients.length || !settings) {
+      return;
+    }
     checkExpiringItems({
       ingredients,
       leftovers: [],
@@ -187,20 +203,12 @@ export function Pantry() {
         toast(message, {
           description: `${item.type === "ingredient" ? "Ingredient" : "Leftover"}: ${item.name}`,
           duration: 8000,
-          className:
-            notificationType === "expired"
-              ? "bg-red-50 text-red-800 border-red-200"
-              : notificationType === "critical"
-                ? "bg-orange-50 text-orange-800 border-orange-200"
-                : "bg-yellow-50 text-yellow-800 border-yellow-200",
-          icon:
-            notificationType === "expired" ? (
-              <AlertTriangle className="size-5 text-red-600" />
-            ) : notificationType === "critical" ? (
-              <AlertTriangle className="size-5 text-orange-600" />
-            ) : (
-              <AlertTriangle className="size-5 text-yellow-600" />
-            ),
+          className: NOTIF_CLASS[notificationType] ?? NOTIF_CLASS.warning,
+          icon: (
+            <AlertTriangle
+              className={`size-5 ${NOTIF_ICON_COLOR[notificationType] ?? "text-yellow-600"}`}
+            />
+          ),
         });
       },
     });
@@ -208,7 +216,9 @@ export function Pantry() {
 
   const onSubmit = useCallback(
     async (data: IngredientFormData) => {
-      if (!user) return;
+      if (!user) {
+        return;
+      }
       try {
         const ingredientData = {
           user_id: user.id,
@@ -229,7 +239,7 @@ export function Pantry() {
         notify(handleApiError(error), { type: "error" });
       }
     },
-    [user, editingIngredient, updateIngredient, addIngredient, reset, notify],
+    [user, editingIngredient, updateIngredient, addIngredient, reset, notify]
   );
 
   const handleDeleteClick = useCallback((id: string) => {
@@ -238,7 +248,9 @@ export function Pantry() {
   }, []);
 
   const handleDeleteConfirm = useCallback(async () => {
-    if (!ingredientToDelete) return;
+    if (!ingredientToDelete) {
+      return;
+    }
     try {
       await deleteIngredient(ingredientToDelete);
     } catch (error) {
@@ -257,7 +269,9 @@ export function Pantry() {
   }, []);
 
   const parseNaturalLanguageText = useCallback(async () => {
-    if (!naturalLanguageText.trim()) return;
+    if (!naturalLanguageText.trim()) {
+      return;
+    }
     setIsParsingText(true);
     try {
       const response = await fetch(
@@ -271,7 +285,7 @@ export function Pantry() {
           body: JSON.stringify({
             text: naturalLanguageText.trim(),
           }),
-        },
+        }
       );
       if (!response.ok) {
         throw new Error(`API request failed: ${response.status}`);
@@ -294,11 +308,11 @@ export function Pantry() {
     (index: number, field: string, value: string | number) => {
       setParsedIngredients((prev) =>
         prev.map((item, i) =>
-          i === index ? { ...item, [field]: value } : item,
-        ),
+          i === index ? { ...item, [field]: value } : item
+        )
       );
     },
-    [],
+    []
   );
 
   const removeParsedIngredient = useCallback((index: number) => {
@@ -306,7 +320,9 @@ export function Pantry() {
   }, []);
 
   const addParsedIngredientsToPantry = useCallback(async () => {
-    if (!user || parsedIngredients.length === 0) return;
+    if (!user || parsedIngredients.length === 0) {
+      return;
+    }
     setIsAddingToPantry(true);
     try {
       const ingredientBatch = parsedIngredients.map((ingredient) => ({
@@ -324,7 +340,7 @@ export function Pantry() {
       clearCache(`ingredients_${user.id}`);
       notify(
         `Added ${ingredientBatch.length} ingredient${ingredientBatch.length === 1 ? "" : "s"} to your pantry`,
-        { type: "success" },
+        { type: "success" }
       );
       resetNaturalLanguageForm();
     } catch (error) {
@@ -354,11 +370,13 @@ export function Pantry() {
       setValue("low_stock_threshold", ingredient.low_stock_threshold);
       setShowNaturalLanguageInput(false);
     },
-    [setValue],
+    [setValue]
   );
 
   const isExpiringSoon = (expirationDate: string | undefined) => {
-    if (!expirationDate) return false;
+    if (!expirationDate) {
+      return false;
+    }
     const expDate = new Date(expirationDate);
     const today = new Date();
     const diffTime = expDate.getTime() - today.getTime();
@@ -367,10 +385,32 @@ export function Pantry() {
   };
 
   const isExpired = (expirationDate: string | undefined) => {
-    if (!expirationDate) return false;
+    if (!expirationDate) {
+      return false;
+    }
     const expDate = new Date(expirationDate);
     const today = new Date();
     return expDate < today;
+  };
+
+  const expirationBorderClass = (expirationDate: string | undefined) => {
+    if (isExpired(expirationDate)) {
+      return "border-red-200 bg-red-50";
+    }
+    if (isExpiringSoon(expirationDate)) {
+      return "border-orange-200 bg-orange-50";
+    }
+    return "";
+  };
+
+  const expirationTextClass = (expirationDate: string | undefined) => {
+    if (isExpired(expirationDate)) {
+      return "text-red-600";
+    }
+    if (isExpiringSoon(expirationDate)) {
+      return "text-orange-600";
+    }
+    return "text-secondary-600";
   };
 
   const isLowStock = (ingredient: Ingredient) => {
@@ -379,82 +419,90 @@ export function Pantry() {
     return ingredient.quantity > 0 && ingredient.quantity <= threshold;
   };
 
-  const isOutOfStock = (ingredient: Ingredient) => {
-    return ingredient.quantity <= 0;
-  };
+  const isOutOfStock = (ingredient: Ingredient) => ingredient.quantity <= 0;
 
   // Memoize expensive derived lists
-  const sortedIngredients = useMemo(() => {
-    return [...ingredients].sort((a, b) => {
-      let aValue: string | number = "";
-      let bValue: string | number = "";
-      switch (sortKey) {
-        case "name":
-          aValue = a.name;
-          bValue = b.name;
-          break;
-        case "expiration_date":
-          aValue = a.expiration_date || "9999-12-31";
-          bValue = b.expiration_date || "9999-12-31";
-          break;
-        case "quantity":
-          aValue = a.quantity;
-          bValue = b.quantity;
-          break;
-        default:
-          break;
-      }
-      if (typeof aValue === "string" && typeof bValue === "string") {
-        if (sortOrder === "asc") return aValue.localeCompare(bValue);
-        return bValue.localeCompare(aValue);
-      }
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        if (sortOrder === "asc") return aValue - bValue;
-        return bValue - aValue;
-      }
-      return 0;
-    });
-  }, [ingredients, sortKey, sortOrder]);
+  const sortedIngredients = useMemo(
+    () =>
+      // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO refactor; tracked separately
+      [...ingredients].sort((a, b) => {
+        let aValue: string | number = "";
+        let bValue: string | number = "";
+        switch (sortKey) {
+          case "name":
+            aValue = a.name;
+            bValue = b.name;
+            break;
+          case "expiration_date":
+            aValue = a.expiration_date || "9999-12-31";
+            bValue = b.expiration_date || "9999-12-31";
+            break;
+          case "quantity":
+            aValue = a.quantity;
+            bValue = b.quantity;
+            break;
+          default:
+            break;
+        }
+        if (typeof aValue === "string" && typeof bValue === "string") {
+          if (sortOrder === "asc") {
+            return aValue.localeCompare(bValue);
+          }
+          return bValue.localeCompare(aValue);
+        }
+        if (typeof aValue === "number" && typeof bValue === "number") {
+          if (sortOrder === "asc") {
+            return aValue - bValue;
+          }
+          return bValue - aValue;
+        }
+        return 0;
+      }),
+    [ingredients, sortKey, sortOrder]
+  );
 
-  const filteredIngredients = useMemo(() => {
-    return sortedIngredients.filter((ingredient) => {
-      const matchesSearch = ingredient.name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-      const matchesCategory =
-        selectedCategory === "All" || ingredient.category === selectedCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [sortedIngredients, searchTerm, selectedCategory]);
+  const filteredIngredients = useMemo(
+    () =>
+      sortedIngredients.filter((ingredient) => {
+        const matchesSearch = ingredient.name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+        const matchesCategory =
+          selectedCategory === "All" ||
+          ingredient.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+      }),
+    [sortedIngredients, searchTerm, selectedCategory]
+  );
 
   const paginatedIngredients = useMemo(
     () => filteredIngredients.slice(0, itemsToShow),
-    [filteredIngredients, itemsToShow],
+    [filteredIngredients, itemsToShow]
   );
 
   const categoryCounts = CATEGORIES.reduce(
     (acc, category) => {
       acc[category] = ingredients.filter(
-        (ing) => ing.category === category,
+        (ing) => ing.category === category
       ).length;
       return acc;
     },
-    {} as Record<string, number>,
+    {} as Record<string, number>
   );
 
   // Get ingredients with expiration dates for monitoring
   const ingredientsWithExpiration = ingredients.filter(
-    (ing) => ing.expiration_date,
+    (ing) => ing.expiration_date
   );
 
   if (loading) {
     return (
       <div
-        className="flex justify-center items-center py-12"
-        role="status"
         aria-label="Loading pantry"
+        className="flex items-center justify-center py-12"
+        role="status"
       >
-        <div className="size-8 rounded-full border-b-2 animate-spin border-primary"></div>
+        <div className="size-8 animate-spin rounded-full border-primary border-b-2" />
       </div>
     );
   }
@@ -462,52 +510,52 @@ export function Pantry() {
   return (
     <div className="space-y-4 sm:space-y-6">
       {error && (
-        <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+        <div className="mb-4 rounded-lg bg-red-100 p-3 text-red-700 text-sm">
           {error}
         </div>
       )}
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-center sm:text-left">
-          <h1 className="text-xl font-bold sm:text-2xl text-secondary-900 text-balance">
+          <h1 className="text-balance font-bold text-secondary-900 text-xl sm:text-2xl">
             My Pantry
           </h1>
-          <p className="text-sm sm:text-base text-secondary-600 text-pretty">
+          <p className="text-pretty text-secondary-600 text-sm sm:text-base">
             Track your ingredients and expiration dates
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button
+            className="flex items-center justify-center space-x-2 text-sm sm:text-base"
             onClick={() => {
               setShowAddForm(true);
               setShowNaturalLanguageInput(false);
             }}
             variant={showAddForm ? "default" : "outline"}
-            className="flex justify-center items-center space-x-2 text-sm sm:text-base"
           >
             <Plus className="size-4" />
             <span>Add Ingredient</span>
           </Button>
           <Button
+            className="flex items-center justify-center space-x-2 text-sm sm:text-base"
             onClick={() => {
               setShowNaturalLanguageInput(true);
               setShowAddForm(false);
               setShowExpirationMonitor(false);
             }}
             variant={showNaturalLanguageInput ? "default" : "outline"}
-            className="flex justify-center items-center space-x-2 text-sm sm:text-base"
           >
             <MessageCircle className="size-4" />
             <span>Add from Text</span>
           </Button>
           {ingredientsWithExpiration.length > 0 && (
             <Button
+              className="flex items-center justify-center space-x-2 text-sm sm:text-base"
               onClick={() => {
                 setShowExpirationMonitor(!showExpirationMonitor);
                 setShowAddForm(false);
                 setShowNaturalLanguageInput(false);
               }}
               variant={showExpirationMonitor ? "default" : "outline"}
-              className="flex justify-center items-center space-x-2 text-sm sm:text-base"
             >
               <Calendar className="size-4" />
               <span>Monitor Expiration</span>
@@ -517,22 +565,22 @@ export function Pantry() {
       </div>
 
       {/* Search and Filter */}
-      <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:gap-4">
+      <div className="flex flex-col space-y-3 sm:flex-row sm:gap-4 sm:space-y-0">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 size-4 transform -translate-y-1/2 text-secondary-400" />
+          <Search className="absolute top-1/2 left-3 size-4 -translate-y-1/2 transform text-secondary-400" />
           <Input
+            className="pl-10 text-sm sm:text-base"
+            onChange={(e) => debouncedSetSearchTerm(e.target.value)}
             placeholder="Search ingredients..."
             value={searchTerm}
-            onChange={(e) => debouncedSetSearchTerm(e.target.value)}
-            className="pl-10 text-sm sm:text-base"
           />
         </div>
         <div className="flex items-center space-x-2">
-          <Filter className="flex-shrink-0 size-4 text-secondary-600" />
+          <Filter className="size-4 flex-shrink-0 text-secondary-600" />
           <select
-            value={selectedCategory}
+            className="flex-1 rounded-lg border border-secondary-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 sm:flex-none"
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="flex-1 px-3 py-2 text-sm rounded-lg border sm:flex-none border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            value={selectedCategory}
           >
             <option value="All">All Categories</option>
             {CATEGORIES.map((category) => (
@@ -545,15 +593,15 @@ export function Pantry() {
       </div>
 
       {/* Sorting Controls */}
-      <div className="flex gap-2 items-center mb-4">
-        <label htmlFor="pantry-sort-key" className="text-sm font-medium">
+      <div className="mb-4 flex items-center gap-2">
+        <label className="font-medium text-sm" htmlFor="pantry-sort-key">
           Sort by:
         </label>
         <select
+          className="rounded border border-secondary-300 px-2 py-1 text-sm"
           id="pantry-sort-key"
-          value={sortKey}
           onChange={(e) => setSortKey(e.target.value)}
-          className="px-2 py-1 text-sm rounded border border-secondary-300"
+          value={sortKey}
         >
           {SORT_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
@@ -562,9 +610,9 @@ export function Pantry() {
           ))}
         </select>
         <button
-          type="button"
+          className="rounded border border-secondary-300 px-2 py-1 text-sm"
           onClick={() => setSortOrder(sortOrder === "asc" ? "desc" : "asc")}
-          className="px-2 py-1 text-sm rounded border border-secondary-300"
+          type="button"
         >
           {sortOrder === "asc" ? "↑" : "↓"}
         </button>
@@ -579,65 +627,65 @@ export function Pantry() {
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
               {/* Main fields grid */}
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 {/* Ingredient Name - full width */}
-                <div className="flex flex-col col-span-1 sm:col-span-2 lg:col-span-4">
+                <div className="col-span-1 flex flex-col sm:col-span-2 lg:col-span-4">
                   <label
+                    className="mb-1 font-medium text-sm"
                     htmlFor="pantry-ingredient-name"
-                    className="mb-1 text-sm font-medium"
                   >
                     Ingredient Name
                   </label>
                   <Controller
-                    name="name"
                     control={control}
+                    name="name"
                     render={({ field }) => (
                       <AutocompleteInput
                         id="pantry-ingredient-name"
-                        value={field.value}
                         onChange={(value) => field.onChange(value)}
                         onSelect={(suggestion) => {
                           field.onChange(suggestion.name);
                           setValue(
                             "category",
-                            suggestion.category || field.value,
+                            suggestion.category || field.value
                           );
                         }}
-                        userHistory={getAllIngredientNames()}
                         placeholder="Start typing ingredient name..."
+                        userHistory={getAllIngredientNames()}
+                        value={field.value}
                       />
                     )}
                   />
                 </div>
                 {/* Quantity */}
-                <div className="flex flex-col col-span-1">
+                <div className="col-span-1 flex flex-col">
                   <label
+                    className="mb-1 font-medium text-sm"
                     htmlFor="pantry-ingredient-quantity"
-                    className="mb-1 text-sm font-medium"
                   >
                     Quantity
                   </label>
                   <Input
                     id="pantry-ingredient-quantity"
-                    type="number"
                     step="0.1"
+                    type="number"
                     {...register("quantity")}
                   />
                 </div>
                 {/* Unit */}
-                <div className="flex flex-col col-span-1">
+                <div className="col-span-1 flex flex-col">
                   <label
+                    className="mb-1 font-medium text-sm"
                     htmlFor="pantry-ingredient-unit"
-                    className="mb-1 text-sm font-medium"
                   >
                     Unit
                   </label>
                   <select
                     id="pantry-ingredient-unit"
                     {...register("unit")}
-                    className="px-2 w-full h-10 text-sm rounded-lg border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                    className="h-10 w-full rounded-lg border border-secondary-300 px-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                   >
                     {UNITS.map((unit) => (
                       <option key={unit} value={unit}>
@@ -647,10 +695,10 @@ export function Pantry() {
                   </select>
                 </div>
                 {/* Expiration Date */}
-                <div className="flex flex-col col-span-1">
+                <div className="col-span-1 flex flex-col">
                   <label
+                    className="mb-1 font-medium text-sm"
                     htmlFor="pantry-ingredient-expiration-date"
-                    className="mb-1 text-sm font-medium"
                   >
                     Expiration Date
                   </label>
@@ -661,14 +709,14 @@ export function Pantry() {
                   />
                 </div>
                 {/* Category - always its own row, but next to Expiration Date on sm+ */}
-                <div className="flex overflow-x-auto flex-col col-span-1 min-w-0">
+                <div className="col-span-1 flex min-w-0 flex-col overflow-x-auto">
                   <Controller
-                    name="category"
                     control={control}
+                    name="category"
                     render={({ field }) => (
                       <SmartCategorySelector
-                        ingredientName={field.value}
                         currentCategory={field.value}
+                        ingredientName={field.value}
                         onCategoryChange={(category) =>
                           field.onChange(category)
                         }
@@ -685,27 +733,27 @@ export function Pantry() {
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-12">
                 <div className="flex flex-col sm:col-span-6">
                   <label
+                    className="mb-1 font-medium text-sm"
                     htmlFor="pantry-ingredient-low-stock-threshold"
-                    className="mb-1 text-sm font-medium"
                   >
                     Low Stock Threshold
                   </label>
                   <Input
                     id="pantry-ingredient-low-stock-threshold"
-                    type="number"
                     step="0.1"
+                    type="number"
                     {...register("low_stock_threshold")}
                     placeholder={`Default: ${getDefaultThreshold(getValues("unit"))} ${getValues("unit")}`}
                   />
-                  <p className="mt-1 text-xs text-secondary-600">
+                  <p className="mt-1 text-secondary-600 text-xs">
                     Alert when quantity falls below this amount. Leave empty for
                     default.
                   </p>
                 </div>
                 <div className="flex flex-col sm:col-span-6">
                   <label
+                    className="mb-1 font-medium text-sm"
                     htmlFor="pantry-ingredient-notes"
-                    className="mb-1 text-sm font-medium"
                   >
                     Notes
                   </label>
@@ -717,19 +765,19 @@ export function Pantry() {
                 </div>
               </div>
               {/* Buttons */}
-              <div className="flex flex-col justify-end space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
-                <Button type="submit" className="text-sm sm:text-base">
+              <div className="flex flex-col justify-end space-y-2 sm:flex-row sm:space-x-2 sm:space-y-0">
+                <Button className="text-sm sm:text-base" type="submit">
                   {editingIngredient ? "Update Ingredient" : "Add Ingredient"}
                 </Button>
                 <Button
-                  type="button"
-                  variant="outline"
+                  className="text-sm sm:text-base"
                   onClick={() => {
                     reset();
                     setShowAddForm(false);
                     setEditingIngredient(null);
                   }}
-                  className="text-sm sm:text-base"
+                  type="button"
+                  variant="outline"
                 >
                   Cancel
                 </Button>
@@ -755,34 +803,34 @@ export function Pantry() {
           <CardContent className="space-y-4">
             <div>
               <label
+                className="mb-2 block font-medium text-secondary-700 text-sm"
                 htmlFor="pantry-natural-language-text"
-                className="block mb-2 text-sm font-medium text-secondary-700"
               >
                 Describe your ingredients:
               </label>
               <textarea
+                className="h-24 w-full resize-none rounded-lg border border-secondary-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
                 id="pantry-natural-language-text"
-                value={naturalLanguageText}
                 onChange={(e) => setNaturalLanguageText(e.target.value)}
                 placeholder="Example: 3 apples, 1kg flour, 2 cans of tuna, 500ml olive oil, 1 liter milk"
-                className="px-3 py-2 w-full h-24 text-sm rounded-lg border resize-none border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                value={naturalLanguageText}
               />
             </div>
 
-            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+            <div className="flex flex-col space-y-2 sm:flex-row sm:space-x-2 sm:space-y-0">
               <Button
-                onClick={parseNaturalLanguageText}
+                className="flex items-center justify-center space-x-2"
                 disabled={!naturalLanguageText.trim() || isParsingText}
-                className="flex justify-center items-center space-x-2"
+                onClick={parseNaturalLanguageText}
               >
                 <Wand2 className="size-4" />
                 <span>{isParsingText ? "Parsing..." : "Parse Text"}</span>
               </Button>
               <Button
+                disabled={isParsingText || isAddingToPantry}
+                onClick={resetNaturalLanguageForm}
                 type="button"
                 variant="outline"
-                onClick={resetNaturalLanguageForm}
-                disabled={isParsingText || isAddingToPantry}
               >
                 Cancel
               </Button>
@@ -791,14 +839,14 @@ export function Pantry() {
             {/* Parsed Ingredients Display */}
             {parsedIngredients.length > 0 && (
               <div className="mt-6 space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-medium text-secondary-900">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-lg text-secondary-900">
                     Parsed Ingredients ({parsedIngredients.length})
                   </h3>
                   <Button
-                    onClick={addParsedIngredientsToPantry}
-                    disabled={isAddingToPantry}
                     className="flex items-center space-x-2"
+                    disabled={isAddingToPantry}
+                    onClick={addParsedIngredientsToPantry}
                   >
                     <Plus className="size-4" />
                     <span>
@@ -810,71 +858,71 @@ export function Pantry() {
                 <div className="space-y-3">
                   {parsedIngredients.map((ingredient, index) => (
                     <div
+                      className="rounded-lg border border-secondary-200 bg-secondary-50 p-4"
                       key={`${ingredient.name}-${ingredient.quantity}-${ingredient.unit}-${ingredient.category}`}
-                      className="p-4 rounded-lg border bg-secondary-50 border-secondary-200"
                     >
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
                         <div>
                           <label
+                            className="mb-1 block font-medium text-secondary-700 text-xs"
                             htmlFor={`pantry-parsed-ingredient-${index}-name`}
-                            className="block mb-1 text-xs font-medium text-secondary-700"
                           >
                             Name
                           </label>
                           <input
+                            className="w-full rounded-md border border-secondary-300 px-2 py-1 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
                             id={`pantry-parsed-ingredient-${index}-name`}
-                            type="text"
-                            value={ingredient.name}
                             onChange={(e) =>
                               updateParsedIngredient(
                                 index,
                                 "name",
-                                e.target.value,
+                                e.target.value
                               )
                             }
-                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                            type="text"
+                            value={ingredient.name}
                           />
                         </div>
                         <div>
                           <label
+                            className="mb-1 block font-medium text-secondary-700 text-xs"
                             htmlFor={`pantry-parsed-ingredient-${index}-quantity`}
-                            className="block mb-1 text-xs font-medium text-secondary-700"
                           >
                             Quantity
                           </label>
                           <input
+                            className="w-full rounded-md border border-secondary-300 px-2 py-1 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
                             id={`pantry-parsed-ingredient-${index}-quantity`}
-                            type="number"
-                            step="0.1"
-                            value={ingredient.quantity}
                             onChange={(e) =>
                               updateParsedIngredient(
                                 index,
                                 "quantity",
-                                parseFloat(e.target.value) || 0,
+                                Number.parseFloat(e.target.value) || 0
                               )
                             }
-                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                            step="0.1"
+                            type="number"
+                            value={ingredient.quantity}
                           />
                         </div>
                         <div>
                           <label
+                            className="mb-1 block font-medium text-secondary-700 text-xs"
                             htmlFor={`pantry-parsed-ingredient-${index}-unit`}
-                            className="block mb-1 text-xs font-medium text-secondary-700"
                           >
                             Unit
                           </label>
                           <select
+                            className="w-full rounded-md border border-secondary-300 px-2 py-1 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
                             id={`pantry-parsed-ingredient-${index}-unit`}
-                            value={ingredient.unit}
                             onChange={(e) =>
                               updateParsedIngredient(
                                 index,
                                 "unit",
-                                e.target.value,
+                                e.target.value
                               )
                             }
-                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                            value={ingredient.unit}
                           >
                             {UNITS.map((unit) => (
                               <option key={unit} value={unit}>
@@ -885,23 +933,23 @@ export function Pantry() {
                         </div>
                         <div>
                           <label
+                            className="mb-1 block font-medium text-secondary-700 text-xs"
                             htmlFor={`pantry-parsed-ingredient-${index}-category`}
-                            className="block mb-1 text-xs font-medium text-secondary-700"
                           >
                             Category
                           </label>
                           <div className="flex items-center space-x-2">
                             <select
+                              className="flex-1 rounded-md border border-secondary-300 px-2 py-1 text-sm focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
                               id={`pantry-parsed-ingredient-${index}-category`}
-                              value={ingredient.category}
                               onChange={(e) =>
                                 updateParsedIngredient(
                                   index,
                                   "category",
-                                  e.target.value,
+                                  e.target.value
                                 )
                               }
-                              className="flex-1 px-2 py-1 text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-none focus:ring-1 focus:ring-primary-500/20"
+                              value={ingredient.category}
                             >
                               {CATEGORIES.map((category) => (
                                 <option key={category} value={category}>
@@ -910,9 +958,9 @@ export function Pantry() {
                               ))}
                             </select>
                             <button
-                              type="button"
+                              className="rounded p-1 text-secondary-400 hover:text-red-600"
                               onClick={() => removeParsedIngredient(index)}
-                              className="p-1 rounded text-secondary-400 hover:text-red-600"
+                              type="button"
                             >
                               <X className="size-4" />
                             </button>
@@ -937,19 +985,19 @@ export function Pantry() {
       {paginatedIngredients.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center sm:py-12">
-            <Package className="mx-auto mb-4 size-10 sm:size-12 text-secondary-400" />
-            <h3 className="mb-2 text-base font-medium sm:text-lg text-secondary-900">
+            <Package className="mx-auto mb-4 size-10 text-secondary-400 sm:size-12" />
+            <h3 className="mb-2 font-medium text-base text-secondary-900 sm:text-lg">
               No ingredients found
             </h3>
-            <p className="px-4 mb-4 text-sm sm:text-base text-secondary-600">
+            <p className="mb-4 px-4 text-secondary-600 text-sm sm:text-base">
               {searchTerm || selectedCategory !== "All"
                 ? "Try adjusting your search or filter criteria"
                 : "Start building your pantry by adding your first ingredient"}
             </p>
             {!searchTerm && selectedCategory === "All" && (
               <Button
-                onClick={() => setShowAddForm(true)}
                 className="text-sm sm:text-base"
+                onClick={() => setShowAddForm(true)}
               >
                 Add Your First Ingredient
               </Button>
@@ -957,55 +1005,51 @@ export function Pantry() {
           </CardContent>
         </Card>
       ) : (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {paginatedIngredients.map((ingredient) => (
             <Card
+              className={`relative ${expirationBorderClass(
+                ingredient.expiration_date
+              )}`}
               key={ingredient.id}
-              className={`relative ${
-                isExpired(ingredient.expiration_date)
-                  ? "border-red-200 bg-red-50"
-                  : isExpiringSoon(ingredient.expiration_date)
-                    ? "border-orange-200 bg-orange-50"
-                    : ""
-              }`}
             >
               <CardContent className="p-3 sm:p-4">
-                <div className="flex justify-between items-start mb-2">
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-medium truncate text-secondary-900 sm:text-base">
+                <div className="mb-2 flex items-start justify-between">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="truncate font-medium text-secondary-900 text-sm sm:text-base">
                       {ingredient.name}
                     </h3>
-                    <p className="text-xs sm:text-sm text-secondary-600">
+                    <p className="text-secondary-600 text-xs sm:text-sm">
                       {ingredient.quantity} {ingredient.unit}
                     </p>
                     {isOutOfStock(ingredient) && (
-                      <span className="inline-block px-2 py-1 text-xs text-red-700 bg-red-100 rounded-full">
+                      <span className="inline-block rounded-full bg-red-100 px-2 py-1 text-red-700 text-xs">
                         Out of Stock
                       </span>
                     )}
                     {isLowStock(ingredient) && !isOutOfStock(ingredient) && (
-                      <span className="inline-block px-2 py-1 text-xs text-orange-700 bg-orange-100 rounded-full">
+                      <span className="inline-block rounded-full bg-orange-100 px-2 py-1 text-orange-700 text-xs">
                         Low Stock
                       </span>
                     )}
-                    <span className="inline-block px-2 py-1 mt-1 text-xs rounded-full bg-secondary-100 text-secondary-700">
+                    <span className="mt-1 inline-block rounded-full bg-secondary-100 px-2 py-1 text-secondary-700 text-xs">
                       {ingredient.category}
                     </span>
                   </div>
-                  <div className="flex flex-shrink-0 ml-2 space-x-1">
+                  <div className="ml-2 flex flex-shrink-0 space-x-1">
                     <button
-                      type="button"
-                      onClick={() => startEdit(ingredient)}
-                      className="p-1.5 text-secondary-400 hover:text-secondary-600 rounded"
                       aria-label={`Edit ${ingredient.name}`}
+                      className="rounded p-1.5 text-secondary-400 hover:text-secondary-600"
+                      onClick={() => startEdit(ingredient)}
+                      type="button"
                     >
                       <Edit3 className="size-3 sm:size-4" />
                     </button>
                     <button
-                      type="button"
-                      onClick={() => handleDeleteClick(ingredient.id)}
-                      className="p-1.5 text-secondary-400 hover:text-red-600 rounded"
                       aria-label={`Delete ${ingredient.name}`}
+                      className="rounded p-1.5 text-secondary-400 hover:text-red-600"
+                      onClick={() => handleDeleteClick(ingredient.id)}
+                      type="button"
                     >
                       <Trash2 className="size-3 sm:size-4" />
                     </button>
@@ -1015,13 +1059,13 @@ export function Pantry() {
                 {/* Stock Level Alerts */}
                 {(isOutOfStock(ingredient) || isLowStock(ingredient)) && (
                   <div
-                    className={`flex items-center space-x-1 text-xs sm:text-sm mb-2 ${
+                    className={`mb-2 flex items-center space-x-1 text-xs sm:text-sm ${
                       isOutOfStock(ingredient)
                         ? "text-red-600"
                         : "text-orange-600"
                     }`}
                   >
-                    <AlertTriangle className="flex-shrink-0 size-3" />
+                    <AlertTriangle className="size-3 flex-shrink-0" />
                     <span className="truncate">
                       {isOutOfStock(ingredient)
                         ? "Out of stock - reorder needed"
@@ -1031,30 +1075,26 @@ export function Pantry() {
                 )}
                 {ingredient.expiration_date && (
                   <div
-                    className={`flex items-center space-x-1 text-xs sm:text-sm ${
-                      isExpired(ingredient.expiration_date)
-                        ? "text-red-600"
-                        : isExpiringSoon(ingredient.expiration_date)
-                          ? "text-orange-600"
-                          : "text-secondary-600"
-                    }`}
+                    className={`flex items-center space-x-1 text-xs sm:text-sm ${expirationTextClass(
+                      ingredient.expiration_date
+                    )}`}
                   >
                     {(isExpired(ingredient.expiration_date) ||
                       isExpiringSoon(ingredient.expiration_date)) && (
-                      <AlertTriangle className="flex-shrink-0 size-3" />
+                      <AlertTriangle className="size-3 flex-shrink-0" />
                     )}
-                    <Calendar className="flex-shrink-0 size-3" />
+                    <Calendar className="size-3 flex-shrink-0" />
                     <span className="truncate">
                       Expires:{" "}
                       {new Date(
-                        ingredient.expiration_date,
+                        ingredient.expiration_date
                       ).toLocaleDateString()}
                     </span>
                   </div>
                 )}
 
                 {ingredient.notes && (
-                  <p className="mt-2 text-xs text-secondary-500 line-clamp-2">
+                  <p className="mt-2 line-clamp-2 text-secondary-500 text-xs">
                     {ingredient.notes}
                   </p>
                 )}
@@ -1066,10 +1106,10 @@ export function Pantry() {
 
       {/* Load More Button */}
       {itemsToShow < filteredIngredients.length && (
-        <div className="flex justify-center mt-6">
+        <div className="mt-6 flex justify-center">
           <Button
-            onClick={throttle(() => setItemsToShow(itemsToShow + 12), 500)}
             disabled={loading}
+            onClick={throttle(() => setItemsToShow(itemsToShow + 12), 500)}
           >
             Load More
           </Button>
@@ -1077,7 +1117,7 @@ export function Pantry() {
       )}
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <AlertDialog onOpenChange={setDeleteDialogOpen} open={deleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Ingredient</AlertDialogTitle>
@@ -1089,8 +1129,8 @@ export function Pantry() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDeleteConfirm}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={handleDeleteConfirm}
             >
               Delete
             </AlertDialogAction>

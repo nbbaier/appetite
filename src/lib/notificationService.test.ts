@@ -51,7 +51,7 @@ describe("checkExpiringItems", () => {
       onNotify,
     });
     expect(onNotify).toHaveBeenCalledWith(
-      expect.objectContaining({ notificationType: "expired" }),
+      expect.objectContaining({ notificationType: "expired" })
     );
   });
 
@@ -69,7 +69,7 @@ describe("checkExpiringItems", () => {
       criticalDays: 3,
     });
     expect(onNotify).toHaveBeenCalledWith(
-      expect.objectContaining({ notificationType: "critical" }),
+      expect.objectContaining({ notificationType: "critical" })
     );
   });
 
@@ -88,7 +88,7 @@ describe("checkExpiringItems", () => {
       criticalDays: 3,
     });
     expect(onNotify).toHaveBeenCalledWith(
-      expect.objectContaining({ notificationType: "warning" }),
+      expect.objectContaining({ notificationType: "warning" })
     );
   });
 
@@ -119,7 +119,7 @@ describe("checkExpiringItems", () => {
       expect.objectContaining({
         notificationType: "critical",
         item: expect.objectContaining({ type: "leftover" }),
-      }),
+      })
     );
   });
 

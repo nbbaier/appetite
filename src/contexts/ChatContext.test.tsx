@@ -12,9 +12,9 @@ function TestComponent() {
     <>
       <div data-testid="inputValue">{state.inputValue}</div>
       <button
-        type="button"
-        onClick={() => dispatch({ type: "SET_INPUT", payload: "hello" })}
         data-testid="set-input"
+        onClick={() => dispatch({ type: "SET_INPUT", payload: "hello" })}
+        type="button"
       >
         Set Input
       </button>
@@ -43,7 +43,7 @@ describe("ChatContext", () => {
     render(
       <ChatProvider>
         <TestComponent />
-      </ChatProvider>,
+      </ChatProvider>
     );
     expect(screen.getByTestId("inputValue").textContent).toBe("");
   });
@@ -52,7 +52,7 @@ describe("ChatContext", () => {
     render(
       <ChatProvider>
         <TestComponent />
-      </ChatProvider>,
+      </ChatProvider>
     );
     const btn = screen.getByTestId("set-input");
     btn.click();
@@ -95,10 +95,10 @@ describe("ChatContext", () => {
     render(
       <ChatProvider>
         <ReducerTest />
-      </ChatProvider>,
+      </ChatProvider>
     );
     expect(screen.getByTestId("activeConversationId").textContent).toBe(
-      "conv1",
+      "conv1"
     );
   });
 });

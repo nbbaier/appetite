@@ -26,10 +26,10 @@ describe("RecipeCard", () => {
   it("renders recipe info and image", () => {
     render(
       <RecipeCard
-        recipe={baseRecipe}
         isBookmarked={false}
         onBookmark={vi.fn()}
-      />,
+        recipe={baseRecipe}
+      />
     );
     expect(screen.getByText("Test Recipe")).toBeInTheDocument();
     expect(screen.getByText("A delicious test recipe.")).toBeInTheDocument();
@@ -44,10 +44,10 @@ describe("RecipeCard", () => {
     const onBookmark = vi.fn();
     render(
       <RecipeCard
-        recipe={baseRecipe}
         isBookmarked={false}
         onBookmark={onBookmark}
-      />,
+        recipe={baseRecipe}
+      />
     );
     const btn = screen.getAllByRole("button")[0];
     fireEvent.click(btn);
@@ -57,12 +57,12 @@ describe("RecipeCard", () => {
   it("shows Can Cook badge and match percentage", () => {
     render(
       <RecipeCard
-        recipe={baseRecipe}
-        isBookmarked={false}
-        onBookmark={vi.fn()}
         canCook={true}
+        isBookmarked={false}
         matchPercentage={90}
-      />,
+        onBookmark={vi.fn()}
+        recipe={baseRecipe}
+      />
     );
     expect(screen.getByText(/can cook/i)).toBeInTheDocument();
     expect(screen.getByText(/90% match/i)).toBeInTheDocument();
@@ -71,11 +71,11 @@ describe("RecipeCard", () => {
   it("shows Perfect Match badge at 100%", () => {
     render(
       <RecipeCard
-        recipe={baseRecipe}
         isBookmarked={false}
-        onBookmark={vi.fn()}
         matchPercentage={100}
-      />,
+        onBookmark={vi.fn()}
+        recipe={baseRecipe}
+      />
     );
     expect(screen.getByText(/perfect match/i)).toBeInTheDocument();
   });
@@ -83,11 +83,11 @@ describe("RecipeCard", () => {
   it("shows missing ingredients and more count", () => {
     render(
       <RecipeCard
-        recipe={baseRecipe}
         isBookmarked={false}
-        onBookmark={vi.fn()}
         missingIngredients={["Eggs", "Milk", "Flour", "Sugar"]}
-      />,
+        onBookmark={vi.fn()}
+        recipe={baseRecipe}
+      />
     );
     expect(screen.getByText(/missing/i)).toBeInTheDocument();
     expect(screen.getByText(/Eggs, Milk, Flour/)).toBeInTheDocument();
@@ -99,12 +99,12 @@ describe("RecipeCard", () => {
     const onDelete = vi.fn();
     render(
       <RecipeCard
-        recipe={baseRecipe}
         isBookmarked={false}
         onBookmark={vi.fn()}
-        onEdit={onEdit}
         onDelete={onDelete}
-      />,
+        onEdit={onEdit}
+        recipe={baseRecipe}
+      />
     );
     // Edit is the second button, Delete is the third
     const buttons = screen.getAllByRole("button");

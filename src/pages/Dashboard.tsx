@@ -48,7 +48,9 @@ export function Dashboard() {
   const [loading, setLoading] = useState(true);
 
   const loadDashboardData = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     try {
       setLoading(true);
@@ -109,8 +111,8 @@ export function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center py-12">
-        <div className="w-8 h-8 rounded-full border-b-2 animate-spin border-primary"></div>
+      <div className="flex items-center justify-center py-12">
+        <div className="h-8 w-8 animate-spin rounded-full border-primary border-b-2" />
       </div>
     );
   }
@@ -118,10 +120,10 @@ export function Dashboard() {
   return (
     <div className="space-y-4 sm:space-y-6">
       <div className="text-center sm:text-left">
-        <h1 className="text-xl font-bold sm:text-2xl text-secondary-900">
+        <h1 className="font-bold text-secondary-900 text-xl sm:text-2xl">
           Dashboard
         </h1>
-        <p className="text-sm sm:text-base text-secondary-600">
+        <p className="text-secondary-600 text-sm sm:text-base">
           Welcome back! Here's what's happening in your kitchen.
         </p>
       </div>
@@ -136,47 +138,47 @@ export function Dashboard() {
 
       {/* Expiring Leftovers Alert */}
       {expiringLeftovers.length > 0 && (
-        <Card className="bg-orange-50 border-orange-200">
+        <Card className="border-orange-200 bg-orange-50">
           <CardContent className="p-4">
             <div className="flex items-start space-x-3">
               <div className="shrink-0">
-                <div className="p-2 bg-orange-100 rounded-lg">
-                  <Utensils className="w-5 h-5 text-orange-600" />
+                <div className="rounded-lg bg-orange-100 p-2">
+                  <Utensils className="h-5 w-5 text-orange-600" />
                 </div>
               </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center mb-2 space-x-2">
+              <div className="min-w-0 flex-1">
+                <div className="mb-2 flex items-center space-x-2">
                   <h3 className="font-semibold text-orange-900">
                     Leftovers Expiring Soon
                   </h3>
                   <Badge
+                    className="border-orange-300 bg-orange-100 text-orange-800"
                     variant="outline"
-                    className="text-orange-800 bg-orange-100 border-orange-300"
                   >
                     {stats.expiringLeftovers} item
-                    {stats.expiringLeftovers !== 1 ? "s" : ""}
+                    {stats.expiringLeftovers === 1 ? "" : "s"}
                   </Badge>
                 </div>
 
                 <div className="space-y-2">
                   {expiringLeftovers.map((leftover) => {
                     const daysLeft = getDaysUntilExpiration(
-                      leftover.expiration_date ?? "",
+                      leftover.expiration_date ?? ""
                     );
                     return (
                       <div
+                        className="flex items-center justify-between text-sm"
                         key={leftover.id}
-                        className="flex justify-between items-center text-sm"
                       >
-                        <span className="font-medium text-orange-900 truncate">
+                        <span className="truncate font-medium text-orange-900">
                           {leftover.name}
                         </span>
-                        <div className="flex shrink-0 items-center ml-2 space-x-2">
-                          <span className="text-xs text-orange-700">
+                        <div className="ml-2 flex shrink-0 items-center space-x-2">
+                          <span className="text-orange-700 text-xs">
                             {leftover.quantity} {leftover.unit}
                           </span>
                           <span
-                            className={`text-xs px-2 py-1 rounded-full ${
+                            className={`rounded-full px-2 py-1 text-xs ${
                               daysLeft <= 0
                                 ? "bg-red-100 text-red-800"
                                 : "bg-orange-100 text-orange-800"
@@ -194,8 +196,8 @@ export function Dashboard() {
 
                 <Link to="/leftovers">
                   <button
+                    className="mt-3 font-medium text-orange-700 text-sm underline hover:text-orange-800"
                     type="button"
-                    className="mt-3 text-sm font-medium text-orange-700 underline hover:text-orange-800"
                   >
                     View All Leftovers →
                   </button>
@@ -208,7 +210,7 @@ export function Dashboard() {
 
       {/* Enhanced Expiration Monitor */}
       {expiringSoonItems.length > 0 && (
-        <ExpirationMonitor ingredients={expiringSoonItems} className="mb-6" />
+        <ExpirationMonitor className="mb-6" ingredients={expiringSoonItems} />
       )}
 
       {/* Quick Stats */}
@@ -217,13 +219,13 @@ export function Dashboard() {
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
               <div className="shrink-0">
-                <Package className="w-6 h-6 sm:h-8 sm:w-8 text-primary" />
+                <Package className="h-6 w-6 text-primary sm:h-8 sm:w-8" />
               </div>
-              <div className="flex-1 ml-3 min-w-0 sm:ml-4">
-                <p className="text-xs font-medium truncate sm:text-sm text-secondary-600">
+              <div className="ml-3 min-w-0 flex-1 sm:ml-4">
+                <p className="truncate font-medium text-secondary-600 text-xs sm:text-sm">
                   Pantry Items
                 </p>
-                <p className="text-lg font-bold sm:text-2xl text-secondary-900">
+                <p className="font-bold text-lg text-secondary-900 sm:text-2xl">
                   {stats.totalIngredients}
                 </p>
               </div>
@@ -235,13 +237,13 @@ export function Dashboard() {
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
               <div className="shrink-0">
-                <Sparkles className="w-6 h-6 sm:h-8 sm:w-8 text-primary" />
+                <Sparkles className="h-6 w-6 text-primary sm:h-8 sm:w-8" />
               </div>
-              <div className="flex-1 ml-3 min-w-0 sm:ml-4">
-                <p className="text-xs font-medium truncate sm:text-sm text-secondary-600">
+              <div className="ml-3 min-w-0 flex-1 sm:ml-4">
+                <p className="truncate font-medium text-secondary-600 text-xs sm:text-sm">
                   Can Cook
                 </p>
-                <p className="text-lg font-bold sm:text-2xl text-secondary-900">
+                <p className="font-bold text-lg text-secondary-900 sm:text-2xl">
                   {stats.canCookRecipes}
                 </p>
               </div>
@@ -253,13 +255,13 @@ export function Dashboard() {
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
               <div className="shrink-0">
-                <BookOpen className="w-6 h-6 sm:h-8 sm:w-8 text-primary" />
+                <BookOpen className="h-6 w-6 text-primary sm:h-8 sm:w-8" />
               </div>
-              <div className="flex-1 ml-3 min-w-0 sm:ml-4">
-                <p className="text-xs font-medium truncate sm:text-sm text-secondary-600">
+              <div className="ml-3 min-w-0 flex-1 sm:ml-4">
+                <p className="truncate font-medium text-secondary-600 text-xs sm:text-sm">
                   Total Recipes
                 </p>
-                <p className="text-lg font-bold sm:text-2xl text-secondary-900">
+                <p className="font-bold text-lg text-secondary-900 sm:text-2xl">
                   {stats.availableRecipes}
                 </p>
               </div>
@@ -271,13 +273,13 @@ export function Dashboard() {
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
               <div className="shrink-0">
-                <Utensils className="w-6 h-6 sm:h-8 sm:w-8 text-primary" />
+                <Utensils className="h-6 w-6 text-primary sm:h-8 sm:w-8" />
               </div>
-              <div className="flex-1 ml-3 min-w-0 sm:ml-4">
-                <p className="text-xs font-medium truncate sm:text-sm text-secondary-600">
+              <div className="ml-3 min-w-0 flex-1 sm:ml-4">
+                <p className="truncate font-medium text-secondary-600 text-xs sm:text-sm">
                   Leftovers
                 </p>
-                <p className="text-lg font-bold sm:text-2xl text-secondary-900">
+                <p className="font-bold text-lg text-secondary-900 sm:text-2xl">
                   {stats.totalLeftovers}
                 </p>
               </div>
@@ -293,11 +295,11 @@ export function Dashboard() {
                   className={`h-6 w-6 sm:h-8 sm:w-8 ${stats.expiringSoon > 0 ? "text-orange-600" : "text-primary"}`}
                 />
               </div>
-              <div className="flex-1 ml-3 min-w-0 sm:ml-4">
-                <p className="text-xs font-medium truncate sm:text-sm text-secondary-600">
+              <div className="ml-3 min-w-0 flex-1 sm:ml-4">
+                <p className="truncate font-medium text-secondary-600 text-xs sm:text-sm">
                   Expiring Soon
                 </p>
-                <p className="text-lg font-bold sm:text-2xl text-secondary-900">
+                <p className="font-bold text-lg text-secondary-900 sm:text-2xl">
                   {stats.expiringSoon}
                 </p>
               </div>
@@ -306,17 +308,17 @@ export function Dashboard() {
         </Card>
 
         {stats.expiringLeftovers > 0 && (
-          <Card className="bg-orange-50 border-orange-200">
+          <Card className="border-orange-200 bg-orange-50">
             <CardContent className="p-4 sm:p-6">
               <div className="flex items-center">
                 <div className="shrink-0">
-                  <Utensils className="w-6 h-6 text-orange-600 sm:h-8 sm:w-8" />
+                  <Utensils className="h-6 w-6 text-orange-600 sm:h-8 sm:w-8" />
                 </div>
-                <div className="flex-1 ml-3 min-w-0 sm:ml-4">
-                  <p className="text-xs font-medium text-orange-700 truncate sm:text-sm">
+                <div className="ml-3 min-w-0 flex-1 sm:ml-4">
+                  <p className="truncate font-medium text-orange-700 text-xs sm:text-sm">
                     Leftovers Expiring
                   </p>
-                  <p className="text-lg font-bold text-orange-900 sm:text-2xl">
+                  <p className="font-bold text-lg text-orange-900 sm:text-2xl">
                     {stats.expiringLeftovers}
                   </p>
                 </div>
@@ -328,18 +330,18 @@ export function Dashboard() {
 
       {/* Additional Stats Row for Low Stock */}
       {stats.lowStockItems > 0 && (
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4 sm:gap-4">
-          <Card className="bg-orange-50 border-orange-200">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+          <Card className="border-orange-200 bg-orange-50">
             <CardContent className="p-4 sm:p-6">
               <div className="flex items-center">
                 <div className="shrink-0">
-                  <TrendingDown className="w-6 h-6 text-orange-600 sm:h-8 sm:w-8" />
+                  <TrendingDown className="h-6 w-6 text-orange-600 sm:h-8 sm:w-8" />
                 </div>
-                <div className="flex-1 ml-3 min-w-0 sm:ml-4">
-                  <p className="text-xs font-medium text-orange-700 truncate sm:text-sm">
+                <div className="ml-3 min-w-0 flex-1 sm:ml-4">
+                  <p className="truncate font-medium text-orange-700 text-xs sm:text-sm">
                     Low Stock
                   </p>
-                  <p className="text-lg font-bold text-orange-900 sm:text-2xl">
+                  <p className="font-bold text-lg text-orange-900 sm:text-2xl">
                     {stats.lowStockItems}
                   </p>
                 </div>
@@ -354,7 +356,7 @@ export function Dashboard() {
         <Card>
           <CardHeader className="pb-3 sm:pb-6">
             <div className="flex items-center space-x-2">
-              <Sparkles className="w-4 h-4 sm:h-5 sm:w-5 text-primary" />
+              <Sparkles className="h-4 w-4 text-primary sm:h-5 sm:w-5" />
               <CardTitle className="text-base sm:text-lg">
                 What Can I Cook?
               </CardTitle>
@@ -368,22 +370,24 @@ export function Dashboard() {
               <div className="space-y-3">
                 {canCookRecipes.map((recipe) => (
                   <div
+                    className="flex items-center space-x-3 rounded-lg bg-secondary-50 p-3"
                     key={recipe.id}
-                    className="flex items-center p-3 space-x-3 rounded-lg bg-secondary-50"
                   >
                     <img
+                      alt={recipe.title}
+                      className="h-10 w-10 shrink-0 rounded-lg object-cover sm:h-12 sm:w-12"
+                      height={48}
                       src={
                         recipe.image_url ||
                         "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
                       }
-                      alt={recipe.title}
-                      className="object-cover shrink-0 w-10 h-10 rounded-lg sm:w-12 sm:h-12"
+                      width={48}
                     />
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium truncate text-secondary-900 sm:text-base">
+                    <div className="min-w-0 flex-1">
+                      <h4 className="truncate font-medium text-secondary-900 text-sm sm:text-base">
                         {recipe.title}
                       </h4>
-                      <p className="text-xs sm:text-sm text-secondary-600">
+                      <p className="text-secondary-600 text-xs sm:text-sm">
                         {recipe.prep_time + recipe.cook_time} min •{" "}
                         {recipe.difficulty}
                       </p>
@@ -398,8 +402,8 @@ export function Dashboard() {
               </div>
             ) : (
               <div className="py-6 text-center">
-                <BookOpen className="mx-auto mb-3 w-10 h-10 sm:h-12 sm:w-12 text-secondary-400" />
-                <p className="mb-4 text-sm sm:text-base text-secondary-600">
+                <BookOpen className="mx-auto mb-3 h-10 w-10 text-secondary-400 sm:h-12 sm:w-12" />
+                <p className="mb-4 text-secondary-600 text-sm sm:text-base">
                   Add ingredients to your pantry to discover recipes you can
                   cook!
                 </p>
@@ -433,29 +437,25 @@ export function Dashboard() {
               <div className="space-y-3">
                 {expiringSoonItems.map((item) => {
                   const daysLeft = getDaysUntilExpiration(
-                    item.expiration_date ?? "",
+                    item.expiration_date ?? ""
                   );
                   return (
                     <div
+                      className="flex items-center justify-between rounded-lg border border-orange-200 bg-orange-50 p-3"
                       key={item.id}
-                      className="flex justify-between items-center p-3 bg-orange-50 rounded-lg border border-orange-200"
                     >
-                      <div className="flex-1 min-w-0">
-                        <h4 className="text-sm font-medium truncate text-secondary-900 sm:text-base">
+                      <div className="min-w-0 flex-1">
+                        <h4 className="truncate font-medium text-secondary-900 text-sm sm:text-base">
                           {item.name}
                         </h4>
-                        <p className="text-xs sm:text-sm text-secondary-600">
+                        <p className="text-secondary-600 text-xs sm:text-sm">
                           {item.quantity} {item.unit}
                         </p>
                       </div>
-                      <div className="shrink-0 ml-2 text-right">
+                      <div className="ml-2 shrink-0 text-right">
                         <span
-                          className={`text-xs sm:text-sm font-medium ${
-                            daysLeft <= 1
-                              ? "text-red-600"
-                              : daysLeft <= 3
-                                ? "text-orange-600"
-                                : "text-orange-600"
+                          className={`font-medium text-xs sm:text-sm ${
+                            daysLeft <= 1 ? "text-red-600" : "text-orange-600"
                           }`}
                         >
                           {daysLeft <= 0
@@ -468,8 +468,8 @@ export function Dashboard() {
                 })}
                 <Link to="/pantry">
                   <Button
-                    variant="outline"
                     className="w-full text-sm sm:text-base"
+                    variant="outline"
                   >
                     Manage Pantry
                   </Button>
@@ -477,12 +477,12 @@ export function Dashboard() {
               </div>
             ) : (
               <div className="py-6 text-center">
-                <Clock className="mx-auto mb-3 w-10 h-10 sm:h-12 sm:w-12 text-secondary-400" />
-                <p className="mb-4 text-sm sm:text-base text-secondary-600">
+                <Clock className="mx-auto mb-3 h-10 w-10 text-secondary-400 sm:h-12 sm:w-12" />
+                <p className="mb-4 text-secondary-600 text-sm sm:text-base">
                   No items expiring soon. Your pantry is well managed!
                 </p>
                 <Link to="/pantry">
-                  <Button variant="outline" className="text-sm sm:text-base">
+                  <Button className="text-sm sm:text-base" variant="outline">
                     View Pantry
                   </Button>
                 </Link>
@@ -493,15 +493,15 @@ export function Dashboard() {
       </div>
 
       {/* Quick Actions */}
-      <div className="grid grid-cols-1 gap-3 sm:gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
         <Link to="/pantry">
-          <Card className="transition-shadow cursor-pointer hover:shadow-md">
+          <Card className="cursor-pointer transition-shadow hover:shadow-md">
             <CardContent className="p-4 text-center sm:p-6">
-              <Package className="mx-auto mb-2 w-6 h-6 sm:h-8 sm:w-8 text-primary" />
-              <h3 className="text-sm font-medium text-secondary-900 sm:text-base">
+              <Package className="mx-auto mb-2 h-6 w-6 text-primary sm:h-8 sm:w-8" />
+              <h3 className="font-medium text-secondary-900 text-sm sm:text-base">
                 Manage Pantry
               </h3>
-              <p className="text-xs sm:text-sm text-secondary-600">
+              <p className="text-secondary-600 text-xs sm:text-sm">
                 Add and track ingredients
               </p>
             </CardContent>
@@ -509,13 +509,13 @@ export function Dashboard() {
         </Link>
 
         <Link to="/recipes">
-          <Card className="transition-shadow cursor-pointer hover:shadow-md">
+          <Card className="cursor-pointer transition-shadow hover:shadow-md">
             <CardContent className="p-4 text-center sm:p-6">
-              <BookOpen className="mx-auto mb-2 w-6 h-6 sm:h-8 sm:w-8 text-primary" />
-              <h3 className="text-sm font-medium text-secondary-900 sm:text-base">
+              <BookOpen className="mx-auto mb-2 h-6 w-6 text-primary sm:h-8 sm:w-8" />
+              <h3 className="font-medium text-secondary-900 text-sm sm:text-base">
                 Browse Recipes
               </h3>
-              <p className="text-xs sm:text-sm text-secondary-600">
+              <p className="text-secondary-600 text-xs sm:text-sm">
                 Discover new dishes
               </p>
             </CardContent>
@@ -523,13 +523,13 @@ export function Dashboard() {
         </Link>
 
         <Link to="/shopping">
-          <Card className="transition-shadow cursor-pointer hover:shadow-md">
+          <Card className="cursor-pointer transition-shadow hover:shadow-md">
             <CardContent className="p-4 text-center sm:p-6">
-              <ShoppingCart className="mx-auto mb-2 w-6 h-6 sm:h-8 sm:w-8 text-primary" />
-              <h3 className="text-sm font-medium text-secondary-900 sm:text-base">
+              <ShoppingCart className="mx-auto mb-2 h-6 w-6 text-primary sm:h-8 sm:w-8" />
+              <h3 className="font-medium text-secondary-900 text-sm sm:text-base">
                 Shopping List
               </h3>
-              <p className="text-xs sm:text-sm text-secondary-600">
+              <p className="text-secondary-600 text-xs sm:text-sm">
                 Plan your grocery trips
               </p>
             </CardContent>
@@ -537,13 +537,13 @@ export function Dashboard() {
         </Link>
 
         <Link to="/leftovers">
-          <Card className="transition-shadow cursor-pointer hover:shadow-md">
+          <Card className="cursor-pointer transition-shadow hover:shadow-md">
             <CardContent className="p-4 text-center sm:p-6">
-              <Utensils className="mx-auto mb-2 w-6 h-6 sm:h-8 sm:w-8 text-primary" />
-              <h3 className="text-sm font-medium text-secondary-900 sm:text-base">
+              <Utensils className="mx-auto mb-2 h-6 w-6 text-primary sm:h-8 sm:w-8" />
+              <h3 className="font-medium text-secondary-900 text-sm sm:text-base">
                 Leftovers
               </h3>
-              <p className="text-xs sm:text-sm text-secondary-600">
+              <p className="text-secondary-600 text-xs sm:text-sm">
                 Track and reduce waste
               </p>
             </CardContent>

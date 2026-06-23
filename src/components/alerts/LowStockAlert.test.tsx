@@ -72,7 +72,7 @@ describe("LowStockAlert", () => {
     const onViewPantry = vi.fn();
     const ingredients = [makeIngredient({ name: "Eggs", quantity: 0 })];
     render(
-      <LowStockAlert ingredients={ingredients} onViewPantry={onViewPantry} />,
+      <LowStockAlert ingredients={ingredients} onViewPantry={onViewPantry} />
     );
     const btn = screen.getByRole("button", { name: /view pantry/i });
     fireEvent.click(btn);

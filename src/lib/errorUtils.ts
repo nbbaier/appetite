@@ -7,7 +7,7 @@ export interface ErrorMonitoringService {
   captureError: (error: unknown, context?: Record<string, unknown>) => void;
   captureMessage: (
     message: string,
-    level?: "info" | "warning" | "error",
+    level?: "info" | "warning" | "error"
   ) => void;
 }
 
@@ -21,7 +21,7 @@ let errorMonitoringService: ErrorMonitoringService | null = null;
  * @param service - The monitoring service implementation
  */
 export function setErrorMonitoringService(
-  service: ErrorMonitoringService | null,
+  service: ErrorMonitoringService | null
 ) {
   errorMonitoringService = service;
 }
@@ -40,9 +40,15 @@ export function getErrorMonitoringService(): ErrorMonitoringService | null {
  * @returns {string} User-friendly error message
  */
 export function handleApiError(error: unknown): string {
-  if (!error) return "An unknown error occurred.";
-  if (typeof error === "string") return error;
-  if (error instanceof Error) return error.message;
+  if (!error) {
+    return "An unknown error occurred.";
+  }
+  if (typeof error === "string") {
+    return error;
+  }
+  if (error instanceof Error) {
+    return error.message;
+  }
   // Supabase error shape
   if (typeof error === "object" && error !== null) {
     const errObj = error as Record<string, unknown>;
@@ -84,16 +90,15 @@ export function logError(error: unknown, context?: string) {
       window as unknown as { notify?: (msg: string, opts?: unknown) => void }
     ).notify === "function"
   ) {
+    let message = "An error occurred.";
+    if (typeof error === "string") {
+      message = error;
+    } else if (error instanceof Error) {
+      message = error.message;
+    }
     (
       window as unknown as { notify: (msg: string, opts?: unknown) => void }
-    ).notify(
-      typeof error === "string"
-        ? error
-        : error instanceof Error
-          ? error.message
-          : "An error occurred.",
-      { type: "error" },
-    );
+    ).notify(message, { type: "error" });
   }
 }
 
@@ -104,7 +109,7 @@ export function logError(error: unknown, context?: string) {
  */
 export async function retryOperation<T>(
   fn: () => Promise<T>,
-  options?: { retries?: number; initialDelay?: number; maxDelay?: number },
+  options?: { retries?: number; initialDelay?: number; maxDelay?: number }
 ): Promise<T> {
   const retries = options?.retries ?? 3;
   const initialDelay = options?.initialDelay ?? 500;
@@ -116,7 +121,9 @@ export async function retryOperation<T>(
       return await fn();
     } catch (error) {
       attempt++;
-      if (attempt > retries) throw error;
+      if (attempt > retries) {
+        throw error;
+      }
       await new Promise((res) => setTimeout(res, delay));
       delay = Math.min(delay * 2, maxDelay);
     }

@@ -7,7 +7,7 @@ describe("cn", () => {
   });
 
   it("handles conditional classes", () => {
-    expect(cn("foo", false && "bar", "baz")).toBe("foo baz");
+    expect(cn("foo", false, "baz")).toBe("foo baz");
   });
 
   it("merges Tailwind classes with conflict resolution", () => {

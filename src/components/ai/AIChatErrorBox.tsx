@@ -3,9 +3,9 @@ import { Button } from "../ui/button";
 
 interface APIError {
   code: string;
+  details?: unknown;
   message: string;
   requestId?: string;
-  details?: unknown;
 }
 
 const ERROR_MESSAGES: Record<string, string> = {
@@ -35,7 +35,7 @@ export const AIChatErrorBox: React.FC<AIChatErrorBoxProps> = ({
   lastUserMessage,
   onRetry,
 }) => (
-  <div className="flex flex-col gap-1 p-2 mb-2 text-red-700 bg-red-100 rounded ai-chat-error">
+  <div className="ai-chat-error mb-2 flex flex-col gap-1 rounded bg-red-100 p-2 text-red-700">
     <div>
       <strong>Error:</strong> {ERROR_MESSAGES[error.code] || error.message}
       {error.code && <span className="ml-2 text-xs">(Code: {error.code})</span>}
@@ -45,7 +45,7 @@ export const AIChatErrorBox: React.FC<AIChatErrorBoxProps> = ({
     </div>
     <div>
       <span>What can you do?</span>
-      <ul className="ml-5 text-sm list-disc">
+      <ul className="ml-5 list-disc text-sm">
         <li>Check your internet connection.</li>
         <li>Try rephrasing your message or sending it again.</li>
         <li>
@@ -55,7 +55,7 @@ export const AIChatErrorBox: React.FC<AIChatErrorBoxProps> = ({
       </ul>
     </div>
     {lastUserMessage && (
-      <Button variant="outline" className="mt-1 w-fit" onClick={onRetry}>
+      <Button className="mt-1 w-fit" onClick={onRetry} variant="outline">
         Retry
       </Button>
     )}

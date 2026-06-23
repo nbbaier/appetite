@@ -386,7 +386,7 @@ export const chatMessageSchema = z.object({
   content: z
     .string()
     .min(1, "Message content is required")
-    .max(10000, "Message content too long")
+    .max(10_000, "Message content too long")
     .trim(),
   timestamp: dateStringSchema,
   suggestions: z.array(z.string().max(500)).nullable().optional(),
@@ -435,7 +435,7 @@ export const signUpSchema = z
       // Require at least one lowercase, one uppercase, one digit, and one special character
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+=[\]{}|;':",.<>/?-])/,
-        "Password must contain uppercase, lowercase, number, and special character",
+        "Password must contain uppercase, lowercase, number, and special character"
       ),
     confirmPassword: z.string(),
     fullName: z

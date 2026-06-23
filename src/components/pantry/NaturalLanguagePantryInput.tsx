@@ -35,16 +35,16 @@ const UNITS = [
   "bottles",
 ];
 
-export type IngredientLike = {
+export interface IngredientLike {
+  category: string;
   name: string;
   quantity: number;
   unit: string;
-  category: string;
-};
+}
 
 interface NaturalLanguagePantryInputProps {
-  onAddIngredients: (ingredients: IngredientLike[]) => Promise<void> | void;
   disabled?: boolean;
+  onAddIngredients: (ingredients: IngredientLike[]) => Promise<void> | void;
 }
 
 function NaturalLanguagePantryInputRaw({
@@ -54,7 +54,7 @@ function NaturalLanguagePantryInputRaw({
   const [showInput, setShowInput] = useState(false);
   const [naturalLanguageText, setNaturalLanguageText] = useState("");
   const [parsedIngredients, setParsedIngredients] = useState<IngredientLike[]>(
-    [],
+    []
   );
   const [isParsingText, setIsParsingText] = useState(false);
   const [isAdding, setIsAdding] = useState(false);
@@ -70,7 +70,9 @@ function NaturalLanguagePantryInputRaw({
   };
 
   const parseNaturalLanguageText = async () => {
-    if (!naturalLanguageText.trim()) return;
+    if (!naturalLanguageText.trim()) {
+      return;
+    }
     setIsParsingText(true);
     setError(null);
     try {
@@ -83,7 +85,7 @@ function NaturalLanguagePantryInputRaw({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ text: naturalLanguageText.trim() }),
-        },
+        }
       );
       if (!response.ok) {
         throw new Error(`API request failed: ${response.status}`);
@@ -105,10 +107,10 @@ function NaturalLanguagePantryInputRaw({
   const updateParsedIngredient = (
     index: number,
     field: keyof IngredientLike,
-    value: string | number,
+    value: string | number
   ) => {
     setParsedIngredients((prev) =>
-      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item)),
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
     );
   };
 
@@ -117,7 +119,9 @@ function NaturalLanguagePantryInputRaw({
   };
 
   const handleAddAll = async () => {
-    if (parsedIngredients.length === 0) return;
+    if (parsedIngredients.length === 0) {
+      return;
+    }
     setIsAdding(true);
     setError(null);
     try {
@@ -138,15 +142,15 @@ function NaturalLanguagePantryInputRaw({
   return (
     <div>
       {!showInput && (
-        <Button onClick={() => setShowInput(true)} disabled={disabled}>
-          <Wand2 className="mr-2 w-4 h-4" /> Add Ingredients from Text
+        <Button disabled={disabled} onClick={() => setShowInput(true)}>
+          <Wand2 className="mr-2 h-4 w-4" /> Add Ingredients from Text
         </Button>
       )}
       {showInput && (
         <Card className="mt-4">
           <CardHeader className="pb-3 sm:pb-6">
             <CardTitle className="flex items-center space-x-2 text-lg sm:text-xl">
-              <Wand2 className="w-5 h-5" />
+              <Wand2 className="h-5 w-5" />
               <span>Add Ingredients from Text</span>
             </CardTitle>
             <CardDescription>
@@ -156,129 +160,129 @@ function NaturalLanguagePantryInputRaw({
           </CardHeader>
           <CardContent className="space-y-4">
             {error && (
-              <div className="mb-2 text-sm font-medium text-red-600">
+              <div className="mb-2 font-medium text-red-600 text-sm">
                 {error}
               </div>
             )}
             <div>
               <label
+                className="mb-2 block font-medium text-secondary-700 text-sm"
                 htmlFor={naturalLanguageInputId}
-                className="block mb-2 text-sm font-medium text-secondary-700"
               >
                 Describe your ingredients:
               </label>
               <textarea
+                className="h-24 w-full resize-none rounded-lg border border-secondary-300 px-3 py-2 text-sm focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
+                disabled={isParsingText || isAdding}
                 id={naturalLanguageInputId}
-                value={naturalLanguageText}
                 onChange={(e) => setNaturalLanguageText(e.target.value)}
                 placeholder="Example: 3 apples, 1kg flour, 2 cans of tuna, 500ml olive oil, 1 liter milk"
-                className="px-3 py-2 w-full h-24 text-sm rounded-lg border resize-none border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-2 focus:ring-primary-500/20"
-                disabled={isParsingText || isAdding}
+                value={naturalLanguageText}
               />
             </div>
-            <div className="flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-2">
+            <div className="flex flex-col space-y-2 sm:flex-row sm:space-x-2 sm:space-y-0">
               <Button
-                onClick={parseNaturalLanguageText}
+                className="flex items-center justify-center space-x-2"
                 disabled={
                   !naturalLanguageText.trim() || isParsingText || isAdding
                 }
-                className="flex justify-center items-center space-x-2"
+                onClick={parseNaturalLanguageText}
               >
-                <Wand2 className="w-4 h-4" />
+                <Wand2 className="h-4 w-4" />
                 <span>{isParsingText ? "Parsing..." : "Parse Text"}</span>
               </Button>
               <Button
+                disabled={isParsingText || isAdding}
+                onClick={resetForm}
                 type="button"
                 variant="outline"
-                onClick={resetForm}
-                disabled={isParsingText || isAdding}
               >
                 Cancel
               </Button>
             </div>
             {parsedIngredients.length > 0 && (
               <div className="mt-6 space-y-4">
-                <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-medium text-secondary-900">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-lg text-secondary-900">
                     Parsed Ingredients ({parsedIngredients.length})
                   </h3>
                   <Button
-                    onClick={handleAddAll}
-                    disabled={isAdding}
                     className="flex items-center space-x-2"
+                    disabled={isAdding}
+                    onClick={handleAddAll}
                   >
-                    <Plus className="w-4 h-4" />
+                    <Plus className="h-4 w-4" />
                     <span>{isAdding ? "Adding..." : "Add All to Pantry"}</span>
                   </Button>
                 </div>
                 <div className="space-y-3">
                   {parsedIngredients.map((ingredient, index) => (
                     <div
+                      className="rounded-lg border border-secondary-200 bg-secondary-50 p-4"
                       key={`${ingredient.name}-${ingredient.quantity}-${ingredient.unit}-${ingredient.category}`}
-                      className="p-4 rounded-lg border bg-secondary-50 border-secondary-200"
                     >
                       <div className="grid grid-cols-1 gap-3 sm:grid-cols-4">
                         <div>
                           <label
+                            className="mb-1 block font-medium text-secondary-700 text-xs"
                             htmlFor={`parsed-ingredient-${index}-name`}
-                            className="block mb-1 text-xs font-medium text-secondary-700"
                           >
                             Name
                           </label>
                           <input
+                            className="w-full rounded-md border border-secondary-300 px-2 py-1 text-sm focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
                             id={`parsed-ingredient-${index}-name`}
-                            type="text"
-                            value={ingredient.name}
                             onChange={(e) =>
                               updateParsedIngredient(
                                 index,
                                 "name",
-                                e.target.value,
+                                e.target.value
                               )
                             }
-                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
+                            type="text"
+                            value={ingredient.name}
                           />
                         </div>
                         <div>
                           <label
+                            className="mb-1 block font-medium text-secondary-700 text-xs"
                             htmlFor={`parsed-ingredient-${index}-quantity`}
-                            className="block mb-1 text-xs font-medium text-secondary-700"
                           >
                             Quantity
                           </label>
                           <input
+                            className="w-full rounded-md border border-secondary-300 px-2 py-1 text-sm focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
                             id={`parsed-ingredient-${index}-quantity`}
-                            type="number"
-                            step="0.1"
-                            value={ingredient.quantity}
                             onChange={(e) =>
                               updateParsedIngredient(
                                 index,
                                 "quantity",
-                                parseFloat(e.target.value) || 0,
+                                Number.parseFloat(e.target.value) || 0
                               )
                             }
-                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
+                            step="0.1"
+                            type="number"
+                            value={ingredient.quantity}
                           />
                         </div>
                         <div>
                           <label
+                            className="mb-1 block font-medium text-secondary-700 text-xs"
                             htmlFor={`parsed-ingredient-${index}-unit`}
-                            className="block mb-1 text-xs font-medium text-secondary-700"
                           >
                             Unit
                           </label>
                           <select
+                            className="w-full rounded-md border border-secondary-300 px-2 py-1 text-sm focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
                             id={`parsed-ingredient-${index}-unit`}
-                            value={ingredient.unit}
                             onChange={(e) =>
                               updateParsedIngredient(
                                 index,
                                 "unit",
-                                e.target.value,
+                                e.target.value
                               )
                             }
-                            className="px-2 py-1 w-full text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
+                            value={ingredient.unit}
                           >
                             {UNITS.map((unit) => (
                               <option key={unit} value={unit}>
@@ -289,23 +293,23 @@ function NaturalLanguagePantryInputRaw({
                         </div>
                         <div>
                           <label
+                            className="mb-1 block font-medium text-secondary-700 text-xs"
                             htmlFor={`parsed-ingredient-${index}-category`}
-                            className="block mb-1 text-xs font-medium text-secondary-700"
                           >
                             Category
                           </label>
                           <div className="flex items-center space-x-2">
                             <select
+                              className="flex-1 rounded-md border border-secondary-300 px-2 py-1 text-sm focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
                               id={`parsed-ingredient-${index}-category`}
-                              value={ingredient.category}
                               onChange={(e) =>
                                 updateParsedIngredient(
                                   index,
                                   "category",
-                                  e.target.value,
+                                  e.target.value
                                 )
                               }
-                              className="flex-1 px-2 py-1 text-sm rounded-md border border-secondary-300 focus:border-primary-500 focus:outline-hidden focus:ring-1 focus:ring-primary-500/20"
+                              value={ingredient.category}
                             >
                               {CATEGORIES.map((category) => (
                                 <option key={category} value={category}>
@@ -314,11 +318,11 @@ function NaturalLanguagePantryInputRaw({
                               ))}
                             </select>
                             <button
-                              type="button"
+                              className="rounded p-1 text-secondary-400 hover:text-red-600"
                               onClick={() => removeParsedIngredient(index)}
-                              className="p-1 rounded text-secondary-400 hover:text-red-600"
+                              type="button"
                             >
-                              <X className="w-4 h-4" />
+                              <X className="h-4 w-4" />
                             </button>
                           </div>
                         </div>
@@ -336,5 +340,5 @@ function NaturalLanguagePantryInputRaw({
 }
 
 export const NaturalLanguagePantryInput = React.memo(
-  NaturalLanguagePantryInputRaw,
+  NaturalLanguagePantryInputRaw
 );

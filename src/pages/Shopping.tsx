@@ -118,11 +118,13 @@ export function Shopping() {
   });
 
   const debouncedSetSearchTerm = useRef(
-    debounce((value: string) => setSearchTerm(value), 300),
+    debounce((value: string) => setSearchTerm(value), 300)
   ).current;
 
   const loadData = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -160,12 +162,14 @@ export function Shopping() {
   }, [notify, user]);
 
   const throttledRefreshData = useMemo(
-    () => throttle(() => void loadData(), 1000),
-    [loadData],
+    () => throttle(() => loadData(), 1000),
+    [loadData]
   );
 
   const loadListItems = useCallback(async () => {
-    if (!selectedList) return;
+    if (!selectedList) {
+      return;
+    }
 
     try {
       const items = await shoppingListService.getListItems(selectedList.id);
@@ -194,15 +198,18 @@ export function Shopping() {
     setListItems([]);
   }, [selectedList, loadListItems]);
 
-  useEffect(() => {
-    return () => {
+  useEffect(
+    () => () => {
       debouncedSetSearchTerm.cancel();
       throttledRefreshData.cancel();
-    };
-  }, [debouncedSetSearchTerm, throttledRefreshData]);
+    },
+    [debouncedSetSearchTerm, throttledRefreshData]
+  );
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     // Real-time subscription for shopping_lists
     const channel = supabase
       .channel("shopping-lists-changes")
@@ -216,7 +223,7 @@ export function Shopping() {
         },
         (_payload) => {
           throttledRefreshData();
-        },
+        }
       )
       .subscribe();
     return () => {
@@ -225,7 +232,9 @@ export function Shopping() {
   }, [user, throttledRefreshData]);
 
   useEffect(() => {
-    if (!selectedList) return;
+    if (!selectedList) {
+      return;
+    }
     // Real-time subscription for shopping_list_items in the selected list
     const channel = supabase
       .channel(`shopping-list-items-changes-${selectedList.id}`)
@@ -239,7 +248,7 @@ export function Shopping() {
         },
         (_payload) => {
           loadListItems();
-        },
+        }
       )
       .subscribe();
     return () => {
@@ -257,7 +266,7 @@ export function Shopping() {
     setSelectedList((current) => {
       if (current) {
         const matchedCurrent = shoppingLists.find(
-          (list) => list.id === current.id,
+          (list) => list.id === current.id
         );
         if (matchedCurrent) {
           return matchedCurrent;
@@ -267,7 +276,7 @@ export function Shopping() {
       const lastListId = localStorage.getItem("lastSelectedShoppingListId");
       if (lastListId) {
         const lastSelected = shoppingLists.find(
-          (list) => list.id === lastListId,
+          (list) => list.id === lastListId
         );
         if (lastSelected) {
           return lastSelected;
@@ -287,7 +296,9 @@ export function Shopping() {
 
   const createList = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     try {
       setError(null);
       const newList = await shoppingListService.createList({
@@ -313,13 +324,15 @@ export function Shopping() {
   };
 
   const handleDeleteListConfirm = async () => {
-    if (!listToDelete) return;
+    if (!listToDelete) {
+      return;
+    }
 
     try {
       setError(null);
       await shoppingListService.deleteList(listToDelete);
       const updatedLists = shoppingLists.filter(
-        (list) => list.id !== listToDelete,
+        (list) => list.id !== listToDelete
       );
       if (user) {
         clearCache(`shoppingLists_${user.id}`);
@@ -342,7 +355,9 @@ export function Shopping() {
 
   const createItem = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedList) return;
+    if (!selectedList) {
+      return;
+    }
 
     // Zod validation
     const result = ItemFormSchema.safeParse(itemFormData);
@@ -356,7 +371,7 @@ export function Shopping() {
       const itemData = {
         shopping_list_id: selectedList.id,
         name: itemFormData.name,
-        quantity: parseFloat(itemFormData.quantity) || 1,
+        quantity: Number.parseFloat(itemFormData.quantity) || 1,
         unit: itemFormData.unit,
         category: itemFormData.category,
         is_purchased: false,
@@ -398,7 +413,7 @@ export function Shopping() {
 
       const updatedItem = await shoppingListService.togglePurchased(
         itemId,
-        !isPurchased,
+        !isPurchased
       );
 
       // If item was just marked as purchased, add it to pantry
@@ -408,7 +423,7 @@ export function Shopping() {
           updatedItem.name,
           updatedItem.quantity,
           updatedItem.unit,
-          updatedItem.category,
+          updatedItem.category
         );
         clearCache(`ingredients_${user.id}`);
       }
@@ -423,14 +438,16 @@ export function Shopping() {
   };
 
   const addFromRecipe = async (recipeId: string) => {
-    if (!selectedList) return;
+    if (!selectedList) {
+      return;
+    }
 
     try {
       setError(null);
       await shoppingListService.createFromRecipe(
         selectedList.id,
         recipeId,
-        userIngredients,
+        userIngredients
       );
       await loadListItems();
       setShowRecipeModal(false);
@@ -481,7 +498,7 @@ export function Shopping() {
       setVisibleItemsCount(ITEMS_PER_PAGE);
       debouncedSetSearchTerm(event.target.value);
     },
-    [debouncedSetSearchTerm],
+    [debouncedSetSearchTerm]
   );
 
   const handleCategoryChange = useCallback(
@@ -489,23 +506,25 @@ export function Shopping() {
       setVisibleItemsCount(ITEMS_PER_PAGE);
       setSelectedCategory(event.target.value);
     },
-    [],
+    []
   );
 
-  const filteredItems = useMemo(() => {
-    return listItems.filter((item) => {
-      const matchesSearch = item.name
-        .toLowerCase()
-        .includes(searchTerm.toLowerCase());
-      const matchesCategory =
-        selectedCategory === "All" || item.category === selectedCategory;
-      return matchesSearch && matchesCategory;
-    });
-  }, [listItems, searchTerm, selectedCategory]);
+  const filteredItems = useMemo(
+    () =>
+      listItems.filter((item) => {
+        const matchesSearch = item.name
+          .toLowerCase()
+          .includes(searchTerm.toLowerCase());
+        const matchesCategory =
+          selectedCategory === "All" || item.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+      }),
+    [listItems, searchTerm, selectedCategory]
+  );
 
   const visibleItems = useMemo(
     () => filteredItems.slice(0, visibleItemsCount),
-    [filteredItems, visibleItemsCount],
+    [filteredItems, visibleItemsCount]
   );
 
   const categoryCounts = useMemo(
@@ -513,13 +532,13 @@ export function Shopping() {
       CATEGORIES.reduce(
         (acc, category) => {
           acc[category] = listItems.filter(
-            (item) => item.category === category,
+            (item) => item.category === category
           ).length;
           return acc;
         },
-        {} as Record<string, number>,
+        {} as Record<string, number>
       ),
-    [listItems],
+    [listItems]
   );
 
   const hasMoreVisibleItems = visibleItems.length < filteredItems.length;
@@ -530,11 +549,11 @@ export function Shopping() {
   if (loading) {
     return (
       <div
-        className="flex justify-center items-center py-12"
-        role="status"
         aria-label="Loading shopping lists"
+        className="flex items-center justify-center py-12"
+        role="status"
       >
-        <div className="size-8 rounded-full border-b-2 animate-spin border-primary"></div>
+        <div className="size-8 animate-spin rounded-full border-primary border-b-2" />
       </div>
     );
   }
@@ -543,26 +562,26 @@ export function Shopping() {
     <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-center sm:text-left">
-          <h1 className="text-xl font-bold sm:text-2xl text-secondary-900 text-balance">
+          <h1 className="text-balance font-bold text-secondary-900 text-xl sm:text-2xl">
             Shopping Lists
           </h1>
-          <p className="text-sm sm:text-base text-secondary-600 text-pretty">
+          <p className="text-pretty text-secondary-600 text-sm sm:text-base">
             Plan your grocery trips and track purchases
           </p>
         </div>
         <div className="flex flex-col gap-2 sm:flex-row">
           <Button
+            className="flex items-center justify-center space-x-2 text-sm sm:text-base"
             onClick={() => setShowListForm(true)}
             variant="outline"
-            className="flex justify-center items-center space-x-2 text-sm sm:text-base"
           >
             <ListPlus className="size-4" />
             <span>New List</span>
           </Button>
           <Button
-            onClick={() => setShowAddForm(true)}
+            className="flex items-center justify-center space-x-2 text-sm sm:text-base"
             disabled={!selectedList}
-            className="flex justify-center items-center space-x-2 text-sm sm:text-base"
+            onClick={() => setShowAddForm(true)}
           >
             <Plus className="size-4" />
             <span>Add Item</span>
@@ -573,59 +592,78 @@ export function Shopping() {
       {/* Shopping Lists Tabs */}
       {shoppingLists.length > 0 && (
         <ShoppingListsTabs
-          shoppingLists={shoppingLists}
-          selectedList={selectedList}
-          onSelect={handleSelectList}
           onDelete={handleDeleteListClick}
+          onSelect={handleSelectList}
+          selectedList={selectedList}
+          shoppingLists={shoppingLists}
         />
       )}
 
       {/* Create List Form */}
       <CreateListForm
-        visible={showListForm}
-        onSubmit={createList}
-        onCancel={resetListForm}
         formData={listFormData}
+        onCancel={resetListForm}
+        onSubmit={createList}
         setFormData={setListFormData}
+        visible={showListForm}
       />
 
       {selectedList ? (
         <>
           <ListHeaderWithStats
-            selectedList={selectedList}
-            totalCount={totalCount}
-            purchasedCount={purchasedCount}
             onAddFromRecipe={() => setShowRecipeModal(true)}
             onAddItem={() => setShowAddForm(true)}
+            purchasedCount={purchasedCount}
+            selectedList={selectedList}
+            totalCount={totalCount}
           />
 
           {/* Search and Filter */}
           <SearchAndFilterBar
-            searchTerm={searchTerm}
-            onSearchChange={handleSearchChange}
-            selectedCategory={selectedCategory}
-            onCategoryChange={handleCategoryChange}
             categories={CATEGORIES}
             categoryCounts={categoryCounts}
+            onCategoryChange={handleCategoryChange}
+            onSearchChange={handleSearchChange}
+            searchTerm={searchTerm}
+            selectedCategory={selectedCategory}
           />
 
           {/* Add/Edit Item Form */}
           <AddEditItemForm
-            visible={showAddForm}
-            onSubmit={createItem}
-            onCancel={resetItemForm}
-            formData={itemFormData}
-            setFormData={setItemFormData}
-            editingItem={editingItem}
             categories={CATEGORIES}
+            editingItem={editingItem}
+            formData={itemFormData}
+            onCancel={resetItemForm}
+            onSubmit={createItem}
+            setFormData={setItemFormData}
             units={UNITS}
+            visible={showAddForm}
           />
 
           {/* Shopping List Items */}
           {filteredItems.length === 0 ? (
             <EmptyState
+              actions={
+                !searchTerm && selectedCategory === "All" ? (
+                  <>
+                    <Button
+                      className="text-sm sm:text-base"
+                      onClick={() => setShowAddForm(true)}
+                    >
+                      Add Item
+                    </Button>
+                    <Button
+                      className="text-sm sm:text-base"
+                      onClick={() => setShowRecipeModal(true)}
+                      variant="outline"
+                    >
+                      Add from Recipe
+                    </Button>
+                  </>
+                ) : null
+              }
               icon={
-                <ShoppingCart className="mx-auto mb-4 size-10 sm:size-12 text-secondary-400" />
+                <ShoppingCart className="mx-auto mb-4 size-10 text-secondary-400 sm:size-12" />
               }
               message={
                 searchTerm || selectedCategory !== "All"
@@ -637,37 +675,18 @@ export function Shopping() {
                   ? "Try adjusting your search or filter criteria"
                   : "Add items to start building your shopping list"
               }
-              actions={
-                !searchTerm && selectedCategory === "All" ? (
-                  <>
-                    <Button
-                      onClick={() => setShowAddForm(true)}
-                      className="text-sm sm:text-base"
-                    >
-                      Add Item
-                    </Button>
-                    <Button
-                      onClick={() => setShowRecipeModal(true)}
-                      variant="outline"
-                      className="text-sm sm:text-base"
-                    >
-                      Add from Recipe
-                    </Button>
-                  </>
-                ) : null
-              }
             />
           ) : (
             <ShoppingListItems
               items={visibleItems}
-              onEdit={startEditItem}
               onDelete={deleteItem}
+              onEdit={startEditItem}
               onTogglePurchased={togglePurchased}
             />
           )}
 
           {hasMoreVisibleItems && (
-            <div className="flex justify-center mt-6">
+            <div className="mt-6 flex justify-center">
               <Button
                 onClick={() =>
                   setVisibleItemsCount((current) => current + ITEMS_PER_PAGE)
@@ -681,17 +700,17 @@ export function Shopping() {
       ) : (
         <Card>
           <CardContent className="py-8 text-center sm:py-12">
-            <ShoppingCart className="mx-auto mb-4 size-10 sm:size-12 text-secondary-400" />
-            <h3 className="mb-2 text-base font-medium sm:text-lg text-secondary-900">
+            <ShoppingCart className="mx-auto mb-4 size-10 text-secondary-400 sm:size-12" />
+            <h3 className="mb-2 font-medium text-base text-secondary-900 sm:text-lg">
               No shopping lists yet
             </h3>
-            <p className="px-4 mb-4 text-sm sm:text-base text-secondary-600">
+            <p className="mb-4 px-4 text-secondary-600 text-sm sm:text-base">
               Create your first shopping list to start planning your grocery
               trips
             </p>
             <Button
-              onClick={() => setShowListForm(true)}
               className="text-sm sm:text-base"
+              onClick={() => setShowListForm(true)}
             >
               Create Your First List
             </Button>
@@ -701,23 +720,23 @@ export function Shopping() {
 
       {/* Add From Recipe Modal */}
       <AddFromRecipeModal
-        visible={showRecipeModal}
-        onClose={() => setShowRecipeModal(false)}
-        onAddFromRecipe={addFromRecipe}
         availableRecipes={availableRecipes}
         loading={loading}
+        onAddFromRecipe={addFromRecipe}
+        onClose={() => setShowRecipeModal(false)}
+        visible={showRecipeModal}
       />
 
       {error && (
-        <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+        <div className="mb-4 rounded-lg bg-red-100 p-3 text-red-700 text-sm">
           {error}
         </div>
       )}
 
       {/* Delete List Confirmation Dialog */}
       <AlertDialog
-        open={deleteListDialogOpen}
         onOpenChange={setDeleteListDialogOpen}
+        open={deleteListDialogOpen}
       >
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -730,8 +749,8 @@ export function Shopping() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDeleteListConfirm}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={handleDeleteListConfirm}
             >
               Delete
             </AlertDialogAction>

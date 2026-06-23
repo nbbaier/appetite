@@ -22,29 +22,29 @@ import { Card, CardContent, CardHeader } from "../ui/card";
 import { ScrollArea } from "../ui/scroll-area";
 
 interface RecipeDetailModalProps {
-  open: boolean;
-  recipe: Recipe | null;
-  ingredients: RecipeIngredient[];
-  instructions: RecipeInstruction[];
-  loading: boolean;
-  onClose: () => void;
-  isBookmarked: boolean;
-  onBookmark: (id: string) => void;
-  canCook: boolean;
-  userShoppingLists: ShoppingList[];
-  showAddToShoppingModal: boolean;
-  setShowAddToShoppingModal: (v: boolean) => void;
-  selectedShoppingListId: string;
-  setSelectedShoppingListId: (v: string) => void;
-  addMissingToShoppingList: () => void;
   addingToShopping: boolean;
-  showCreateLeftoverModal: boolean;
-  setShowCreateLeftoverModal: (v: boolean) => void;
+  addMissingToShoppingList: () => void;
+  canCook: boolean;
   createLeftoverFromRecipe: () => void;
   creatingLeftover: boolean;
-  getMissingIngredients: () => RecipeIngredient[];
   currentUserId?: string;
+  getMissingIngredients: () => RecipeIngredient[];
+  ingredients: RecipeIngredient[];
+  instructions: RecipeInstruction[];
+  isBookmarked: boolean;
+  loading: boolean;
+  onBookmark: (id: string) => void;
+  onClose: () => void;
   onDelete?: () => void;
+  open: boolean;
+  recipe: Recipe | null;
+  selectedShoppingListId: string;
+  setSelectedShoppingListId: (v: string) => void;
+  setShowAddToShoppingModal: (v: boolean) => void;
+  setShowCreateLeftoverModal: (v: boolean) => void;
+  showAddToShoppingModal: boolean;
+  showCreateLeftoverModal: boolean;
+  userShoppingLists: ShoppingList[];
 }
 
 const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
@@ -65,7 +65,9 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
   onDelete,
 }) => {
   React.useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      return;
+    }
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         onClose();
@@ -76,51 +78,55 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [open, onClose]);
-  if (!open || !recipe) return null;
+  if (!(open && recipe)) {
+    return null;
+  }
   const missingIngredients = getMissingIngredients();
   return (
-    <div className="flex fixed inset-0 z-modal justify-center items-center p-4 pb-[env(safe-area-inset-bottom)]">
-      <Card className="max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+    <div className="fixed inset-0 z-modal flex items-center justify-center p-4 pb-[env(safe-area-inset-bottom)]">
+      <Card className="flex max-h-[90vh] w-full max-w-4xl flex-col overflow-hidden">
         <CardHeader className="relative pb-3 sm:pb-4">
           <Button
-            variant="ghost"
-            size="icon"
-            onClick={onClose}
-            className="absolute top-2 right-2 z-dropdown sm:right-4 sm:top-4"
             aria-label="Close recipe details"
+            className="absolute top-2 right-2 z-dropdown sm:top-4 sm:right-4"
+            onClick={onClose}
+            size="icon"
+            variant="ghost"
           >
             <X className="size-4" />
           </Button>
           <div className="relative">
             <img
+              alt={recipe.title}
+              className="h-48 w-full rounded-lg object-cover sm:h-64"
+              height={256}
               src={
                 recipe.image_url ||
                 "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg"
               }
-              alt={recipe.title}
-              className="object-cover w-full h-48 rounded-lg sm:h-64"
+              width={512}
             />
-            <div className="absolute right-3 bottom-3 left-3 sm:bottom-4 sm:left-4 sm:right-4">
-              <div className="p-3 rounded-lg backdrop-blur-sm bg-white/95 sm:p-4">
-                <div className="flex justify-between items-start">
-                  <div className="flex-1 min-w-0">
-                    <h2 className="mb-1 text-lg font-bold text-gray-900 sm:text-2xl sm:mb-2 line-clamp-2 text-balance">
+            <div className="absolute right-3 bottom-3 left-3 sm:right-4 sm:bottom-4 sm:left-4">
+              <div className="rounded-lg bg-white/95 p-3 backdrop-blur-sm sm:p-4">
+                <div className="flex items-start justify-between">
+                  <div className="min-w-0 flex-1">
+                    <h2 className="mb-1 line-clamp-2 text-balance font-bold text-gray-900 text-lg sm:mb-2 sm:text-2xl">
                       {recipe.title}
                     </h2>
-                    <p className="mb-2 text-sm text-gray-600 sm:text-base sm:mb-3 line-clamp-2 text-pretty">
+                    <p className="mb-2 line-clamp-2 text-pretty text-gray-600 text-sm sm:mb-3 sm:text-base">
                       {recipe.description}
                     </p>
-                    <div className="flex flex-wrap gap-2 items-center">
-                      <Badge variant="outline" className="text-xs">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Badge className="text-xs" variant="outline">
                         {recipe.difficulty}
                       </Badge>
                       {recipe.cuisine_type && (
-                        <Badge variant="secondary" className="text-xs">
+                        <Badge className="text-xs" variant="secondary">
                           {recipe.cuisine_type}
                         </Badge>
                       )}
                       {canCook && (
-                        <Badge className="text-xs bg-green-600">
+                        <Badge className="bg-green-600 text-xs">
                           <Sparkles className="mr-1 size-2 sm:size-3" />
                           Can Cook
                         </Badge>
@@ -128,21 +134,21 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                     </div>
                   </div>
                   <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onBookmark(recipe.id);
-                    }}
                     aria-label={
                       isBookmarked
                         ? "Remove from bookmarks"
                         : "Add to bookmarks"
                     }
-                    className={`p-2 rounded-full transition-colors ml-2 flex-shrink-0 ${
+                    className={`ml-2 flex-shrink-0 rounded-full p-2 transition-colors ${
                       isBookmarked
-                        ? "text-white bg-red-500"
-                        : "text-gray-600 bg-gray-100 hover:bg-gray-200"
+                        ? "bg-red-500 text-white"
+                        : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                     }`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onBookmark(recipe.id);
+                    }}
+                    type="button"
                   >
                     <Heart
                       className={`size-4 sm:size-5 ${isBookmarked ? "fill-current" : ""}`}
@@ -157,22 +163,22 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
           <CardContent className="p-4 sm:p-6">
             {loading ? (
               <div
-                className="flex justify-center items-center py-8"
-                role="status"
                 aria-label="Loading recipe details"
+                className="flex items-center justify-center py-8"
+                role="status"
               >
-                <div className="size-8 rounded-full border-b-2 animate-spin border-primary"></div>
+                <div className="size-8 animate-spin rounded-full border-primary border-b-2" />
               </div>
             ) : (
               <div className="space-y-6">
                 {/* Quick Add to Shopping List Button */}
                 {missingIngredients.length > 0 &&
                   userShoppingLists.length > 0 && (
-                    <div className="flex justify-end mb-4">
+                    <div className="mb-4 flex justify-end">
                       <Button
+                        className="flex items-center space-x-2"
                         onClick={() => setShowAddToShoppingModal(true)}
                         variant="default"
-                        className="flex items-center space-x-2"
                       >
                         <ShoppingCart className="mr-2 size-4" />
                         <span>Add missing ingredients to shopping list</span>
@@ -181,55 +187,55 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                   )}
                 {/* Recipe Stats */}
                 <div className="grid grid-cols-3 gap-2 text-center sm:gap-4">
-                  <div className="p-3 bg-gray-50 rounded-lg sm:p-4">
-                    <div className="flex justify-center items-center mb-1 sm:mb-2">
+                  <div className="rounded-lg bg-gray-50 p-3 sm:p-4">
+                    <div className="mb-1 flex items-center justify-center sm:mb-2">
                       <Timer className="size-4 text-blue-600 sm:size-5" />
                     </div>
-                    <div className="text-lg font-bold text-gray-900 sm:text-2xl tabular-nums">
+                    <div className="font-bold text-gray-900 text-lg tabular-nums sm:text-2xl">
                       {recipe.prep_time}
                     </div>
-                    <div className="text-xs text-gray-600 sm:text-sm">
+                    <div className="text-gray-600 text-xs sm:text-sm">
                       Prep Time
                     </div>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-lg sm:p-4">
-                    <div className="flex justify-center items-center mb-1 sm:mb-2">
+                  <div className="rounded-lg bg-gray-50 p-3 sm:p-4">
+                    <div className="mb-1 flex items-center justify-center sm:mb-2">
                       <ChefHat className="size-4 text-orange-600 sm:size-5" />
                     </div>
-                    <div className="text-lg font-bold text-gray-900 sm:text-2xl tabular-nums">
+                    <div className="font-bold text-gray-900 text-lg tabular-nums sm:text-2xl">
                       {recipe.cook_time}
                     </div>
-                    <div className="text-xs text-gray-600 sm:text-sm">
+                    <div className="text-gray-600 text-xs sm:text-sm">
                       Cook Time
                     </div>
                   </div>
-                  <div className="p-3 bg-gray-50 rounded-lg sm:p-4">
-                    <div className="flex justify-center items-center mb-1 sm:mb-2">
+                  <div className="rounded-lg bg-gray-50 p-3 sm:p-4">
+                    <div className="mb-1 flex items-center justify-center sm:mb-2">
                       <Users className="size-4 text-green-600 sm:size-5" />
                     </div>
-                    <div className="text-lg font-bold text-gray-900 sm:text-2xl tabular-nums">
+                    <div className="font-bold text-gray-900 text-lg tabular-nums sm:text-2xl">
                       {recipe.servings}
                     </div>
-                    <div className="text-xs text-gray-600 sm:text-sm">
+                    <div className="text-gray-600 text-xs sm:text-sm">
                       Servings
                     </div>
                   </div>
                 </div>
-                <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 sm:gap-8">
+                <div className="grid grid-cols-1 gap-6 sm:gap-8 lg:grid-cols-2">
                   {/* Ingredients */}
                   <div>
-                    <div className="flex items-center mb-3 space-x-2 sm:mb-4">
+                    <div className="mb-3 flex items-center space-x-2 sm:mb-4">
                       <Utensils className="size-4 text-gray-600 sm:size-5" />
-                      <h3 className="text-base font-semibold text-gray-900 sm:text-lg text-balance">
+                      <h3 className="text-balance font-semibold text-base text-gray-900 sm:text-lg">
                         Ingredients
                       </h3>
                     </div>
                     {/* Create Leftover Button */}
                     <div className="mb-4">
                       <Button
+                        className="flex items-center space-x-2 text-sm"
                         onClick={() => setShowCreateLeftoverModal(true)}
                         variant="outline"
-                        className="flex items-center space-x-2 text-sm"
                       >
                         <Utensils className="size-4" />
                         <span>Create Leftover</span>
@@ -242,21 +248,21 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                           // For now, just show all ingredients
                           return (
                             <div
+                              className="flex items-center justify-between rounded-lg border p-2 transition-colors sm:p-3"
                               key={ingredient.id}
-                              className="flex justify-between items-center p-2 rounded-lg border transition-colors sm:p-3"
                             >
-                              <div className="flex flex-1 items-center space-x-2 min-w-0">
-                                <div className="flex-shrink-0 size-2 bg-gray-300 rounded-full sm:size-3" />
+                              <div className="flex min-w-0 flex-1 items-center space-x-2">
+                                <div className="size-2 flex-shrink-0 rounded-full bg-gray-300 sm:size-3" />
                                 <div className="flex items-center space-x-1">
-                                  <span className="text-sm font-medium truncate sm:text-base">
+                                  <span className="truncate font-medium text-sm sm:text-base">
                                     {ingredient.ingredient_name}
                                   </span>
                                 </div>
                               </div>
-                              <div className="flex-shrink-0 ml-2 text-xs sm:text-sm">
+                              <div className="ml-2 flex-shrink-0 text-xs sm:text-sm">
                                 {ingredient.quantity} {ingredient.unit}
                                 {ingredient.notes && (
-                                  <span className="hidden ml-1 text-gray-500 sm:inline">
+                                  <span className="ml-1 hidden text-gray-500 sm:inline">
                                     ({ingredient.notes})
                                   </span>
                                 )}
@@ -266,16 +272,16 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                         })}
                       </div>
                     ) : (
-                      <p className="text-sm italic text-gray-500 sm:text-base">
+                      <p className="text-gray-500 text-sm italic sm:text-base">
                         No ingredients listed for this recipe.
                       </p>
                     )}
                   </div>
                   {/* Instructions */}
                   <div>
-                    <div className="flex items-center mb-3 space-x-2 sm:mb-4">
+                    <div className="mb-3 flex items-center space-x-2 sm:mb-4">
                       <BookOpen className="size-4 text-gray-600 sm:size-5" />
-                      <h3 className="text-base font-semibold text-gray-900 sm:text-lg text-balance">
+                      <h3 className="text-balance font-semibold text-base text-gray-900 sm:text-lg">
                         Instructions
                       </h3>
                     </div>
@@ -283,16 +289,16 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                       <div className="space-y-3 sm:space-y-4">
                         {instructions.map((instruction) => (
                           <div
-                            key={instruction.id}
                             className="flex space-x-3 sm:space-x-4"
+                            key={instruction.id}
                           >
                             <div className="flex-shrink-0">
-                              <div className="flex justify-center items-center size-6 text-xs font-medium text-white rounded-full sm:size-8 bg-primary sm:text-sm tabular-nums">
+                              <div className="flex size-6 items-center justify-center rounded-full bg-primary font-medium text-white text-xs tabular-nums sm:size-8 sm:text-sm">
                                 {instruction.step_number}
                               </div>
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm leading-relaxed text-gray-700 sm:text-base">
+                            <div className="min-w-0 flex-1">
+                              <p className="text-gray-700 text-sm leading-relaxed sm:text-base">
                                 {instruction.instruction}
                               </p>
                             </div>
@@ -300,7 +306,7 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
                         ))}
                       </div>
                     ) : (
-                      <p className="text-sm italic text-gray-500 sm:text-base">
+                      <p className="text-gray-500 text-sm italic sm:text-base">
                         No instructions available for this recipe.
                       </p>
                     )}
@@ -315,11 +321,11 @@ const RecipeDetailModalRaw: React.FC<RecipeDetailModalProps> = ({
           currentUserId &&
           recipe.user_id === currentUserId &&
           onDelete && (
-            <div className="flex justify-end p-4 bg-red-50 border-t">
+            <div className="flex justify-end border-t bg-red-50 p-4">
               <Button
-                variant="destructive"
-                onClick={onDelete}
                 className="w-full sm:w-auto"
+                onClick={onDelete}
+                variant="destructive"
               >
                 Delete Recipe
               </Button>
