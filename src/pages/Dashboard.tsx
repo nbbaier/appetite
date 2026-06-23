@@ -455,11 +455,7 @@ export function Dashboard() {
                       <div className="ml-2 shrink-0 text-right">
                         <span
                           className={`font-medium text-xs sm:text-sm ${
-                            daysLeft <= 1
-                              ? "text-red-600"
-                              : daysLeft <= 3
-                                ? "text-orange-600"
-                                : "text-orange-600"
+                            daysLeft <= 1 ? "text-red-600" : "text-orange-600"
                           }`}
                         >
                           {daysLeft <= 0

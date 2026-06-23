@@ -76,16 +76,15 @@ function LeftoverCardRaw({
     return "text-gray-600";
   };
 
+  let statusClass = "";
+  if (isExpired()) {
+    statusClass = "border-red-200 bg-red-50";
+  } else if (isExpiringSoon()) {
+    statusClass = "border-orange-200 bg-orange-50";
+  }
+
   return (
-    <Card
-      className={`relative ${
-        isExpired()
-          ? "border-red-200 bg-red-50"
-          : isExpiringSoon()
-            ? "border-orange-200 bg-orange-50"
-            : ""
-      } ${className}`}
-    >
+    <Card className={`relative ${statusClass} ${className}`}>
       <CardContent className="p-3 sm:p-4">
         <div className="mb-2 flex items-start justify-between">
           <div className="min-w-0 flex-1">

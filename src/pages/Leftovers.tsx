@@ -36,6 +36,12 @@ import { leftoverService } from "../lib/database";
 import { checkExpiringItems } from "../lib/notificationService";
 import type { Leftover } from "../types";
 
+const NOTIF_ICON_COLOR: Record<string, string> = {
+  expired: "text-red-600",
+  critical: "text-orange-600",
+  warning: "text-yellow-600",
+};
+
 export function Leftovers() {
   const { user } = useAuth();
   const [leftovers, setLeftovers] = useState<Leftover[]>([]);
@@ -87,14 +93,11 @@ export function Leftovers() {
         notify(message, {
           description: `${item.type === "ingredient" ? "Ingredient" : "Leftover"}: ${item.name}`,
           duration: 8000,
-          icon:
-            notificationType === "expired" ? (
-              <AlertTriangle className="size-5 text-red-600" />
-            ) : notificationType === "critical" ? (
-              <AlertTriangle className="size-5 text-orange-600" />
-            ) : (
-              <AlertTriangle className="size-5 text-yellow-600" />
-            ),
+          icon: (
+            <AlertTriangle
+              className={`size-5 ${NOTIF_ICON_COLOR[notificationType] ?? "text-yellow-600"}`}
+            />
+          ),
         });
       },
     });

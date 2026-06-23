@@ -10,6 +10,13 @@ import { toast } from "sonner";
 
 export type NotificationType = "success" | "error" | "info" | "warning";
 
+const TOAST_CLASS_BY_TYPE: Record<NotificationType, string> = {
+  error: "bg-red-50 text-red-800 border-red-200",
+  warning: "bg-orange-50 text-orange-800 border-orange-200",
+  success: "bg-green-50 text-green-800 border-green-200",
+  info: "bg-blue-50 text-blue-800 border-blue-200",
+};
+
 interface NotificationContextValue {
   notify: (
     message: string,
@@ -40,14 +47,7 @@ export const NotificationProvider = ({ children }: { children: ReactNode }) => {
       toast(message, {
         description: options?.description,
         duration: options?.duration ?? 6000,
-        className:
-          options?.type === "error"
-            ? "bg-red-50 text-red-800 border-red-200"
-            : options?.type === "warning"
-              ? "bg-orange-50 text-orange-800 border-orange-200"
-              : options?.type === "success"
-                ? "bg-green-50 text-green-800 border-green-200"
-                : "bg-blue-50 text-blue-800 border-blue-200",
+        className: TOAST_CLASS_BY_TYPE[options?.type ?? "info"],
         icon: options?.icon,
       });
     },

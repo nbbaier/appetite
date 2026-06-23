@@ -113,6 +113,13 @@ export function LeftoverForm({
     (r) => r.id === formData.source_recipe_id
   );
 
+  let submitLabel = "Add Leftover";
+  if (loading) {
+    submitLabel = "Saving...";
+  } else if (leftover) {
+    submitLabel = "Update Leftover";
+  }
+
   return (
     <form
       aria-label={leftover ? "Edit leftover" : "Add leftover"}
@@ -288,11 +295,7 @@ export function LeftoverForm({
           disabled={loading}
           type="submit"
         >
-          {loading
-            ? "Saving..."
-            : leftover
-              ? "Update Leftover"
-              : "Add Leftover"}
+          {submitLabel}
         </Button>
         <Button
           className="text-sm sm:text-base"

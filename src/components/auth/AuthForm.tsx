@@ -79,6 +79,13 @@ function AuthFormRaw({ initialMode }: AuthFormProps) {
     reset();
   };
 
+  let submitLabel = "Sign In";
+  if (loading) {
+    submitLabel = "Loading...";
+  } else if (isSignUp) {
+    submitLabel = "Create Account";
+  }
+
   return (
     <div className="flex min-h-dvh items-center justify-center bg-emerald-50 p-4 pb-[env(safe-area-inset-bottom)]">
       <Card className="w-full max-w-md border-emerald-100 shadow-2xl">
@@ -175,7 +182,7 @@ function AuthFormRaw({ initialMode }: AuthFormProps) {
               disabled={loading || !isSupabaseConnected}
               type="submit"
             >
-              {loading ? "Loading..." : isSignUp ? "Create Account" : "Sign In"}
+              {submitLabel}
             </Button>
           </form>
 

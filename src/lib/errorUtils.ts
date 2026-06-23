@@ -90,16 +90,15 @@ export function logError(error: unknown, context?: string) {
       window as unknown as { notify?: (msg: string, opts?: unknown) => void }
     ).notify === "function"
   ) {
+    let message = "An error occurred.";
+    if (typeof error === "string") {
+      message = error;
+    } else if (error instanceof Error) {
+      message = error.message;
+    }
     (
       window as unknown as { notify: (msg: string, opts?: unknown) => void }
-    ).notify(
-      typeof error === "string"
-        ? error
-        : error instanceof Error
-          ? error.message
-          : "An error occurred.",
-      { type: "error" }
-    );
+    ).notify(message, { type: "error" });
   }
 }
 

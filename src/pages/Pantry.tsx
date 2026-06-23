@@ -116,6 +116,18 @@ const getDefaultThreshold = (unit: string): number => {
   }
 };
 
+const NOTIF_CLASS: Record<string, string> = {
+  expired: "bg-red-50 text-red-800 border-red-200",
+  critical: "bg-orange-50 text-orange-800 border-orange-200",
+  warning: "bg-yellow-50 text-yellow-800 border-yellow-200",
+};
+
+const NOTIF_ICON_COLOR: Record<string, string> = {
+  expired: "text-red-600",
+  critical: "text-orange-600",
+  warning: "text-yellow-600",
+};
+
 export function Pantry() {
   const { user } = useAuth();
   const { getAllIngredientNames } = useIngredientHistory();
@@ -190,20 +202,12 @@ export function Pantry() {
         toast(message, {
           description: `${item.type === "ingredient" ? "Ingredient" : "Leftover"}: ${item.name}`,
           duration: 8000,
-          className:
-            notificationType === "expired"
-              ? "bg-red-50 text-red-800 border-red-200"
-              : notificationType === "critical"
-                ? "bg-orange-50 text-orange-800 border-orange-200"
-                : "bg-yellow-50 text-yellow-800 border-yellow-200",
-          icon:
-            notificationType === "expired" ? (
-              <AlertTriangle className="size-5 text-red-600" />
-            ) : notificationType === "critical" ? (
-              <AlertTriangle className="size-5 text-orange-600" />
-            ) : (
-              <AlertTriangle className="size-5 text-yellow-600" />
-            ),
+          className: NOTIF_CLASS[notificationType] ?? NOTIF_CLASS.warning,
+          icon: (
+            <AlertTriangle
+              className={`size-5 ${NOTIF_ICON_COLOR[notificationType] ?? "text-yellow-600"}`}
+            />
+          ),
         });
       },
     });
@@ -386,6 +390,26 @@ export function Pantry() {
     const expDate = new Date(expirationDate);
     const today = new Date();
     return expDate < today;
+  };
+
+  const expirationBorderClass = (expirationDate: string | undefined) => {
+    if (isExpired(expirationDate)) {
+      return "border-red-200 bg-red-50";
+    }
+    if (isExpiringSoon(expirationDate)) {
+      return "border-orange-200 bg-orange-50";
+    }
+    return "";
+  };
+
+  const expirationTextClass = (expirationDate: string | undefined) => {
+    if (isExpired(expirationDate)) {
+      return "text-red-600";
+    }
+    if (isExpiringSoon(expirationDate)) {
+      return "text-orange-600";
+    }
+    return "text-secondary-600";
   };
 
   const isLowStock = (ingredient: Ingredient) => {
@@ -982,13 +1006,9 @@ export function Pantry() {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {paginatedIngredients.map((ingredient) => (
             <Card
-              className={`relative ${
-                isExpired(ingredient.expiration_date)
-                  ? "border-red-200 bg-red-50"
-                  : isExpiringSoon(ingredient.expiration_date)
-                    ? "border-orange-200 bg-orange-50"
-                    : ""
-              }`}
+              className={`relative ${expirationBorderClass(
+                ingredient.expiration_date
+              )}`}
               key={ingredient.id}
             >
               <CardContent className="p-3 sm:p-4">
@@ -1053,13 +1073,9 @@ export function Pantry() {
                 )}
                 {ingredient.expiration_date && (
                   <div
-                    className={`flex items-center space-x-1 text-xs sm:text-sm ${
-                      isExpired(ingredient.expiration_date)
-                        ? "text-red-600"
-                        : isExpiringSoon(ingredient.expiration_date)
-                          ? "text-orange-600"
-                          : "text-secondary-600"
-                    }`}
+                    className={`flex items-center space-x-1 text-xs sm:text-sm ${expirationTextClass(
+                      ingredient.expiration_date
+                    )}`}
                   >
                     {(isExpired(ingredient.expiration_date) ||
                       isExpiringSoon(ingredient.expiration_date)) && (
