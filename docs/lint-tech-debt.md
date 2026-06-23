@@ -85,6 +85,31 @@ already exists (`src/components/ui/alert-dialog.tsx`); rename additionally needs
 small input/prompt modal. Doing this also reduces the complexity of the
 delete-conversation handler (#4 above).
 
+## `useFilenamingConvention` — deferred file renames (project-wide)
+
+Disabled in `biome.jsonc` rather than renamed. Ultracite's default wants
+kebab-case filenames, but the tree uses `PascalCase.tsx` for components and
+`camelCase.ts` for modules (~65 files), and renaming would churn every import
+site at once.
+
+**Decision to revisit:** either commit to a kebab-case rename (one mechanical
+pass updating files + imports together) or keep the current convention
+permanently and drop this from the debt list. Until then the rule stays off so it
+doesn't mask other `style` findings.
+
+## Deliberate (non-debt) suppressions
+
+For completeness — these `biome.jsonc` opt-outs are intentional and **not**
+expected to be revisited:
+
+- `noBarrelFile` off — `lib/validation` is a deliberate module API surface.
+- `noNamespaceImport` off for `src/components/ui/**` — vendored shadcn/Radix
+  primitives use the documented `import * as X` pattern.
+- Test-file relaxations (`useTopLevelRegex`, `useAwait`, `noNamespaceImport`) —
+  throwaway regex assertions, `act(async () => {})`, and `vi.spyOn(Mod, …)`.
+- `*.example.*` excluded from linting — comment-only illustrative files.
+- `Deno` global declared for `supabase/functions/**` — Deno runtime, not browser.
+
 ## Notes
 
 - Run `bun run check` to see the current lint state; suppressed items will not
