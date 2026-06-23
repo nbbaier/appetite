@@ -14,5 +14,14 @@
     "parser": {
       "tailwindDirectives": true
     }
+  },
+  "linter": {
+    "rules": {
+      "style": {
+        // Existing files use PascalCase components / camelCase modules.
+        // Disabled for now rather than renaming the whole tree.
+        "useFilenamingConvention": "off"
+      }
+    }
   }
 }
