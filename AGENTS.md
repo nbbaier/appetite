@@ -2,7 +2,8 @@
 
 ## Commands
 - **Build:** `bun run build`
-- **Lint & Format:** `bun run check` (Run `bun run fix` to auto-fix issues)
+- **Lint:** `bun run check` (Run `bun run check:fix` to auto-fix issues, does not fix formatting)
+- **Format:** `bun run format`
 - **Test (All):** `bun run test`
 - **Test (Single):** `bun run test -- <path/to/file>` (e.g., `bun run test -- src/utils.test.ts`)
 
