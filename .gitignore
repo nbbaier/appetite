@@ -1,3 +1,4 @@
+*.tsbuildinfo
 !.env.example
 !.vscode/extensions.json
 .DS_Store
