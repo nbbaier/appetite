@@ -12,21 +12,21 @@ import type { Recipe, RecipeIngredient, RecipeInstruction } from "../types";
 import { useAuth } from "./AuthContext";
 
 interface RecipeContextType {
-  recipes: Recipe[];
-  loading: boolean;
+  addRecipe: (
+    recipe: Omit<Recipe, "id" | "created_at" | "updated_at">
+  ) => Promise<void>;
   bookmarkedRecipes: string[];
-  selectedRecipe: Recipe | null;
+  deleteRecipe: (id: string) => Promise<void>;
+  loading: boolean;
+  loadRecipeDetails: (recipe: Recipe) => Promise<void>;
+  loadRecipes: () => Promise<void>;
   recipeIngredients: RecipeIngredient[];
   recipeInstructions: RecipeInstruction[];
-  loadRecipes: () => Promise<void>;
-  loadRecipeDetails: (recipe: Recipe) => Promise<void>;
-  toggleBookmark: (recipeId: string) => Promise<void>;
+  recipes: Recipe[];
+  selectedRecipe: Recipe | null;
   setSelectedRecipe: React.Dispatch<React.SetStateAction<Recipe | null>>;
-  addRecipe: (
-    recipe: Omit<Recipe, "id" | "created_at" | "updated_at">,
-  ) => Promise<void>;
+  toggleBookmark: (recipeId: string) => Promise<void>;
   updateRecipe: (id: string, updates: Partial<Recipe>) => Promise<void>;
-  deleteRecipe: (id: string) => Promise<void>;
 }
 
 const RecipeContext = createContext<RecipeContextType | undefined>(undefined);
@@ -52,7 +52,7 @@ export const RecipeProvider: React.FC<{ children: React.ReactNode }> = ({
       const data = await recipeService.getAll();
       // Only show public (user_id is null) or current user's recipes
       const filtered = data.filter(
-        (r) => r.user_id === null || (user && r.user_id === user.id),
+        (r) => r.user_id === null || (user && r.user_id === user.id)
       );
       setRecipes(filtered);
       if (user) {
@@ -87,7 +87,9 @@ export const RecipeProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const toggleBookmark = useCallback(
     async (recipeId: string) => {
-      if (!user) return;
+      if (!user) {
+        return;
+      }
       try {
         if (bookmarkedRecipes.includes(recipeId)) {
           await bookmarkService.removeBookmark(user.id, recipeId);
@@ -98,7 +100,7 @@ export const RecipeProvider: React.FC<{ children: React.ReactNode }> = ({
             setBookmarkedRecipes((prev) => [...prev, recipeId]);
           } else {
             setBookmarkedRecipes((prev) =>
-              prev.includes(recipeId) ? prev : [...prev, recipeId],
+              prev.includes(recipeId) ? prev : [...prev, recipeId]
             );
           }
         }
@@ -106,7 +108,7 @@ export const RecipeProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Error toggling bookmark:", error);
       }
     },
-    [user, bookmarkedRecipes],
+    [user, bookmarkedRecipes]
   );
 
   const addRecipe = useCallback(
@@ -118,7 +120,7 @@ export const RecipeProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Error adding recipe:", error);
       }
     },
-    [loadRecipes],
+    [loadRecipes]
   );
 
   const updateRecipe = useCallback(
@@ -130,7 +132,7 @@ export const RecipeProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Error updating recipe:", error);
       }
     },
-    [loadRecipes],
+    [loadRecipes]
   );
 
   const deleteRecipe = useCallback(
@@ -142,7 +144,7 @@ export const RecipeProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Error deleting recipe:", error);
       }
     },
-    [loadRecipes],
+    [loadRecipes]
   );
 
   useEffect(() => {
@@ -178,7 +180,7 @@ export const RecipeProvider: React.FC<{ children: React.ReactNode }> = ({
       addRecipe,
       updateRecipe,
       deleteRecipe,
-    ],
+    ]
   );
 
   return (
@@ -190,6 +192,8 @@ export const RecipeProvider: React.FC<{ children: React.ReactNode }> = ({
 
 export function useRecipe() {
   const ctx = useContext(RecipeContext);
-  if (!ctx) throw new Error("useRecipe must be used within a RecipeProvider");
+  if (!ctx) {
+    throw new Error("useRecipe must be used within a RecipeProvider");
+  }
   return ctx;
 }

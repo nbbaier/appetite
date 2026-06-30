@@ -11,26 +11,6 @@ const positiveNumberSchema = z.number().positive("Must be a positive number");
 const nonNegativeNumberSchema = z.number().nonnegative("Must be non-negative");
 
 /**
- * User Schema
- */
-export const userSchema = z.object({
-  id: uuidSchema,
-  email: emailSchema,
-  full_name: z.string().min(1).max(255).optional(),
-  avatar_url: urlSchema,
-  created_at: dateStringSchema,
-  updated_at: dateStringSchema,
-});
-
-export const userInsertSchema = userSchema.omit({
-  id: true,
-  created_at: true,
-  updated_at: true,
-});
-
-export type UserInsert = z.infer<typeof userInsertSchema>;
-
-/**
  * Ingredient Schema
  */
 export const ingredientSchema = z.object({
@@ -69,9 +49,6 @@ export const ingredientUpdateSchema = ingredientInsertSchema.partial().omit({
   user_id: true,
 });
 
-export type IngredientInsert = z.infer<typeof ingredientInsertSchema>;
-export type IngredientUpdate = z.infer<typeof ingredientUpdateSchema>;
-
 /**
  * Recipe Schema
  */
@@ -108,9 +85,6 @@ export const recipeUpdateSchema = recipeInsertSchema.partial().omit({
   user_id: true,
 });
 
-export type RecipeInsert = z.infer<typeof recipeInsertSchema>;
-export type RecipeUpdate = z.infer<typeof recipeUpdateSchema>;
-
 /**
  * Recipe Ingredient Schema
  */
@@ -131,14 +105,6 @@ export const recipeIngredientSchema = z.object({
   notes: z.string().max(500, "Notes too long").optional(),
 });
 
-export const recipeIngredientInsertSchema = recipeIngredientSchema.omit({
-  id: true,
-});
-
-export type RecipeIngredientInsert = z.infer<
-  typeof recipeIngredientInsertSchema
->;
-
 /**
  * Recipe Instruction Schema
  */
@@ -152,14 +118,6 @@ export const recipeInstructionSchema = z.object({
     .max(2000, "Instruction too long")
     .trim(),
 });
-
-export const recipeInstructionInsertSchema = recipeInstructionSchema.omit({
-  id: true,
-});
-
-export type RecipeInstructionInsert = z.infer<
-  typeof recipeInstructionInsertSchema
->;
 
 /**
  * Shopping List Schema
@@ -188,9 +146,6 @@ export const shoppingListUpdateSchema = shoppingListInsertSchema
   .omit({
     user_id: true,
   });
-
-export type ShoppingListInsert = z.infer<typeof shoppingListInsertSchema>;
-export type ShoppingListUpdate = z.infer<typeof shoppingListUpdateSchema>;
 
 /**
  * Shopping List Item Schema
@@ -233,13 +188,6 @@ export const shoppingListItemUpdateSchema = shoppingListItemInsertSchema
     shopping_list_id: true,
   });
 
-export type ShoppingListItemInsert = z.infer<
-  typeof shoppingListItemInsertSchema
->;
-export type ShoppingListItemUpdate = z.infer<
-  typeof shoppingListItemUpdateSchema
->;
-
 /**
  * User Profile Schema
  */
@@ -261,7 +209,7 @@ export const userProfileSchema = z.object({
   updated_at: dateStringSchema,
 });
 
-export const userProfileInsertSchema = userProfileSchema.omit({
+const userProfileInsertSchema = userProfileSchema.omit({
   id: true,
   created_at: true,
   updated_at: true,
@@ -270,9 +218,6 @@ export const userProfileInsertSchema = userProfileSchema.omit({
 export const userProfileUpdateSchema = userProfileInsertSchema.partial().omit({
   user_id: true,
 });
-
-export type UserProfileInsert = z.infer<typeof userProfileInsertSchema>;
-export type UserProfileUpdate = z.infer<typeof userProfileUpdateSchema>;
 
 /**
  * User Preferences Schema
@@ -301,7 +246,7 @@ export const userPreferencesSchema = z.object({
   inventory_threshold: nonNegativeNumberSchema,
 });
 
-export const userPreferencesInsertSchema = userPreferencesSchema.omit({
+const userPreferencesInsertSchema = userPreferencesSchema.omit({
   id: true,
   created_at: true,
   updated_at: true,
@@ -312,9 +257,6 @@ export const userPreferencesUpdateSchema = userPreferencesInsertSchema
   .omit({
     user_id: true,
   });
-
-export type UserPreferencesInsert = z.infer<typeof userPreferencesInsertSchema>;
-export type UserPreferencesUpdate = z.infer<typeof userPreferencesUpdateSchema>;
 
 /**
  * Leftover Schema
@@ -350,9 +292,6 @@ export const leftoverUpdateSchema = leftoverInsertSchema.partial().omit({
   user_id: true,
 });
 
-export type LeftoverInsert = z.infer<typeof leftoverInsertSchema>;
-export type LeftoverUpdate = z.infer<typeof leftoverUpdateSchema>;
-
 /**
  * Conversation Schema
  */
@@ -374,8 +313,6 @@ export const conversationUpdateSchema = z.object({
   title: z.string().max(255, "Title too long").nullable(),
 });
 
-export type ConversationInsert = z.infer<typeof conversationInsertSchema>;
-
 /**
  * Chat Message Schema
  */
@@ -386,7 +323,7 @@ export const chatMessageSchema = z.object({
   content: z
     .string()
     .min(1, "Message content is required")
-    .max(10000, "Message content too long")
+    .max(10_000, "Message content too long")
     .trim(),
   timestamp: dateStringSchema,
   suggestions: z.array(z.string().max(500)).nullable().optional(),
@@ -398,32 +335,9 @@ export const chatMessageInsertSchema = chatMessageSchema.omit({
   timestamp: true,
 });
 
-export type ChatMessageInsert = z.infer<typeof chatMessageInsertSchema>;
-
-/**
- * Environment Variables Schema
- */
-export const envSchema = z.object({
-  VITE_SUPABASE_URL: z.string().url("Invalid Supabase URL"),
-  VITE_SUPABASE_ANON_KEY: z.string().min(1, "Supabase anon key is required"),
-  MODE: z.enum(["development", "production", "test"]),
-});
-
-export type EnvSchema = z.infer<typeof envSchema>;
-
 /**
  * Authentication Schemas
  */
-/**
- * signInSchema intentionally uses minimal password validation (only non-empty)
- * to allow existing users with legacy passwords to sign in, even if their
- * passwords do not meet current complexity requirements. Stricter password
- * requirements are enforced only at sign-up (see signUpSchema).
- */
-export const signInSchema = z.object({
-  email: emailSchema,
-  password: z.string().min(1, "Password is required"),
-});
 
 export const signUpSchema = z
   .object({
@@ -435,7 +349,7 @@ export const signUpSchema = z
       // Require at least one lowercase, one uppercase, one digit, and one special character
       .regex(
         /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+=[\]{}|;':",.<>/?-])/,
-        "Password must contain uppercase, lowercase, number, and special character",
+        "Password must contain uppercase, lowercase, number, and special character"
       ),
     confirmPassword: z.string(),
     fullName: z
@@ -450,4 +364,3 @@ export const signUpSchema = z
   });
 
 export type SignUpFormData = z.infer<typeof signUpSchema>;
-export type SignInFormData = z.infer<typeof signInSchema>;

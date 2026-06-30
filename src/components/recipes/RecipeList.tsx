@@ -5,24 +5,24 @@ import type { Recipe } from "../../types";
 import { RecipeCard } from "./RecipeCard";
 
 interface RecipeListProps {
-  recipes: (Recipe | RecipeMatchResult)[];
   bookmarkedRecipes: string[];
-  onBookmark: (id: string) => void;
-  onSelectRecipe: (recipe: Recipe) => void;
   canCookMatches?: RecipeMatchResult[];
-  onEdit?: (recipe: Recipe) => void;
+  onBookmark: (id: string) => void;
   onDelete?: (recipe: Recipe) => void;
+  onEdit?: (recipe: Recipe) => void;
+  onSelectRecipe: (recipe: Recipe) => void;
+  recipes: (Recipe | RecipeMatchResult)[];
 }
 
 interface RecipeGridCellData {
-  recipes: (Recipe | RecipeMatchResult)[];
   bookmarkedRecipes: string[];
-  onBookmark: (id: string) => void;
-  onSelectRecipe: (recipe: Recipe) => void;
   canCookMatchById: Map<string, RecipeMatchResult>;
-  onEdit?: (recipe: Recipe) => void;
-  onDelete?: (recipe: Recipe) => void;
   columnCount: number;
+  onBookmark: (id: string) => void;
+  onDelete?: (recipe: Recipe) => void;
+  onEdit?: (recipe: Recipe) => void;
+  onSelectRecipe: (recipe: Recipe) => void;
+  recipes: (Recipe | RecipeMatchResult)[];
 }
 
 function getRecipeId(recipe: Recipe | RecipeMatchResult) {
@@ -31,16 +31,16 @@ function getRecipeId(recipe: Recipe | RecipeMatchResult) {
 
 function getRecipeMatchInfo(
   recipe: Recipe | RecipeMatchResult,
-  canCookMatchById: Map<string, RecipeMatchResult>,
+  canCookMatchById: Map<string, RecipeMatchResult>
 ) {
   if ("recipe_id" in recipe) {
     return canCookMatchById.get(recipe.recipe_id);
   }
 
-  return undefined;
+  return;
 }
 
-const RecipeGridCell: React.FC<CellComponentProps<RecipeGridCellData>> = ({
+const RecipeGridCell = ({
   ariaAttributes,
   columnIndex,
   rowIndex,
@@ -53,7 +53,7 @@ const RecipeGridCell: React.FC<CellComponentProps<RecipeGridCellData>> = ({
   onEdit,
   onDelete,
   columnCount,
-}) => {
+}: CellComponentProps<RecipeGridCellData>) => {
   const index = rowIndex * columnCount + columnIndex;
 
   if (index >= recipes.length) {
@@ -67,14 +67,14 @@ const RecipeGridCell: React.FC<CellComponentProps<RecipeGridCellData>> = ({
   return (
     <div style={style} {...ariaAttributes}>
       <RecipeCard
-        recipe={recipe}
         isBookmarked={bookmarkedRecipes.includes(recipeId)}
-        onBookmark={onBookmark}
-        onClick={() => onSelectRecipe(recipe as Recipe)}
         matchPercentage={matchInfo?.match_percentage}
         missingIngredients={matchInfo?.missing_ingredients}
-        onEdit={onEdit}
+        onBookmark={onBookmark}
+        onClick={() => onSelectRecipe(recipe as Recipe)}
         onDelete={onDelete}
+        onEdit={onEdit}
+        recipe={recipe}
       />
     </div>
   );
@@ -117,34 +117,34 @@ const RecipeListComponent: React.FC<RecipeListProps> = ({
           onDelete,
           columnCount,
         }}
+        className="gap-4"
         columnCount={columnCount}
-        rowCount={rowCount}
         columnWidth={340}
+        rowCount={rowCount}
         rowHeight={320}
         style={{ height: 960, width: 1080 }}
-        className="gap-4"
       />
     );
   }
 
   // Fallback to normal rendering for small lists
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 sm:gap-6">
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
       {recipes.map((recipe) => {
         const recipeId = getRecipeId(recipe);
         const matchInfo = getRecipeMatchInfo(recipe, canCookMatchById);
 
         return (
           <RecipeCard
-            key={recipeId}
-            recipe={recipe}
             isBookmarked={bookmarkedRecipes.includes(recipeId)}
-            onBookmark={onBookmark}
-            onClick={() => onSelectRecipe(recipe as Recipe)}
+            key={recipeId}
             matchPercentage={matchInfo?.match_percentage}
             missingIngredients={matchInfo?.missing_ingredients}
-            onEdit={onEdit}
+            onBookmark={onBookmark}
+            onClick={() => onSelectRecipe(recipe as Recipe)}
             onDelete={onDelete}
+            onEdit={onEdit}
+            recipe={recipe}
           />
         );
       })}

@@ -3,10 +3,10 @@ import type React from "react";
 import type { ShoppingList } from "../../types";
 
 interface ShoppingListsTabsProps {
-  shoppingLists: ShoppingList[];
-  selectedList: ShoppingList | null;
-  onSelect: (list: ShoppingList) => void;
   onDelete: (listId: string) => void;
+  onSelect: (list: ShoppingList) => void;
+  selectedList: ShoppingList | null;
+  shoppingLists: ShoppingList[];
 }
 
 export const ShoppingListsTabs: React.FC<ShoppingListsTabsProps> = ({
@@ -14,36 +14,34 @@ export const ShoppingListsTabs: React.FC<ShoppingListsTabsProps> = ({
   selectedList,
   onSelect,
   onDelete,
-}) => {
-  return (
-    <div className="flex flex-wrap gap-2">
-      {shoppingLists.map((list) => (
-        <button
-          type="button"
-          key={list.id}
-          onClick={() => onSelect(list)}
-          className={`flex items-center space-x-2 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-            selectedList?.id === list.id
-              ? "bg-primary text-primary-foreground"
-              : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
-          }`}
-        >
-          <ShoppingCart className="w-4 h-4" />
-          <span>{list.name}</span>
-          {selectedList?.id === list.id && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDelete(list.id);
-              }}
-              className="ml-1 p-0.5 hover:bg-primary-foreground/20 rounded"
-            >
-              <X className="w-3 h-3" />
-            </button>
-          )}
-        </button>
-      ))}
-    </div>
-  );
-};
+}) => (
+  <div className="flex flex-wrap gap-2">
+    {shoppingLists.map((list) => (
+      <button
+        className={`flex items-center space-x-2 rounded-lg px-3 py-2 font-medium text-sm transition-colors ${
+          selectedList?.id === list.id
+            ? "bg-primary text-primary-foreground"
+            : "bg-secondary text-secondary-foreground hover:bg-secondary/80"
+        }`}
+        key={list.id}
+        onClick={() => onSelect(list)}
+        type="button"
+      >
+        <ShoppingCart className="h-4 w-4" />
+        <span>{list.name}</span>
+        {selectedList?.id === list.id && (
+          <button
+            className="ml-1 rounded p-0.5 hover:bg-primary-foreground/20"
+            onClick={(e) => {
+              e.stopPropagation();
+              onDelete(list.id);
+            }}
+            type="button"
+          >
+            <X className="h-3 w-3" />
+          </button>
+        )}
+      </button>
+    ))}
+  </div>
+);

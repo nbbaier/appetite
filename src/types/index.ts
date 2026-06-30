@@ -1,136 +1,127 @@
-export interface User {
-  id: string;
-  email: string;
-  full_name?: string;
-  avatar_url?: string;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface Ingredient {
+  category: string;
+  created_at: string;
+  expiration_date?: string;
   id: string;
-  user_id: string;
+  low_stock_threshold?: number;
   name: string;
+  notes?: string;
   quantity: number;
   unit: string;
-  category: string;
-  expiration_date?: string;
-  notes?: string;
-  low_stock_threshold?: number;
-  created_at: string;
   updated_at: string;
+  user_id: string;
 }
 
 export interface Recipe {
-  id: string;
-  user_id: string;
-  title: string;
+  cook_time: number;
+  created_at: string;
+  cuisine_type?: string;
   description: string;
+  difficulty: "Easy" | "Medium" | "Hard";
+  id: string;
   image_url: string;
   prep_time: number;
-  cook_time: number;
   servings: number;
-  difficulty: "Easy" | "Medium" | "Hard";
-  cuisine_type?: string;
-  created_at: string;
+  title: string;
   updated_at: string;
+  user_id: string;
 }
 
 export interface RecipeIngredient {
   id: string;
-  recipe_id: string;
   ingredient_name: string;
-  quantity: number;
-  unit: string;
   notes?: string;
+  quantity: number;
+  recipe_id: string;
+  unit: string;
 }
 
 export interface RecipeInstruction {
   id: string;
+  instruction: string;
   recipe_id: string;
   step_number: number;
-  instruction: string;
 }
 
 export interface ShoppingListItem {
-  id: string;
-  shopping_list_id: string;
-  name: string;
-  quantity: number;
-  unit: string;
   category: string;
-  is_purchased: boolean;
-  notes?: string;
-  recipe_id?: string;
   created_at: string;
+  id: string;
+  is_purchased: boolean;
+  name: string;
+  notes?: string;
+  quantity: number;
+  recipe_id?: string;
+  shopping_list_id: string;
+  unit: string;
   updated_at: string;
 }
 
 export interface ShoppingList {
-  id: string;
-  user_id: string;
-  name: string;
-  description?: string;
   created_at: string;
+  description?: string;
+  id: string;
+  name: string;
   updated_at: string;
+  user_id: string;
 }
 
 export interface UserProfile {
-  id: string;
-  user_id: string;
-  full_name: string;
-  bio: string;
   avatar_color: string;
-  onboarding_completed: boolean;
   avatar_url?: string;
+  bio: string;
   created_at: string;
+  full_name: string;
+  id: string;
+  onboarding_completed: boolean;
   updated_at: string;
+  user_id: string;
 }
 
 export interface UserPreferences {
-  id: string;
-  user_id: string;
-  dietary_restrictions: string[];
   allergies: string[];
-  preferred_cuisines: string[];
   cooking_skill_level: "Beginner" | "Intermediate" | "Advanced" | "Expert";
-  measurement_units: "Metric" | "Imperial";
-  family_size: number;
-  kitchen_equipment: string[];
   created_at: string;
-  updated_at: string;
-  notification_enabled: boolean;
+  dietary_restrictions: string[];
   expiration_threshold_days: number;
+  family_size: number;
+  id: string;
   inventory_threshold: number;
+  kitchen_equipment: string[];
+  measurement_units: "Metric" | "Imperial";
+  notification_enabled: boolean;
+  preferred_cuisines: string[];
+  updated_at: string;
+  user_id: string;
 }
 
 export interface Leftover {
-  id: string;
-  user_id: string;
-  name: string;
-  quantity: number;
-  unit: string;
-  expiration_date?: string;
-  source_recipe_id?: string;
-  notes?: string;
   created_at: string;
+  expiration_date?: string;
+  id: string;
+  name: string;
+  notes?: string;
+  quantity: number;
+  source_recipe_id?: string;
+  unit: string;
   updated_at: string;
+  user_id: string;
 }
 
 export interface Conversation {
-  id: string;
-  user_id: string;
   created_at: string;
-  updated_at: string;
+  id: string;
   title: string | null;
+  updated_at: string;
+  user_id: string;
 }
 
 export interface ChatMessage {
-  id: string;
-  conversation_id: string;
-  sender: "user" | "ai";
   content: string;
-  timestamp: string;
-  suggestions?: string[] | null;
+  conversation_id: string;
+  id: string;
   recipes?: Recipe[] | null;
+  sender: "user" | "ai";
+  suggestions?: string[] | null;
+  timestamp: string;
 }

@@ -20,7 +20,7 @@ const dateFromToday = (days: number) => {
 const makeIngredient = (
   id: string,
   name: string,
-  expirationDate: string,
+  expirationDate: string
 ): Ingredient => ({
   id,
   user_id: "user1",
@@ -43,7 +43,7 @@ describe("ExpirationMonitor", () => {
           makeIngredient("1", "Milk", dateFromToday(1)),
           makeIngredient("2", "Eggs", dateFromToday(5)),
         ]}
-      />,
+      />
     );
 
     expect(screen.getByText("Milk")).toBeInTheDocument();
@@ -57,7 +57,7 @@ describe("ExpirationMonitor", () => {
           makeIngredient("1", "Yogurt", dateFromToday(3)),
           makeIngredient("2", "Cheese", dateFromToday(7)),
         ]}
-      />,
+      />
     );
 
     expect(screen.getByText("Critical (1)")).toBeInTheDocument();
@@ -68,7 +68,7 @@ describe("ExpirationMonitor", () => {
     render(
       <ExpirationMonitor
         ingredients={[makeIngredient("1", "Butter", dateFromToday(30))]}
-      />,
+      />
     );
 
     expect(screen.getByText(/no items expiring soon/i)).toBeInTheDocument();

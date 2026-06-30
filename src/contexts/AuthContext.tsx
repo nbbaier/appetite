@@ -4,23 +4,23 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
 
 interface AuthContextType {
-  user: User | null;
-  session: Session | null;
+  isSupabaseConnected: boolean;
   loading: boolean;
+  resetPassword: (
+    email: string
+  ) => Promise<{ error: import("@supabase/supabase-js").AuthError | null }>;
+  session: Session | null;
+  signIn: (
+    email: string,
+    password: string
+  ) => Promise<{ error: import("@supabase/supabase-js").AuthError | null }>;
+  signOut: () => Promise<void>;
   signUp: (
     email: string,
     password: string,
-    fullName: string,
+    fullName: string
   ) => Promise<{ error: import("@supabase/supabase-js").AuthError | null }>;
-  signIn: (
-    email: string,
-    password: string,
-  ) => Promise<{ error: import("@supabase/supabase-js").AuthError | null }>;
-  signOut: () => Promise<void>;
-  resetPassword: (
-    email: string,
-  ) => Promise<{ error: import("@supabase/supabase-js").AuthError | null }>;
-  isSupabaseConnected: boolean;
+  user: User | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -96,7 +96,7 @@ export function AuthProvider({
             setUser(session?.user ?? null);
             setLoading(false);
           }
-        },
+        }
       );
       // @ts-expect-error: test mock may not match Supabase Subscription type
       subscription = authSubscription;

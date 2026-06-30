@@ -36,6 +36,12 @@ import { leftoverService } from "../lib/database";
 import { checkExpiringItems } from "../lib/notificationService";
 import type { Leftover } from "../types";
 
+const NOTIF_ICON_COLOR: Record<string, string> = {
+  expired: "text-red-600",
+  critical: "text-orange-600",
+  warning: "text-yellow-600",
+};
+
 export function Leftovers() {
   const { user } = useAuth();
   const [leftovers, setLeftovers] = useState<Leftover[]>([]);
@@ -51,7 +57,9 @@ export function Leftovers() {
   const { notify } = useNotification();
 
   const loadLeftovers = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
 
     try {
       setLoading(true);
@@ -72,7 +80,9 @@ export function Leftovers() {
 
   // Notification integration
   useEffect(() => {
-    if (!user || loading || !leftovers.length || !settings) return;
+    if (!user || loading || !leftovers.length || !settings) {
+      return;
+    }
     checkExpiringItems({
       ingredients: [],
       leftovers,
@@ -83,21 +93,18 @@ export function Leftovers() {
         notify(message, {
           description: `${item.type === "ingredient" ? "Ingredient" : "Leftover"}: ${item.name}`,
           duration: 8000,
-          icon:
-            notificationType === "expired" ? (
-              <AlertTriangle className="size-5 text-red-600" />
-            ) : notificationType === "critical" ? (
-              <AlertTriangle className="size-5 text-orange-600" />
-            ) : (
-              <AlertTriangle className="size-5 text-yellow-600" />
-            ),
+          icon: (
+            <AlertTriangle
+              className={`size-5 ${NOTIF_ICON_COLOR[notificationType] ?? "text-yellow-600"}`}
+            />
+          ),
         });
       },
     });
   }, [user, loading, leftovers, settings, notify]);
 
   const handleSubmit = async (
-    data: Omit<Leftover, "id" | "created_at" | "updated_at">,
+    data: Omit<Leftover, "id" | "created_at" | "updated_at">
   ) => {
     try {
       setSaving(true);
@@ -121,7 +128,9 @@ export function Leftovers() {
   };
 
   const handleDeleteConfirm = async () => {
-    if (!leftoverToDelete) return;
+    if (!leftoverToDelete) {
+      return;
+    }
 
     try {
       await leftoverService.delete(leftoverToDelete);
@@ -145,7 +154,9 @@ export function Leftovers() {
   };
 
   const getDaysUntilExpiration = (expirationDate: string | undefined) => {
-    if (!expirationDate) return null;
+    if (!expirationDate) {
+      return null;
+    }
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -157,7 +168,7 @@ export function Leftovers() {
   };
 
   const filteredLeftovers = leftovers.filter((leftover) =>
-    leftover.name.toLowerCase().includes(searchTerm.toLowerCase()),
+    leftover.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Categorize leftovers by expiration status
@@ -181,11 +192,11 @@ export function Leftovers() {
   if (loading) {
     return (
       <div
-        className="flex justify-center items-center py-12"
-        role="status"
         aria-label="Loading leftovers"
+        className="flex items-center justify-center py-12"
+        role="status"
       >
-        <div className="size-8 rounded-full border-b-2 animate-spin border-primary"></div>
+        <div className="size-8 animate-spin rounded-full border-primary border-b-2" />
       </div>
     );
   }
@@ -194,16 +205,16 @@ export function Leftovers() {
     <div className="space-y-4 sm:space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-center sm:text-left">
-          <h1 className="text-xl font-bold sm:text-2xl text-secondary-900 text-balance">
+          <h1 className="text-balance font-bold text-secondary-900 text-xl sm:text-2xl">
             Leftovers
           </h1>
-          <p className="text-sm sm:text-base text-secondary-600 text-pretty">
+          <p className="text-pretty text-secondary-600 text-sm sm:text-base">
             Track your leftovers and reduce food waste
           </p>
         </div>
         <Button
+          className="flex items-center justify-center space-x-2 text-sm sm:text-base"
           onClick={() => setShowAddForm(true)}
-          className="flex justify-center items-center space-x-2 text-sm sm:text-base"
         >
           <Plus className="size-4" />
           <span>Add Leftover</span>
@@ -216,13 +227,13 @@ export function Leftovers() {
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <Package className="size-6 sm:size-8 text-primary" />
+                <Package className="size-6 text-primary sm:size-8" />
               </div>
-              <div className="flex-1 ml-3 min-w-0 sm:ml-4">
-                <p className="text-xs font-medium truncate sm:text-sm text-secondary-600">
+              <div className="ml-3 min-w-0 flex-1 sm:ml-4">
+                <p className="truncate font-medium text-secondary-600 text-xs sm:text-sm">
                   Total Leftovers
                 </p>
-                <p className="text-lg font-bold sm:text-2xl text-secondary-900">
+                <p className="font-bold text-lg text-secondary-900 sm:text-2xl">
                   {leftovers.length}
                 </p>
               </div>
@@ -240,11 +251,11 @@ export function Leftovers() {
                   className={`h-6 w-6 sm:h-8 sm:w-8 ${totalExpiring > 0 ? "text-orange-600" : "text-primary"}`}
                 />
               </div>
-              <div className="flex-1 ml-3 min-w-0 sm:ml-4">
-                <p className="text-xs font-medium truncate sm:text-sm text-secondary-600">
+              <div className="ml-3 min-w-0 flex-1 sm:ml-4">
+                <p className="truncate font-medium text-secondary-600 text-xs sm:text-sm">
                   Expiring Soon
                 </p>
-                <p className="text-lg font-bold sm:text-2xl text-secondary-900">
+                <p className="font-bold text-lg text-secondary-900 sm:text-2xl">
                   {totalExpiring}
                 </p>
               </div>
@@ -256,13 +267,13 @@ export function Leftovers() {
           <CardContent className="p-4 sm:p-6">
             <div className="flex items-center">
               <div className="flex-shrink-0">
-                <ChefHat className="w-6 h-6 sm:h-8 sm:w-8 text-primary" />
+                <ChefHat className="h-6 w-6 text-primary sm:h-8 sm:w-8" />
               </div>
-              <div className="flex-1 ml-3 min-w-0 sm:ml-4">
-                <p className="text-xs font-medium truncate sm:text-sm text-secondary-600">
+              <div className="ml-3 min-w-0 flex-1 sm:ml-4">
+                <p className="truncate font-medium text-secondary-600 text-xs sm:text-sm">
                   From Recipes
                 </p>
-                <p className="text-lg font-bold sm:text-2xl text-secondary-900">
+                <p className="font-bold text-lg text-secondary-900 sm:text-2xl">
                   {leftovers.filter((l) => l.source_recipe_id).length}
                 </p>
               </div>
@@ -273,12 +284,12 @@ export function Leftovers() {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 w-4 h-4 transform -translate-y-1/2 text-secondary-400" />
+        <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-secondary-400" />
         <Input
+          className="pl-10 text-sm sm:text-base"
+          onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search leftovers..."
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="pl-10 text-sm sm:text-base"
         />
       </div>
 
@@ -296,9 +307,9 @@ export function Leftovers() {
           <CardContent>
             <LeftoverForm
               leftover={editingLeftover || undefined}
-              onSubmit={handleSubmit}
-              onCancel={resetForm}
               loading={saving}
+              onCancel={resetForm}
+              onSubmit={handleSubmit}
             />
           </CardContent>
         </Card>
@@ -308,19 +319,19 @@ export function Leftovers() {
       {filteredLeftovers.length === 0 ? (
         <Card>
           <CardContent className="py-8 text-center sm:py-12">
-            <Package className="mx-auto mb-4 w-10 h-10 sm:h-12 sm:w-12 text-secondary-400" />
-            <h3 className="mb-2 text-base font-medium sm:text-lg text-secondary-900">
+            <Package className="mx-auto mb-4 h-10 w-10 text-secondary-400 sm:h-12 sm:w-12" />
+            <h3 className="mb-2 font-medium text-base text-secondary-900 sm:text-lg">
               {searchTerm ? "No leftovers found" : "No leftovers yet"}
             </h3>
-            <p className="px-4 mb-4 text-sm sm:text-base text-secondary-600">
+            <p className="mb-4 px-4 text-secondary-600 text-sm sm:text-base">
               {searchTerm
                 ? "Try adjusting your search criteria"
                 : "Start tracking your leftovers to reduce food waste"}
             </p>
             {!searchTerm && (
               <Button
-                onClick={() => setShowAddForm(true)}
                 className="text-sm sm:text-base"
+                onClick={() => setShowAddForm(true)}
               >
                 Add Your First Leftover
               </Button>
@@ -332,17 +343,17 @@ export function Leftovers() {
           {/* Expired Leftovers */}
           {expiredLeftovers.length > 0 && (
             <div>
-              <h2 className="flex items-center mb-3 text-lg font-semibold text-red-900">
-                <AlertTriangle className="mr-2 w-5 h-5" />
+              <h2 className="mb-3 flex items-center font-semibold text-lg text-red-900">
+                <AlertTriangle className="mr-2 h-5 w-5" />
                 Expired ({expiredLeftovers.length})
               </h2>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                 {expiredLeftovers.map((leftover) => (
                   <LeftoverCard
                     key={leftover.id}
                     leftover={leftover}
-                    onEdit={startEdit}
                     onDelete={handleDeleteClick}
+                    onEdit={startEdit}
                   />
                 ))}
               </div>
@@ -352,17 +363,17 @@ export function Leftovers() {
           {/* Expiring Soon */}
           {expiringSoonLeftovers.length > 0 && (
             <div>
-              <h2 className="flex items-center mb-3 text-lg font-semibold text-orange-900">
-                <Clock className="mr-2 w-5 h-5" />
+              <h2 className="mb-3 flex items-center font-semibold text-lg text-orange-900">
+                <Clock className="mr-2 h-5 w-5" />
                 Expiring Soon ({expiringSoonLeftovers.length})
               </h2>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                 {expiringSoonLeftovers.map((leftover) => (
                   <LeftoverCard
                     key={leftover.id}
                     leftover={leftover}
-                    onEdit={startEdit}
                     onDelete={handleDeleteClick}
+                    onEdit={startEdit}
                   />
                 ))}
               </div>
@@ -372,17 +383,17 @@ export function Leftovers() {
           {/* Fresh Leftovers */}
           {freshLeftovers.length > 0 && (
             <div>
-              <h2 className="flex items-center mb-3 text-lg font-semibold text-secondary-900">
-                <Calendar className="mr-2 w-5 h-5" />
+              <h2 className="mb-3 flex items-center font-semibold text-lg text-secondary-900">
+                <Calendar className="mr-2 h-5 w-5" />
                 Fresh ({freshLeftovers.length})
               </h2>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 sm:gap-4">
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
                 {freshLeftovers.map((leftover) => (
                   <LeftoverCard
                     key={leftover.id}
                     leftover={leftover}
-                    onEdit={startEdit}
                     onDelete={handleDeleteClick}
+                    onEdit={startEdit}
                   />
                 ))}
               </div>
@@ -392,13 +403,13 @@ export function Leftovers() {
       )}
 
       {error && (
-        <div className="p-3 mb-4 text-sm text-red-700 bg-red-100 rounded-lg">
+        <div className="mb-4 rounded-lg bg-red-100 p-3 text-red-700 text-sm">
           {error}
         </div>
       )}
 
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+      <AlertDialog onOpenChange={setDeleteDialogOpen} open={deleteDialogOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Leftover</AlertDialogTitle>
@@ -410,8 +421,8 @@ export function Leftovers() {
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={handleDeleteConfirm}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              onClick={handleDeleteConfirm}
             >
               Delete
             </AlertDialogAction>

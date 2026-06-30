@@ -13,18 +13,18 @@ import type { Ingredient } from "../types";
 import { useAuth } from "./AuthContext";
 
 interface PantryContextType {
-  ingredients: Ingredient[];
-  loading: boolean;
-  loadIngredients: () => Promise<void>;
   addIngredient: (
-    ingredient: Omit<Ingredient, "id" | "created_at" | "updated_at">,
+    ingredient: Omit<Ingredient, "id" | "created_at" | "updated_at">
   ) => Promise<void>;
   addIngredients: (
-    ingredients: Omit<Ingredient, "id" | "created_at" | "updated_at">[],
+    ingredients: Omit<Ingredient, "id" | "created_at" | "updated_at">[]
   ) => Promise<void>;
-  updateIngredient: (id: string, updates: Partial<Ingredient>) => Promise<void>;
   deleteIngredient: (id: string) => Promise<void>;
+  ingredients: Ingredient[];
+  loadIngredients: () => Promise<void>;
+  loading: boolean;
   setIngredients: React.Dispatch<React.SetStateAction<Ingredient[]>>;
+  updateIngredient: (id: string, updates: Partial<Ingredient>) => Promise<void>;
 }
 
 const PantryContext = createContext<PantryContextType | undefined>(undefined);
@@ -37,7 +37,9 @@ export const PantryProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
 
   const loadIngredients = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     try {
       setLoading(true);
       const data = await ingredientService.getAll(user.id);
@@ -51,9 +53,11 @@ export const PantryProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const addIngredient = useCallback(
     async (
-      ingredient: Omit<Ingredient, "id" | "created_at" | "updated_at">,
+      ingredient: Omit<Ingredient, "id" | "created_at" | "updated_at">
     ) => {
-      if (!user) return;
+      if (!user) {
+        return;
+      }
       try {
         await ingredientService.create(ingredient);
         await loadIngredients();
@@ -61,7 +65,7 @@ export const PantryProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Error adding ingredient:", error);
       }
     },
-    [user, loadIngredients],
+    [user, loadIngredients]
   );
 
   const addIngredients = useCallback(
@@ -69,26 +73,30 @@ export const PantryProvider: React.FC<{ children: React.ReactNode }> = ({
       ingredientsToCreate: Omit<
         Ingredient,
         "id" | "created_at" | "updated_at"
-      >[],
+      >[]
     ) => {
-      if (!user || ingredientsToCreate.length === 0) return;
+      if (!user || ingredientsToCreate.length === 0) {
+        return;
+      }
       try {
         await Promise.all(
           ingredientsToCreate.map((ingredient) =>
-            ingredientService.create(ingredient),
-          ),
+            ingredientService.create(ingredient)
+          )
         );
         await loadIngredients();
       } catch (error) {
         console.error("Error adding ingredients:", error);
       }
     },
-    [user, loadIngredients],
+    [user, loadIngredients]
   );
 
   const updateIngredient = useCallback(
     async (id: string, updates: Partial<Ingredient>) => {
-      if (!user) return;
+      if (!user) {
+        return;
+      }
       try {
         await ingredientService.update(id, updates);
         await loadIngredients();
@@ -96,12 +104,14 @@ export const PantryProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Error updating ingredient:", error);
       }
     },
-    [user, loadIngredients],
+    [user, loadIngredients]
   );
 
   const deleteIngredient = useCallback(
     async (id: string) => {
-      if (!user) return;
+      if (!user) {
+        return;
+      }
       try {
         await ingredientService.delete(id);
         await loadIngredients();
@@ -109,7 +119,7 @@ export const PantryProvider: React.FC<{ children: React.ReactNode }> = ({
         console.error("Error deleting ingredient:", error);
       }
     },
-    [user, loadIngredients],
+    [user, loadIngredients]
   );
 
   useEffect(() => {
@@ -119,7 +129,9 @@ export const PantryProvider: React.FC<{ children: React.ReactNode }> = ({
   }, [user, loadIngredients]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      return;
+    }
     // Subscribe to real-time changes for the user's ingredients
     const channel = supabase
       .channel("ingredients-changes")
@@ -134,7 +146,7 @@ export const PantryProvider: React.FC<{ children: React.ReactNode }> = ({
         (_payload) => {
           // Reload ingredients on any change
           loadIngredients();
-        },
+        }
       )
       .subscribe();
     return () => {
@@ -161,7 +173,7 @@ export const PantryProvider: React.FC<{ children: React.ReactNode }> = ({
       addIngredients,
       updateIngredient,
       deleteIngredient,
-    ],
+    ]
   );
 
   return (

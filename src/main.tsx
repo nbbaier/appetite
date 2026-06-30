@@ -16,7 +16,7 @@ if (import.meta.env.PROD) {
     // Log to console in production (can be replaced with analytics service)
     const isUnitless = metric.name === "CLS";
     console.log(
-      `[Web Vitals] ${metric.name}: ${metric.value.toFixed(2)}${isUnitless ? "" : "ms"} (${metric.rating})`,
+      `[Web Vitals] ${metric.name}: ${metric.value.toFixed(2)}${isUnitless ? "" : "ms"} (${metric.rating})`
     );
 
     // TODO: Send to analytics service (e.g., Google Analytics, Sentry, etc.)
@@ -61,7 +61,7 @@ class ErrorBoundary extends React.Component<
         error instanceof Error
           ? error.message
           : "An unexpected error occurred.",
-        { type: "error", description: "A critical error occurred in the app." },
+        { type: "error", description: "A critical error occurred in the app." }
       );
     }
   }
@@ -111,7 +111,7 @@ try {
       <ErrorBoundary>
         <App />
       </ErrorBoundary>
-    </StrictMode>,
+    </StrictMode>
   );
 } catch (error) {
   console.error("Failed to render app:", error);

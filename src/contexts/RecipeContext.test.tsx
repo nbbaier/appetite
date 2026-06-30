@@ -57,7 +57,7 @@ describe("RecipeContext", () => {
       render(
         <RecipeProvider>
           <TestComponent />
-        </RecipeProvider>,
+        </RecipeProvider>
       );
     });
     await waitFor(() => {
@@ -79,7 +79,6 @@ describe("RecipeContext", () => {
       const ctx = useRecipe();
       return (
         <button
-          type="button"
           onClick={() =>
             ctx.addRecipe({
               title: "R",
@@ -92,6 +91,7 @@ describe("RecipeContext", () => {
               difficulty: "Easy",
             })
           }
+          type="button"
         >
           Add
         </button>
@@ -101,7 +101,7 @@ describe("RecipeContext", () => {
       render(
         <RecipeProvider>
           <AddRecipeTest />
-        </RecipeProvider>,
+        </RecipeProvider>
       );
     });
     await act(async () => {
@@ -119,9 +119,9 @@ describe("RecipeContext", () => {
       return (
         <>
           <button
-            type="button"
             data-testid="toggle-btn"
             onClick={() => ctx.toggleBookmark("recipe1")}
+            type="button"
           >
             Toggle
           </button>
@@ -133,7 +133,7 @@ describe("RecipeContext", () => {
       render(
         <RecipeProvider>
           <ToggleBookmarkTest />
-        </RecipeProvider>,
+        </RecipeProvider>
       );
     });
     // Wait for bookmarks to load in the DOM
@@ -166,7 +166,7 @@ describe("RecipeContext", () => {
       render(
         <RecipeProvider>
           <DetailsTest />
-        </RecipeProvider>,
+        </RecipeProvider>
       );
     });
     await waitFor(() => {
@@ -194,7 +194,7 @@ describe("RecipeContext", () => {
       render(
         <RecipeProvider>
           <DetailsTest />
-        </RecipeProvider>,
+        </RecipeProvider>
       );
     });
     await waitFor(() => {
@@ -211,9 +211,9 @@ describe("RecipeContext", () => {
       return (
         <>
           <button
-            type="button"
             data-testid="toggle-btn"
             onClick={() => ctx.toggleBookmark("recipe2")}
+            type="button"
           >
             Toggle
           </button>
@@ -225,7 +225,7 @@ describe("RecipeContext", () => {
       render(
         <RecipeProvider>
           <ToggleBookmarkTest />
-        </RecipeProvider>,
+        </RecipeProvider>
       );
     });
     await waitFor(() => {
@@ -245,16 +245,16 @@ describe("RecipeContext", () => {
       return (
         <>
           <button
-            type="button"
             data-testid="update-btn"
             onClick={() => ctx.updateRecipe("id1", { title: "T" })}
+            type="button"
           >
             Update
           </button>
           <button
-            type="button"
             data-testid="delete-btn"
             onClick={() => ctx.deleteRecipe("id1")}
+            type="button"
           >
             Delete
           </button>
@@ -265,7 +265,7 @@ describe("RecipeContext", () => {
       render(
         <RecipeProvider>
           <UpdateDeleteTest />
-        </RecipeProvider>,
+        </RecipeProvider>
       );
     });
     await act(async () => {
@@ -282,9 +282,9 @@ describe("RecipeContext", () => {
       return (
         <>
           <button
-            type="button"
             data-testid="select-btn"
             onClick={() => ctx.setSelectedRecipe("id2")}
+            type="button"
           >
             Select
           </button>
@@ -296,7 +296,7 @@ describe("RecipeContext", () => {
       render(
         <RecipeProvider>
           <SelectTest />
-        </RecipeProvider>,
+        </RecipeProvider>
       );
     });
     await act(async () => {
@@ -311,7 +311,6 @@ describe("RecipeContext", () => {
       const ctx = useRecipe();
       return (
         <button
-          type="button"
           onClick={() =>
             ctx.addRecipe({
               title: "R",
@@ -324,6 +323,7 @@ describe("RecipeContext", () => {
               difficulty: "Easy",
             })
           }
+          type="button"
         >
           Add
         </button>
@@ -333,7 +333,7 @@ describe("RecipeContext", () => {
       render(
         <RecipeProvider>
           <AddRecipeTest />
-        </RecipeProvider>,
+        </RecipeProvider>
       );
     });
     await act(async () => {

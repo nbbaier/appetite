@@ -26,14 +26,14 @@ describe("SmartCategorySelector", () => {
     render(<SmartCategorySelector {...defaultProps} />);
     expect(screen.getByText("Category")).toBeInTheDocument();
     expect(
-      screen.getByRole("button", { name: /smart suggest/i }),
+      screen.getByRole("button", { name: /smart suggest/i })
     ).toBeInTheDocument();
     expect(screen.getByRole("combobox")).toBeInTheDocument();
   });
 
   it("calls analyzeCategory when Smart Suggest is clicked and shows suggestion banner", async () => {
     // Mock fetch to return a suggestion
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
         category: "Fruits",
@@ -52,14 +52,14 @@ describe("SmartCategorySelector", () => {
       }
       // Look for the 'Fruits' badge inside the banner
       expect(
-        within(banner).getByText("Fruits", { selector: "div" }),
+        within(banner).getByText("Fruits", { selector: "div" })
       ).toBeInTheDocument();
     });
   });
 
   it("applies and dismisses a suggestion", async () => {
     const onCategoryChange = vi.fn();
-    global.fetch = vi.fn().mockResolvedValue({
+    globalThis.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: async () => ({
         category: "Fruits",
@@ -72,11 +72,11 @@ describe("SmartCategorySelector", () => {
         {...defaultProps}
         ingredientName="Apple"
         onCategoryChange={onCategoryChange}
-      />,
+      />
     );
     fireEvent.click(screen.getByRole("button", { name: /smart suggest/i }));
     await waitFor(() =>
-      expect(screen.getByText(/smart suggestion:/i)).toBeInTheDocument(),
+      expect(screen.getByText(/smart suggestion:/i)).toBeInTheDocument()
     );
     // Apply
     fireEvent.click(screen.getByRole("button", { name: /apply/i }));
@@ -84,7 +84,7 @@ describe("SmartCategorySelector", () => {
     // Dismiss (re-render to show again)
     fireEvent.click(screen.getByRole("button", { name: /smart suggest/i }));
     await waitFor(() =>
-      expect(screen.getByText(/smart suggestion:/i)).toBeInTheDocument(),
+      expect(screen.getByText(/smart suggestion:/i)).toBeInTheDocument()
     );
     fireEvent.click(screen.getByRole("button", { name: /dismiss/i }));
     expect(screen.queryByText(/smart suggestion:/i)).not.toBeInTheDocument();

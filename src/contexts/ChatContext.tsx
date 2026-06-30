@@ -9,10 +9,10 @@ import type { Message } from "../components/ai/AIChat";
 
 // Chat State Types
 export interface ChatState {
-  messages: Message[];
+  activeConversationId: string | null;
   inputValue: string;
   isTyping: boolean;
-  activeConversationId: string | null;
+  messages: Message[];
 }
 
 export type ChatAction =
@@ -51,7 +51,7 @@ function chatReducer(state: ChatState, action: ChatAction): ChatState {
 
 const ChatStateContext = createContext<ChatState | undefined>(undefined);
 const ChatDispatchContext = createContext<Dispatch<ChatAction> | undefined>(
-  undefined,
+  undefined
 );
 
 export function ChatProvider({ children }: { children: ReactNode }) {

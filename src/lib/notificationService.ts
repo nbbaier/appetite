@@ -6,27 +6,27 @@ const notificationCooldownCache = new Map<string, number>();
 export type NotificationType = "expired" | "critical" | "warning";
 
 export interface ExpiringItem {
+  daysLeft: number;
+  expiration_date: string;
   id: string;
   name: string;
-  expiration_date: string;
   type: "ingredient" | "leftover";
-  daysLeft: number;
 }
 
 export interface Notification {
   item: ExpiringItem;
-  notificationType: NotificationType;
   message: string;
+  notificationType: NotificationType;
 }
 
 export interface NotificationServiceOptions {
+  criticalDays?: number;
   ingredients: Ingredient[];
   leftovers: Leftover[];
-  criticalDays?: number;
-  warningDays?: number;
-  notificationEnabled?: boolean;
   notificationCooldownMs?: number;
+  notificationEnabled?: boolean;
   onNotify: (notification: Notification) => void;
+  warningDays?: number;
 }
 
 function getNotificationCacheKey(notification: Notification): string {
@@ -40,7 +40,7 @@ function getNotificationCacheKey(notification: Notification): string {
 
 function shouldEmitNotification(
   notification: Notification,
-  notificationCooldownMs: number,
+  notificationCooldownMs: number
 ): boolean {
   if (notificationCooldownMs <= 0) {
     return true;
@@ -80,13 +80,16 @@ export function checkExpiringItems({
   const warn = typeof warningDays === "number" ? warningDays : 7;
 
   // Helper to process a list
+  // biome-ignore lint/complexity/noExcessiveCognitiveComplexity: TODO refactor; tracked separately
   function processItems(
     items: (Ingredient | Leftover)[],
-    type: "ingredient" | "leftover",
+    type: "ingredient" | "leftover"
   ) {
-    items.forEach((item) => {
+    for (const item of items) {
       const expirationDate = item.expiration_date;
-      if (!expirationDate) return;
+      if (!expirationDate) {
+        continue;
+      }
 
       const expDate = new Date(expirationDate);
       expDate.setHours(0, 0, 0, 0);
@@ -96,13 +99,13 @@ export function checkExpiringItems({
       let message = "";
       if (daysLeft < 0) {
         notificationType = "expired";
-        message = `${item.name} expired ${Math.abs(daysLeft)} day${Math.abs(daysLeft) !== 1 ? "s" : ""} ago.`;
+        message = `${item.name} expired ${Math.abs(daysLeft)} day${Math.abs(daysLeft) === 1 ? "" : "s"} ago.`;
       } else if (daysLeft <= crit) {
         notificationType = "critical";
-        message = `${item.name} expires in ${daysLeft} day${daysLeft !== 1 ? "s" : ""} (critical).`;
+        message = `${item.name} expires in ${daysLeft} day${daysLeft === 1 ? "" : "s"} (critical).`;
       } else if (daysLeft <= warn) {
         notificationType = "warning";
-        message = `${item.name} expires in ${daysLeft} day${daysLeft !== 1 ? "s" : ""} (warning).`;
+        message = `${item.name} expires in ${daysLeft} day${daysLeft === 1 ? "" : "s"} (warning).`;
       }
       if (notificationType && notificationEnabled) {
         const notification: Notification = {
@@ -121,7 +124,7 @@ export function checkExpiringItems({
           onNotify(notification);
         }
       }
-    });
+    }
   }
 
   processItems(ingredients, "ingredient");
