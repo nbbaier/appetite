@@ -375,6 +375,6 @@ Key tables and relationships (see `supabase/migrations/`):
 - **Storage**: `node_modules` ~150MB, `dist` build ~2MB
 
 ## Development Patterns
-- Always reference `PLAN.md` for current project status and feature roadmap
+- Always reference `docs/PLAN.md` for current project status and feature roadmap
 - Follow established patterns in existing components for consistency
 - Check `src/contexts/` for state management patterns before adding new global state

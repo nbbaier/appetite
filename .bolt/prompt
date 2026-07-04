@@ -5,4 +5,4 @@ By default, this template supports JSX syntax with Tailwind CSS classes, React h
 Use icons from lucide-react for logos.
 
 
-After each task, check `PLAN.md` to see if modifications need to be made or action items need to be checked off.
+After each task, check `docs/PLAN.md` to see if modifications need to be made or action items need to be checked off.

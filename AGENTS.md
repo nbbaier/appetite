@@ -15,6 +15,50 @@
 - **Testing:** Vitest + RTL. Mock `AuthProvider` & `SettingsProvider` for component tests.
 - **Type Safety:** Strict TypeScript. No `any`. Use schemas in `src/lib/validation`.
 
+## Naming Conventions
+```typescript
+components/          // kebab-case for directories
+ComponentName.tsx     // PascalCase for component files
+useHookName.ts        // camelCase for hooks/utility files
+
+const userName = "John";           // camelCase for variables
+function calculateTotal() {}       // camelCase for functions
+const UserComponent = () => {};    // PascalCase for components
+
+const MAX_RETRY_ATTEMPTS = 3;      // UPPER_SNAKE_CASE for constants/magic numbers
+
+interface UserProfile {}           // PascalCase for interfaces
+type ApiResponse<T> = {};          // PascalCase for types
+```
+
+Import order: external libraries → internal utilities/services (`src/lib`) → components → types (`import type`) → styles.
+
+## Component Patterns
+- Components live under `src/components/`, grouped by domain (`ui/`, `layout/`, `auth/`, feature folders).
+- Accept a `className` prop and merge with `cn()`; spread remaining props to the root element. Prefer composition over inheritance.
+- Pages follow: read auth/context state → fetch via a service function in an effect → render loading/error/data states.
+- Forms use `react-hook-form` + a Zod schema via `zodResolver`; display validation errors inline.
+
+```tsx
+interface ComponentNameProps {
+  className?: string;
+}
+
+export function ComponentName({ className, ...props }: ComponentNameProps) {
+  return (
+    <div className={cn("base-styles", className)} {...props}>
+      {/* content */}
+    </div>
+  );
+}
+```
+
+## Database & Service Layer
+- All database access goes through service objects in `src/lib/database.ts` (e.g. `ingredientService`, `recipeService`, `bookmarkService`) — never call Supabase directly from components.
+- Every table has RLS enabled. User-owned data is scoped with `auth.uid() = user_id`; shared/reference data (e.g. recipes) is public-read.
+- Validate input with a Zod schema before writing to the database.
+- Select specific columns instead of `*`, filter/order in the query rather than in JS, and add indexes for columns used in `WHERE`/`ORDER BY` (see `supabase/migrations/`).
+
 ## Linting & Formatting (Ultracite)
 
 This project uses **Ultracite**, a zero-config preset over **Biome** (not ESLint) that enforces strict code quality through automated formatting and linting. Run `bun run fix` before committing. Most issues are auto-fixable.
@@ -91,8 +135,8 @@ Write code that is **accessible, performant, type-safe, and maintainable**. Favo
 Focus your own attention on: business logic correctness, meaningful naming, architecture decisions, edge cases, user experience (accessibility, performance), and documenting complex logic.
 
 ## References
-- See `.cursor/rules/` for pattern-specific rules (Component, Database, etc).
 - See `.github/copilot-instructions.md` for detailed workflow and architecture.
+- See `docs/ARCHITECTURE.md` for system design and decisions.
 
 ## Agent skills
 
